@@ -1,28 +1,14 @@
-import { useState, useEffect, useContext } from "react";
-import AuthGroup from "@/app/(auth)/_layout"
-import TabsGroup from "@/app/(tabs)/_layout"
+import { AppRegistry } from 'react-native';
+import App from "@/app/App" 
+import { AuthProvider } from "@/hooks/AuthContext";
+import { UserProvider } from "@/hooks/UserContext";
 
-export default function RootLayout() {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const { isNewUser, isAuth } = useContext(AuthContext);
+const Root = () => (
+  <UserProvider>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </UserProvider>
+);
 
-  if (!isLoaded) {
-    return null;
-  }
-
-  if (isAuth) {
-    return(
-      <TabsGroup></TabsGroup>
-    )
-  }
-
-  if (isNewUser) {
-    return (
-      <SurveyGroup></SurveyGroup>
-    )
-  }
-
-  return (
-    <AuthGroup></AuthGroup>
-  )
-}
+AppRegistry.registerComponent("More Weight", () => Root);

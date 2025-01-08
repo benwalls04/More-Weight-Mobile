@@ -1,44 +1,25 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Text } from "react-native";
-import AuthRoot from "@/app/(auth)/index"
-import TabsRoot from "@/app/(tabs)/index"
-import SurveyRoot from "@/app/(survey)/index"
-import AuthContext from "@/hooks/AuthContext";
+import AuthRoot from "@/app/(auth)/index";
+import TabsRoot from "@/app/(tabs)/index";
+import SurveyRoot from "@/app/(survey)/index";
+import { useAuthContext } from "@/hooks/AuthContext";
 
 const App = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const { isNew, isAuth } = useContext(AuthContext);
+  const { isAuth, isNew } = useAuthContext();
 
-  // FIXME: add icon
-  const handleLoading = () => {
+  useEffect(() => {
+    // FIXME: add icon
     setTimeout(() => {
       setIsLoaded(true);  
     }, 1000); 
-  };
-  useEffect(() => {
-    handleLoading();  
   }, []);
 
-
-  if (!isLoaded) {
-    return <Text>Loading</Text>;
-  }
-
-  if (isAuth) {
-    return(
-      <TabsRoot></TabsRoot>
-    )
-  }
-
-  if (isNew) {
-    return (
-      <SurveyRoot></SurveyRoot>
-    )
-  }
-
-  return (
-    <AuthRoot></AuthRoot>
-  )
-}
+  if (!isLoaded) return <Text>Loading</Text>;
+  if (isAuth) return <TabsRoot />;
+  if (isNew) return <SurveyRoot />;
+  return <AuthRoot />;
+};
 
 export default App;

@@ -1,6 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 
-const UserContext = React.createContext();
+export const UserContext = React.createContext();
+
+export function useUserContext() {
+  const userState = useContext(UserContext);
+
+  if (userState === undefined) {
+    throw new Error("useUserContext must be used within a UserProvider");
+  }
+
+  return userState;
+}
 
 export function UserProvider({children}) {
   const [username, setUsername] = useState("");
@@ -8,8 +18,21 @@ export function UserProvider({children}) {
   const [exp, setExp] = useState(-1);
   const [numSets, setNumSets] = useState(-1);
 
+  const userState = {
+    username: username, 
+    setUsername: setUsername, 
+    routine: routine, 
+    setRoutine: setRoutine,
+    info: {
+      exp: exp, 
+      setExp: setExp, 
+      numSets: numSets, 
+      setNumSets: setNumSets
+    }
+  }
+
   return (
-    <UserContext.Provider value={{username, setUsername, routine, setRoutine, exp, setExp, numSets, setNumSets}}>
+    <UserContext.Provider value={userState}>
       {children}
     </UserContext.Provider>
   )

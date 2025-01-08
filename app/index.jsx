@@ -1,14 +1,17 @@
 import { AppRegistry } from 'react-native';
-import App from "@/app/App" 
+import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from "@/hooks/AuthContext";
 import { UserProvider } from "@/hooks/UserContext";
+import App from './App';
 
 const Root = () => (
-  <UserProvider>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
-  </UserProvider>
+  <NavigationContainer>
+    <UserProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </UserProvider>
+  </NavigationContainer>
 );
 
 AppRegistry.registerComponent("More Weight", () => Root);

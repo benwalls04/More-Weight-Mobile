@@ -12,8 +12,8 @@ const AuthRoot = () => {
         headerShown: false
       }}
     >
-      <Stack.Screen name="Welcome" component={WelcomePage} />
-      <Stack.Screen name="Login" component={LoginPage} />
+      <Stack.Screen name="Welcome" component={WelcomePage} headerShown={false}/>
+      <Stack.Screen name="Login" component={LoginPage} headerShown={false}/>
     </Stack.Navigator>
   );
 };

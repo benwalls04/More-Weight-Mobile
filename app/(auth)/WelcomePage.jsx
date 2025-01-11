@@ -2,16 +2,16 @@ import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useAuthContext } from "@/hooks/AuthContext";
-import { useTheme } from "@/hooks/ThemeContext";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+import { useThemeContext } from "@/hooks/ThemeContext";
+import { COLORS } from "@/constants/Colors";
 
 const WelcomePage = () => {
   const navigation = useNavigation();
-  const { setIsNew } = useAuthContext();
-  const { theme } = useTheme(); 
-  const colorScheme = theme === 'dark' ? Colors.dark : Colors.light;
-  const Styles = createStyles(theme, colorScheme);
-    
+  const { setIsNew, theme } = useAuthContext();
+  //const { theme } = useThemeContext(); 
+  const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
+  const Styles = createStyles(colors);
+  
   return (
     <View style={Styles.page}>
       <Text style={Styles.header}>Welcome to More Weight!</Text>
@@ -43,20 +43,25 @@ function createStyles (colors) {
     }, 
     container: {
       width: "80%",
+      maxWidth: 380,
+      marginTop: 20,
       flexDirection: "row",
       justifyContent: "space-around",
       alignSelf: "center",
     }, 
     button: {
+      backgroundColor: colors.buttonColor,
       width: "40%", 
       height: 60, 
       padding: 10,
       margin: 10,
-      border: colors.border,
+      borderColor: colors.borderColor,
+      borderWidth: 1,
       borderRadius: 4,
       justifyContent: "center",
     }, 
     buttonText: {
+      fontSize: 14,
       textAlign: "center",
       color: colors.text,
     }

@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { Appearance } from "react-native";
 
 export const AuthContext = React.createContext();
 
@@ -16,11 +17,28 @@ export function AuthProvider({ children }) {
   const [isNew, setIsNew] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
 
+  const systemTheme = Appearance.getColorScheme();
+  const [theme, setTheme] = useState(systemTheme | 'dark');
+
+  useEffect(() => {
+  const subscription = Appearance.addChangeListener(({ colorScheme }) => {
+    setTheme(colorScheme); 
+  });
+
+  return () => subscription.remove();
+}, []);
+
+  const toggleTheme = () => {
+    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+  }
+
   const authState = {
     isNew: isNew,
     setIsNew: setIsNew,
     isAuth: isAuth,
-    setIsAuth: setIsAuth
+    setIsAuth: setIsAuth,
+    theme: theme,
+    toggleTheme: toggleTheme
   };
 
   return (

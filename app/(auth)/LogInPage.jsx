@@ -1,101 +1,68 @@
-import { View, Text, TextInput, Pressable, StyleSheet} from "react-native";
+import { View, TextInput, Pressable, StyleSheet, Alert } from "react-native";
 import { useState } from "react";
 import { useAuthContext } from "@/hooks/AuthContext";
-import { useUserContext } from "@/hooks/UserContext";
+import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
-import axios from 'axios';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedPressable } from "@/components/ThemedPressable";
 
 const LoginPage = () => {
   const [userText, setUserText] = useState("");
   const [passText, setPassText] = useState("");
-  const { setIsAuth, theme } = useAuthContext();
-  const { setRoutine, setUsername } = useUserContext();
+  const { theme } = useThemeContext();
+  const { login } = useAuthContext();
+
+  const handleSubmit = async () => {
+    const res = await login(userText, passText);
+    if (res != "success") {
+      Alert.alert(res);
+    } 
+  }
 
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const Styles = createStyles(colors);
 
-  const logIn = async (username, password) => {
-    if (validInput(username) && validInput(password)) {
-      try {
-        const response = await axios.get('https://more-weight.com/login', {
-          params: { username, password }
-        });
-        setRoutine(response.data.routine);
-        setUsername(username);
-        setIsAuth(true);
-      } catch (error) {
-        if (error.response?.status === 400) {
-          return error.response.data.message;
-        }
-        return "error";
-      }
-    }
-    return "please enter a valid username and password";
-  };
-
   return (
-    <View style={Styles.page}>
-      <View style={Styles.content}>
-        <View style={Styles.headerContainer}>
-          <Text style={Styles.header}>Hi, Welcome Back!</Text>
-        </View>
-        <View style={Styles.inputContainer}>
-          <View style={Styles.input}>
-            <Text style={Styles.inputLabel}>Username</Text>
-            <TextInput
-              style={Styles.inputText}
-              placeholder="Your username"
-              value={userText}
-              onChangeText={setUserText}
-            />
-          </View>
-          <View style={Styles.input}>
-            <Text style={Styles.inputLabel}>Password</Text>
-            <TextInput
-              style={Styles.inputText}
-              placeholder="Your password"
-              value={passText}
-              onChangeText={setPassText}
-              secureTextEntry
-            />
-          </View>
-          <Pressable onPress={() => logIn(userText, passText)} style={Styles.button}>
-            <Text style={Styles.buttonText}>Log In</Text>
-          </Pressable>
-        </View>
+    <ThemedView>
+      <View style={Styles.headerContainer}>
+        <ThemedText style={{textAlign: "center"}} type="header">Hi, Welcome Back!</ThemedText>
       </View>
-    </View>
+      <View style={Styles.inputContainer}>
+        <View style={Styles.input}>
+          <ThemedText>Username</ThemedText>
+          <TextInput
+            style={Styles.inputText}
+            placeholder="Your username"
+            value={userText}
+            onChangeText={setUserText}
+          />
+        </View>
+        <View style={Styles.input}>
+          <ThemedText>Password</ThemedText>
+          <TextInput
+            style={Styles.inputText}
+            placeholder="Your password"
+            value={passText}
+            onChangeText={setPassText}
+            secureTextEntry
+          />
+        </View>
+        <ThemedPressable onPress={() => handleSubmit()} style={Styles.button}>
+          <ThemedText style={{textAlign: "center"}}>Log In</ThemedText>
+        </ThemedPressable>
+      </View>
+    </ThemedView>
   );
 };
-
-function validInput(string) {
-  const invalidCharacters = /\s|[\x00-\x1F\x7F-\x9F]/;
-  return string.length > 0 && !invalidCharacters.test(string);
-}
 
 export default LoginPage;
 
 function createStyles (colors) {
   return StyleSheet.create({
-    page: {
-      flex: 1,
-      backgroundColor: colors.background,
-      justifyContent: "center", 
-    }, 
-    content: {
-      height: "70%",
-      width: "85%", 
-      justifyContent: "center",
-      alignSelf: "center",
-    },
     headerContainer: {
       flex: 1,
       justifyContent: "center",
-    }, 
-    header: {
-      fontSize: 26,
-      color: colors.text,
-      textAlign: "center",
     }, 
     inputContainer: {
       flex: 3,
@@ -110,12 +77,6 @@ function createStyles (colors) {
       marginBottom: 10,
       justifyContent: "center",
     },
-    inputLabel: {
-      fontSize: 14,
-      color: colors.text,
-      textAlign: "left",
-      paddingBottom: 5,
-    },
     inputText: {
       paddingLeft: 10,
       fontSize: 14,
@@ -126,21 +87,10 @@ function createStyles (colors) {
       borderRadius: 2,
     },
     button: {
-      backgroundColor: colors.buttonColor,
-      height: 35,
       maxHeight: 35,
       marginTop: 45,
-      width: "100%", 
-      alignSelf: "center",
-      borderColor: colors.borderColor,
-      borderWidth: 1,
+      height: 35,
       borderRadius: 0,
-      justifyContent: "center",
     }, 
-    buttonText: {
-      fontSize: 14,
-      textAlign: "center",
-      color: colors.text,
-    }
   })
 }

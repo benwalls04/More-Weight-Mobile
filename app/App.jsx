@@ -6,7 +6,7 @@ import SurveyRoot from "@/app/(survey)/index";
 import { useAuthContext } from "@/hooks/AuthContext";
 
 const App = () => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(true);
   const { isAuth, isNew } = useAuthContext();
 
   useEffect(() => {
@@ -16,10 +16,15 @@ const App = () => {
     }, 1000); 
   }, []);
 
-  if (!isLoaded) return <Text>Loading</Text>;
-  if (isAuth) return <TabsRoot />;
-  if (isNew) return <SurveyRoot />;
-  return <AuthRoot />;
+  if (isAuth) {
+    return <TabsRoot />;
+  }
+
+  if (isNew) {
+    return <SurveyRoot />;
+  }
+
+  return <Text>Loading...</Text>;
 };
 
 export default App;

@@ -35,8 +35,6 @@ export function ThemeProvider({children}) {
     toggleTheme: toggleTheme
   }
 
-  console.log(themeState);
-
   return (
     <ThemeContext.Provider value={themeState}>
       {children}

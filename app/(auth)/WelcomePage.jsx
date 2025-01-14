@@ -1,19 +1,22 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, SafeAreaView } from "react-native";
 import { useAuthContext } from "@/hooks/AuthContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 
 const WelcomePage = () => {
   const navigation = useNavigation();
-  const { setIsNew, theme } = useAuthContext();
-  //const { theme } = useThemeContext(); 
+  const { setIsNew, isNew, isAuth} = useAuthContext();
+  const { theme } = useThemeContext(); 
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const Styles = createStyles(colors);
-  
+
+  console.log(isNew)
+  console.log(isAuth)
+
   return (
-    <View style={Styles.page}>
+    <SafeAreaView style={Styles.page}>
       <Text style={Styles.header}>Welcome to More Weight!</Text>
       <View style={Styles.container}>
         <Pressable onPress={() => navigation.navigate("Login")} style={Styles.button}>
@@ -23,7 +26,7 @@ const WelcomePage = () => {
           <Text style={Styles.buttonText}>New User</Text>
         </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

@@ -17,6 +17,9 @@ export const COLORS = {
     borderColor: redOne,
     buttonColor: grayOne,
     inputBorderColor: "white",
+    buttonColorSelected: redTwo,
+    borderColorSelected: redTwo,
+    textSelected: "white",
   }, 
   dark: {
     text: grayOne, 
@@ -29,5 +32,8 @@ export const COLORS = {
     borderColor: redOne,
     buttonColor: redThree,
     inputBorderColor: "white",
+    buttonColorSelected: redThree,
+    borderColorSelected: redOne,
+    textSelected: "white",
   }
 }

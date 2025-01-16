@@ -1,6 +1,6 @@
 import { View, TextInput, Pressable, StyleSheet, Alert } from "react-native";
 import { useState } from "react";
-import { useAuthContext } from "@/hooks/AuthContext";
+import { useUserContext } from "@/hooks/UserContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
@@ -11,7 +11,7 @@ const LoginPage = () => {
   const [userText, setUserText] = useState("");
   const [passText, setPassText] = useState("");
   const { theme } = useThemeContext();
-  const { login } = useAuthContext();
+  const { login } = useUserContext();
 
   const handleSubmit = async () => {
     const res = await login(userText, passText);

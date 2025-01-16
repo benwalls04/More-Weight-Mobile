@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
 
-export default function SignUpPage() {
+export default function Days() {
   return (
     <View>
-      <Text>Sign Up</Text>
+      <Text>Days</Text>
     </View>
   )
 }

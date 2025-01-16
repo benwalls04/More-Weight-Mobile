@@ -1,22 +1,23 @@
-import { createStackNavigator } from "@react-navigation/stack"; 
+import { View, Text } from "react-native";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { useSurveyContext } from "@/hooks/SurveyContext";
 import { SURVEY_DATA } from "@/constants/Survey";
-import SelectOne from "@/components/SelectOne";
-
-const Stack = createStackNavigator();
+import { routes } from "@/constants/Survey";
 
 const SurveyRoot = () => {
+  const router = useRouter();
+  const { route } = useSurveyContext();
+
+  useEffect(() => {
+    router.push(route);
+  }, [route]);
+
   return (
-    <Stack.Navigator
-      initialRouteName="Experience"
-      screenOptions={{
-        headerShown: true
-      }}>
-      <Stack.Screen 
-        name="Experience" 
-        component={<SelectOne title={SURVEY_DATA[0].title} data={SURVEY_DATA[0].options}/>} 
-      />
-    </Stack.Navigator>
-  )
+    <View>
+      <Text>Survey</Text>
+    </View>
+  );
 }
 
 export default SurveyRoot;

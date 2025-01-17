@@ -5,8 +5,8 @@ export default function SurveyLayout() {
   return (
     <SurveyProvider>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Experience"/>
-        <Stack.Screen name="Days"/>
+        <Stack.Screen name="experience"/>
+        <Stack.Screen name="days"/>
       </Stack>
     </SurveyProvider>
   );

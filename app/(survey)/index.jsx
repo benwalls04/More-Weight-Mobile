@@ -1,23 +1,16 @@
-import { View, Text } from "react-native";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { View, Text, Pressable } from "react-native";
 import { useSurveyContext } from "@/hooks/SurveyContext";
-import { SURVEY_DATA } from "@/constants/Survey";
-import { routes } from "@/constants/Survey";
+import { ROUTES, SURVEY_DATA } from "@/constants/Survey";
+import SelectOne from "@/components/SelectOne";
 
-const SurveyRoot = () => {
-  const router = useRouter();
-  const { route } = useSurveyContext();
-
-  useEffect(() => {
-    router.push(route);
-  }, [route]);
+export default function Experience() {
+  const { setRoute } = useSurveyContext();
 
   return (
-    <View>
-      <Text>Survey</Text>
-    </View>
-  );
+    <SelectOne
+      title={SURVEY_DATA.experience.title}
+      data={SURVEY_DATA.experience.options}
+      nextRoute={() => setRoute(ROUTES[1])}
+    ></SelectOne>
+  )
 }
-
-export default SurveyRoot;

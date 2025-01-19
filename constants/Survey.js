@@ -1,4 +1,3 @@
-
 export const SURVEY_DATA = {
   experience: {
     id: 1,
@@ -120,24 +119,36 @@ export const SURVEY_DATA = {
   }, 
   time: {
     id: 8,
-    title: "How many hours would you like to spend working out?",
+    title: "How long would you like to spend working out (minutes)?",
     options: [
       {
         id: 1,
-        title: .5,
+        title: 30,
       },
       {
         id: 2,
-        title: 1,
+        title: 45,
       },
       {
         id: 3,
-        title: 1.5,
+        title: 60,
       }, 
       {
         id: 4,
-        title: 2,
+        title: 75,
       },
+      {
+        id: 5,
+        title: 90,
+      },
+      {
+        id: 6,
+        title: 105,
+      },
+      {
+        id: 7,
+        title: 120,
+      }
     ]
   }, 
   accessories: {
@@ -273,6 +284,6 @@ export const SURVEY_DATA = {
   }
 }
 
-export const routes = [
+export const ROUTES = [
   "experience", "days", "bias", "base", "split", "style", "sets", "time", "accessories", "regions", "movements"
 ]

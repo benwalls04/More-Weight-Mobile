@@ -3,23 +3,23 @@ import { SURVEY_DATA } from "@/constants/Survey";
 import SurveyGrid from "@/components/SurveyGrid";
 import { useRouter } from "expo-router";
 
-export default function Experience() {
-  const { setRoute, setExperience } = useSurveyContext();
+export default function Time() {
+  const { setRoute, setTime } = useSurveyContext();
   const router = useRouter();
 
   const handleNext = (selected, nextRoute) => {
-    setExperience(selected[0]);
+    setTime(selected[0]);
     setRoute(nextRoute);
     router.push(nextRoute);
   }
 
   return (
     <SurveyGrid
-      title={SURVEY_DATA.experience.title}
-      data={SURVEY_DATA.experience.options}
-      numColumns={2}
+      title={SURVEY_DATA.time.title}
+      data={SURVEY_DATA.time.options}
+      numColumns={4}
       handleNext={handleNext}
-      nextRoute={'days'}
+      nextRoute={'accessories'}
       type={'one'}
     ></SurveyGrid>
   )

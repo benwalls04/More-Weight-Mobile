@@ -18,7 +18,7 @@ export function ThemedPressable({
           height: 55,
           width: "100%",
           borderWidth: 1,
-          borderRadius: 2,
+          borderRadius: 4,
           justifyContent: "center",
         },
         styles[type] || styles.default,
@@ -40,6 +40,11 @@ function createStyles(colors) {
       backgroundColor: colors.buttonColorSelected,
       borderColor: colors.borderColorSelected,
       color: colors.textSelected,
+    },
+    accent: {
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
+      color: colors.text,
     }
   })
 }

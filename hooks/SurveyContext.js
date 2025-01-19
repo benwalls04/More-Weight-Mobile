@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useUserContext } from "./UserContext";
-import { routes } from "@/constants/Survey";
+import { ROUTES } from "@/constants/Survey";
 
 export const SurveyContext = React.createContext();
 
@@ -20,7 +20,7 @@ export function SurveyProvider({children}) {
     //const userState = useUserContext();
   }
 
-  const [route, setRoute] = useState(routes[0]);
+  const [route, setRoute] = useState(ROUTES[0]);
   const [experience, setExperience] = useState('');
   const [days, setDays] = useState({});
   const [bias, setBias] = useState({});

@@ -48,7 +48,7 @@ const LoginPage = () => {
             secureTextEntry
           />
         </View>
-        <ThemedPressable onPress={() => handleSubmit()} style={Styles.button}>
+        <ThemedPressable onPress={() => handleSubmit()}>
           <ThemedText style={{textAlign: "center"}}>Log In</ThemedText>
         </ThemedPressable>
       </View>

@@ -31,7 +31,7 @@ export default function SurveyGrid({
     }
   }
   
-  const BTN_WIDTH= (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;
+  const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;
   const rem = data.length % numColumns;
   const maxIndx = data.length - rem + 1;
   const OF_BTN_WIDTH = (windowWidth - (rem + 1) * BUTTON_MARGIN * 2) / rem;

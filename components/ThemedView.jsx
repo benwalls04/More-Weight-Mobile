@@ -5,6 +5,7 @@ import { COLORS } from "@/constants/Colors";
 export function ThemedView({
   style,
   children,
+  type="default",
   ...otherProps
 }) {
   const { theme } = useThemeContext();

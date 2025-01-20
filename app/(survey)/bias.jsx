@@ -1,11 +1,13 @@
 import { useSurveyContext } from "@/hooks/SurveyContext";
+import { useSplitsContext } from "@/hooks/SplitsContext";
 import { SURVEY_DATA } from "@/constants/Survey";
 import SurveyGrid from "@/components/SurveyGrid";
 import { useRouter } from "expo-router";
 import axios from "axios";
 
 export default function Bias() {
-  const { setBias, setSplits, setSelection, formatParams } = useSurveyContext();
+  const { setBias, formatParams } = useSurveyContext();
+  const { setSplits, setLeaf, setRoot } = useSplitsContext();
   const router = useRouter();
 
   const handleNext = async (selected, nextRoute) => {
@@ -17,7 +19,8 @@ export default function Bias() {
 
     await axios.get('https://more-weight.com/splits', { params: params }).then((response) => {
       setSplits(response.data);
-      setSelection(response.data.selection);
+      setLeaf(response.data.selection);
+      setRoot(response.data.selection);
     });
 
     router.push(nextRoute);

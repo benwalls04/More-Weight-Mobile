@@ -34,8 +34,10 @@ export function SurveyProvider({children}) {
   const [days, setDays] = useState({});
   const [bias, setBias] = useState({});
   const [base, setBase] = useState([]);
+  const [root, setRoot] = useState([]);
   const [splits, setSplits] = useState([]);
-  const [selection, setSelection] = useState([]);
+  const [leaf, setLeaf] = useState([]);
+  const [decisions, setDecisions] = useState([]);
   const [style, setStyle] = useState(-1.0);
   const [sets, setSets] = useState(-1);
   const [time, setTime] = useState(-1.0);
@@ -63,10 +65,12 @@ export function SurveyProvider({children}) {
     setDays: setDays,
     setBias: setBias,
     setBase: setBase,
-    setSelection: setSelection,
-    selection: selection,
     setSplits: setSplits,
     splits: splits,
+    setLeaf: setLeaf,
+    leaf: leaf,
+    setDecisions: setDecisions,
+    decisions: decisions,
     setStyle: setStyle,
     setSets: setSets,
     setTime: setTime,

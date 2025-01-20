@@ -28,8 +28,6 @@ export default function SurveyRange({
     handleNext(value, nextRoute);
   };
 
-  console.log(data);
-  
   return (
     <ThemedView style={{height: '95%'}}>
       <View style={styles.titleContainer}>
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     width: windowWidth,
     alignSelf: 'center',
   },
@@ -115,6 +113,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   slider: {
+    paddingTop: 55,
     width: '100%',
     height: 40,
   },

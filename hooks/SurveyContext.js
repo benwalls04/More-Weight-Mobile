@@ -20,12 +20,22 @@ export function SurveyProvider({children}) {
     //const userState = useUserContext();
   }
 
+  const formatParams = (tmpBias) => {
+    const params = {
+      schedule: days, 
+      bias: tmpBias
+    }
+
+    return params;
+  }
+
   const [route, setRoute] = useState(ROUTES[0]);
   const [experience, setExperience] = useState('');
   const [days, setDays] = useState({});
   const [bias, setBias] = useState({});
   const [base, setBase] = useState([]);
-  const [split, setSplit] = useState([]);
+  const [splits, setSplits] = useState([]);
+  const [selection, setSelection] = useState([]);
   const [style, setStyle] = useState(-1.0);
   const [sets, setSets] = useState(-1);
   const [time, setTime] = useState(-1.0);
@@ -53,13 +63,17 @@ export function SurveyProvider({children}) {
     setDays: setDays,
     setBias: setBias,
     setBase: setBase,
-    setSplit: setSplit,
+    setSelection: setSelection,
+    selection: selection,
+    setSplits: setSplits,
+    splits: splits,
     setStyle: setStyle,
     setSets: setSets,
     setTime: setTime,
     setAccessories: setAccessories,
     setRegions: setRegions,
     setMovements: setMovements, 
+    formatParams: formatParams,
     finish: finish
   }
 

@@ -21,7 +21,6 @@ export default function SurveyGrid({
   const router = useRouter();
 
   const handlePress = (index) => {
-
     if (selected.includes(index)) {
       setSelected(selected.filter(item => item !== index));
     } else if (type === 'many') {

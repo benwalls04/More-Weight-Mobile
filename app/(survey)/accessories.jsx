@@ -17,7 +17,7 @@ export default function Accessories() {
     <SurveyGrid
       title={SURVEY_DATA.accessories.title}
       data={SURVEY_DATA.accessories.options}
-      numColumns={4}
+      numColumns={3}
       handleNext={handleNext}
       nextRoute={'regions'}
       type={'many'}

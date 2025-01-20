@@ -4,13 +4,18 @@ import SurveyGrid from "@/components/SurveyGrid";
 import { useRouter } from "expo-router";
 import { Alert } from "react-native";
 
+const DAYS = ['M', 'T', 'W', 'Th', 'F', 'S', 'Su']
+
 export default function Days() {
+
   const { setRoute, setDays } = useSurveyContext();
   const router = useRouter();
 
   const handleNext = (selected, nextRoute) => {
     if (selected.length >= 3) {
-      setDays(selected);
+      let days = Array(7).fill("rest");
+      selected.forEach(i => days[i - 1] = "lift");
+      setDays(days);
       setRoute(nextRoute);
       router.push(nextRoute);
     } else {

@@ -19,7 +19,7 @@ export default function Regions() {
       title={SURVEY_DATA.style.title}
       data={SURVEY_DATA.style.options}
       handleNext={handleNext}
-      nextRoute={'sets'}
+      nextRoute={'signup'}
     />
   );
 } 

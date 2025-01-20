@@ -287,3 +287,41 @@ export const SURVEY_DATA = {
 export const ROUTES = [
   "experience", "days", "bias", "base", "split", "style", "sets", "time", "accessories", "regions", "movements"
 ]
+
+export const SPLIT_SAMPLES = {
+  "": [],
+  u: ["chest back biceps triceps shoulders", "legs"],
+  b: ["chest", "back", "legs", "shoulders", "biceps triceps"], 
+  a: ["chest back", "triceps shoulders biceps", "legs"],
+  p: ["chest triceps shoulders", "back biceps", "legs"], 
+  b1: ["chest triceps", "back", "legs", "shoulders biceps"],
+  b2: ["chest", "back biceps", "shoulders triceps", "legs"],
+  b3: ["chest", "back", "legs", "shoulders biceps triceps"], 
+  p1: ["chest shoulders triceps", "back biceps", "legs"], 
+  p2: ["chest triceps", "back biceps", "legs shoulders"], 
+  p3: ["chest triceps", "legs", "shoulders", "back biceps"], 
+  a1: ["chest back", "shoulders biceps triceps", "legs"], 
+  a2: ["chest back", "legs shoulders", "biceps triceps"], 
+  a3: ["chest back", "biceps triceps", "shoulders", "legs"],
+  u1: ["chest back shoulders biceps triceps", "legs"], 
+  u2: ["chest back biceps triceps", "legs shoulders"],
+}
+
+export const SPLIT_TITLES = {
+  "": "",
+  u: "Upper Lower",
+  b: "Body Part Split", 
+  a: "Arnold Split",
+  p: "Push Pull Legs", 
+  b1: "Body Part Split 1",
+  b2: "Body Part Split 2",
+  b3: "Body Part Split 3", 
+  p1: "Push Pull Legs 1", 
+  p2: "Push Pull Legs 2", 
+  p3: "Push Pull Legs 3", 
+  a1: "Arnold Split 1", 
+  a2: "Arnold Split 2", 
+  a3: "Arnold Split 3",
+  u1: "Upper Lower 1", 
+  u2: "Upper Lower 2",
+}

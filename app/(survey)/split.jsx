@@ -1,5 +1,6 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
+import { ThemedLayout } from "@/components/ThemedLayout";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
@@ -62,26 +63,27 @@ export default function Split() {
   }
 
   return (
-    <ThemedView style={{height: '95%'}}>
-      <View style={styles.titleContainer}>
-        <ThemedText 
-          style={styles.title}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.5}
-        >
-          Which routine do you prefer?
-        </ThemedText>
-      </View>
+    <ThemedView>
+      <ThemedLayout
+        header={
+          <ThemedText 
+            style={styles.title}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            Which routine do you prefer?
+          </ThemedText>
+        }
 
-      <View style={styles.bodyContainer}>
-        <FlatList 
-          data={leaf}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={2}
-          contentContainerStyle={styles.list}
-          columnWrapperStyle={styles.row}
-          scrollEnabled={false}
+        body={
+          <FlatList 
+            data={leaf}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+            contentContainerStyle={styles.list}
+            columnWrapperStyle={styles.row}
+            scrollEnabled={false}
           renderItem={({item, index}) => (
             <ThemedPressable 
               onPress={() => handlePress(index)}
@@ -105,54 +107,43 @@ export default function Split() {
             </ThemedPressable>
           )}
         />
-      </View>
+        }
 
-      <View style={styles.submitContainer}>
-        <View style={{justifyContent: 'center', width: '100%', flexDirection: 'row'}}>
-          <ThemedPressable 
+        footer={
+          <View style={{justifyContent: 'center', width: '100%', flexDirection: 'row'}}>
+            <ThemedPressable 
             onPress={() => handleBack()}
             style={styles.submitButton}
             type="accent"
-        >
+            >
           <ThemedText>Back</ThemedText>
-        </ThemedPressable>
-        <ThemedPressable 
-            onPress={() => partition()}
-            style={[styles.submitButton, {width: '50%'}]}
-            type={choiceIndex > -1 && leaf[0].length > 2 && leaf[1].length > 2 ? "selected" : "accent"}
-        >
-          <ThemedText>Show Me More</ThemedText>
-        </ThemedPressable>
-        <ThemedPressable 
-          onPress={() => handleNext()}
-          style={styles.submitButton}
-          type="selected"
-        >
-          <ThemedText>Next</ThemedText>
           </ThemedPressable>
-        </View>
-      </View>
+          <ThemedPressable 
+              onPress={() => partition()}
+              style={[styles.submitButton, {width: '50%'}]}
+              type={choiceIndex > -1 && leaf[0].length > 2 && leaf[1].length > 2 ? "selected" : "accent"}
+          >
+            <ThemedText>Show Me More</ThemedText>
+          </ThemedPressable>
+          <ThemedPressable 
+            onPress={() => handleNext()}
+            style={styles.submitButton}
+            type="selected"
+          >
+            <ThemedText>Next</ThemedText>
+            </ThemedPressable>
+          </View>
+        }
+      />
     </ThemedView>
     );
 }
 
   
 const styles = StyleSheet.create({
-  titleContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
   title: {
     fontSize: 20,
-    marginVertical: 16,
     textAlign: 'center',
-    alignSelf: 'center',
-  },
-  bodyContainer: {
-    flex: 2,
-    justifyContent: 'flex-start',
-    width: windowWidth,
     alignSelf: 'center',
   },
   list: {
@@ -167,7 +158,6 @@ const styles = StyleSheet.create({
     minHeight: 300,
     marginLeft: BUTTON_MARGIN,
     marginRight: BUTTON_MARGIN,
-    marginBottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -192,11 +182,6 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     marginBottom: 2,
     textAlign: 'left',
-  },
-  submitContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    width: '100%',
   },
   submitButton: {
     borderWidth: 0,

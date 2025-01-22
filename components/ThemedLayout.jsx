@@ -1,8 +1,6 @@
-import { SafeAreaView, View } from "react-native";
-import { useThemeContext } from "@/hooks/ThemeContext";
-import { COLORS } from "@/constants/Colors";
+import { View } from "react-native";
 
-export function ThemedView({
+export function ThemedLayout({
   style,
   children,
   header,
@@ -10,20 +8,17 @@ export function ThemedView({
   footer,
   ...otherProps
 }) {
-  const { theme } = useThemeContext();
-  const colors = theme === "dark" ? COLORS.dark : COLORS.light;
-
   return (
-    <View style={[style]}>
+    <View style={[style, {height: '100%', width: '100%'}]}>
       <View style={{flex: 1, justifyContent: "flex-end"}}>
         {header}
       </View>
 
-      <View style={{flex: 1, justifyContent: "center"}}>
+      <View style={{flex: 2, justifyContent: "flex-start", marginVertical: 16}}>
         {body}
       </View>
 
-      <View style={{flex: 1, justifyContent: "flex-end"}}>
+      <View style={{flex: .5, justifyContent: "flex-end"}}>
         {footer}
       </View>
     </View>

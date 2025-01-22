@@ -2,6 +2,7 @@ import { FlatList, StyleSheet, Dimensions, View } from "react-native";
 import { ThemedPressable } from "./ThemedPressable";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
+import { ThemedLayout } from "./ThemedLayout";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 const windowWidth = Dimensions.get('window').width * .85;
@@ -37,8 +38,9 @@ export default function SurveyGrid({
   const OF_BTN_WIDTH = (windowWidth - (rem + 1) * BUTTON_MARGIN * 2) / rem;
 
   return (
-    <ThemedView style={{height: '95%'}}>
-      <View style={styles.titleContainer}>
+    <ThemedView>
+      <ThemedLayout
+      header={
         <ThemedText 
           style={styles.title}
           numberOfLines={1}
@@ -47,9 +49,9 @@ export default function SurveyGrid({
         >
           {title}
         </ThemedText>
-      </View>
-      <View style={styles.listContainer}>
-        <FlatList 
+      }
+      body={
+        <FlatList         
           data={data}
           keyExtractor={(item) => item.id}
           numColumns={numColumns}
@@ -65,48 +67,31 @@ export default function SurveyGrid({
             </ThemedPressable>
           )}
         />
-      </View>
-      <View style={styles.submitContainer}>
-        <View style={{justifyContent: 'center', width: '100%', flexDirection: 'row'}}>
+      }
+      footer={
+        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <ThemedPressable onPress={type === 'many' ? () => router.back() : () => {}} style={type === 'one' ? {display: 'none'} : styles.submitButton} type="accent">
+            <ThemedText>Back</ThemedText>
+          </ThemedPressable>
+
           <ThemedPressable 
-            onPress={type === 'many' ? () => router.back() : () => {}}
-            style={type === 'one' ? {display: 'none'} : styles.submitButton}
-            type="accent"
-        >
-          <ThemedText>Back</ThemedText>
-        </ThemedPressable>
-        <ThemedPressable 
           onPress={type === 'many' ? () => handleNext(selected, nextRoute) : () => {}}
           style={type === 'one' ? {display: 'none'} : styles.submitButton}
           type="selected"
-        >
-          <ThemedText>Next</ThemedText>
+          >
+            <ThemedText>Next</ThemedText>
           </ThemedPressable>
         </View>
-      </View>
+      }
+    />
     </ThemedView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-  },
-  titleContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
   title: {
     fontSize: 20,
-    marginVertical: 16,
-    textAlign: 'center',
     alignSelf: 'center',
-  },
-  listContainer: {
-    flex: 1,
-    justifyContent: 'center',
   },
   list: {
     flexGrow: 1,
@@ -117,17 +102,10 @@ const styles = StyleSheet.create({
     marginBottom: 2 * BUTTON_MARGIN,
   },
   button: {
-    minHeight: 60,
     marginLeft: BUTTON_MARGIN,
     marginRight: BUTTON_MARGIN,
-    marginBottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  submitContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    width: '100%',
   },
   submitButton: {
     borderWidth: 0,

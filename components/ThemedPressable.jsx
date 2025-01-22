@@ -15,7 +15,7 @@ export function ThemedPressable({
     <Pressable
       style={[
         {
-          height: 55,
+          height: 60,
           width: "100%",
           borderWidth: 1,
           borderRadius: 4,

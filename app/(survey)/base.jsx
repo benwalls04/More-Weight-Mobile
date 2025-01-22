@@ -1,6 +1,7 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import { ThemedLayout } from "@/components/ThemedLayout";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList } from "react-native";
@@ -43,19 +44,20 @@ export default function Base() {
   }
   
   return (
-    <ThemedView style={{height: '95%'}}>
-      <View style={styles.titleContainer}>
-        <ThemedText 
-          style={styles.title}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          minimumFontScale={0.5}
+    <ThemedView>
+      <ThemedLayout
+        header={
+          <ThemedText 
+            style={styles.title}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
         >
           Which split type do you prefer?
         </ThemedText>
-      </View>
+        }
 
-      <View style={styles.bodyContainer}>
+      body={
         <FlatList 
           data={splits.selection}
           keyExtractor={(item, index) => index.toString()}
@@ -85,9 +87,9 @@ export default function Base() {
             </ThemedPressable>
           )}
         />
-      </View>
+      }
 
-      <View style={styles.submitContainer}>
+      footer={
         <View style={{justifyContent: 'center', width: '100%', flexDirection: 'row'}}>
           <ThemedPressable 
             onPress={() => router.back()}
@@ -104,28 +106,17 @@ export default function Base() {
           <ThemedText>Next</ThemedText>
           </ThemedPressable>
         </View>
-      </View>
+        }
+      />
     </ThemedView>
     );
 }
 
   
 const styles = StyleSheet.create({
-  titleContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
   title: {
     fontSize: 20,
-    marginVertical: 16,
     textAlign: 'center',
-    alignSelf: 'center',
-  },
-  bodyContainer: {
-    flex: 2,
-    justifyContent: 'flex-start',
-    width: windowWidth,
     alignSelf: 'center',
   },
   list: {
@@ -165,11 +156,6 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginBottom: 2,
     textAlign: 'left',
-  },
-  submitContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    width: '100%',
   },
   submitButton: {
     borderWidth: 0,

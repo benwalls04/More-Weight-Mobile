@@ -5,7 +5,6 @@ import { COLORS } from "@/constants/Colors";
 export function ThemedView({
   style,
   children,
-  type="default",
   ...otherProps
 }) {
   const { theme } = useThemeContext();
@@ -27,7 +26,7 @@ export function ThemedView({
             justifyContent: "center",
             alignItems: "center",
             width: "85%",
-            height: "70%",
+            height: "90%",
           },
           style,
         ]}

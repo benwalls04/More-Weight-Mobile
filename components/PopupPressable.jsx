@@ -4,9 +4,10 @@ import { COLORS } from "@/constants/Colors";
 import Popup from "@/components/Popup";
 import { useState, useEffect } from "react";
 
-export function FloatPressable({
+export function PopupPressable({
   style,
   children,
+  popupBody,
   ...otherProps
 }) {
   const { theme } = useThemeContext();
@@ -21,7 +22,7 @@ export function FloatPressable({
     Animated.sequence([
       // Shift the button
       Animated.timing(scale, {
-        toValue: 1.05,
+        toValue: 1.005,
         duration: 300,
         useNativeDriver: true,
       }),
@@ -73,7 +74,7 @@ export function FloatPressable({
           {children}
         </View>
       </Pressable>
-      <Popup visible={popupVisible} onClose={closePopup} />
+      <Popup visible={popupVisible} onClose={closePopup} body={popupBody} />
     </Animated.View>
   );
 }
@@ -95,7 +96,7 @@ function createStyles(colors) {
       borderColor: colors.borderColor,
       color: colors.text,
       height: 40,
-      width: "100%",
+      width: 40,
       borderWidth: 1,
       borderRadius: 4,
       justifyContent: "center",

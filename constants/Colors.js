@@ -21,6 +21,7 @@ export const COLORS = {
     borderColorSelected: redTwo,
     textSelected: "white",
     shadowColor: grayThree,
+    popupColor: grayTwo,
   }, 
   dark: {
     text: grayOne, 
@@ -36,5 +37,7 @@ export const COLORS = {
     buttonColorSelected: redThree,
     borderColorSelected: redOne,
     textSelected: "white",
+    shadowColor: grayThree,
+    popupColor: grayTwo
   }
 }

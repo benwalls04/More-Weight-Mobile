@@ -1,30 +1,29 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
-import { FloatPressable } from "@/components/FloatPressable";
+import { PopupPressable } from "@/components/PopupPressable";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList, Pressable } from "react-native";
 import { useState } from "react";
-import { SPLIT_TITLES } from "@/constants/Survey";
+import { SPLIT_TITLES, SPLIT_SAMPLES } from "@/constants/Survey";
 import { COLORS } from "@/constants/Colors";
 import axios from "axios";
 
 const windowWidth = Dimensions.get('window').width * .85;
-const BUTTON_MARGIN = 4;
-const BTN_WIDTH =  windowWidth - 10;
+const BUTTON_MARGIN = 3;
+const BTN_WIDTH =  (windowWidth - (3) * BUTTON_MARGIN * 2) / 2;
 
 export default function Base() {
+  const { theme } = useThemeContext();
+  const colors = theme === "dark" ? COLORS.dark : COLORS.light;
+  const styles = createStyles(colors);
 
   const { setBase, setSplits, splits, setLeaf } = useSplitsContext();
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
-
-  const { theme } = useThemeContext();
-  const colors = theme === "dark" ? COLORS.dark : COLORS.light;
-  const styles = createStyles(colors);
 
   // FIXME: replace includes list with info pop up
   // FIXME: function that changes long description to short: IE shoul, biceps, triceps -> arms 
@@ -49,6 +48,36 @@ export default function Base() {
   const handlePress = (index) => {
     setChoiceIndex(index)
   }
+
+  const popupBody = () => {
+    return (
+      <FlatList 
+        data={splits.selection}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={1}
+        contentContainerStyle={{ flexGrow: 1, width: '100%'}}
+        scrollEnabled={false}
+        renderItem={({item, index}) => (
+          <View>
+            <View style={[styles.popupEntry, index === 0 ? {borderTopWidth: 0} : {}]}>
+              <View style={{flex: 4, justifyContent: 'center', paddingLeft: 10}}>
+                <ThemedText type="subheader">{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
+                <ThemedText style={styles.subText}>Pros:</ThemedText>
+                <ThemedText style={styles.subText}>Cons:</ThemedText>
+              </View>
+              <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                <ThemedPressable 
+                  style={styles.checkButton} 
+                  onPress={() => handlePress(index)}
+                  type={choiceIndex === index ? "selected" : "default"} />
+              </View>
+            </View>
+            <ThemedText style={styles.sampleText}>EX: {SPLIT_SAMPLES[Object.entries(item)[0][0]]}</ThemedText>
+          </View>
+        )}
+      />
+    )
+  }
   
   return (
     <ThemedView>
@@ -65,33 +94,30 @@ export default function Base() {
         }
 
       body={
-        <FlatList 
-          data={splits.selection}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={1}
-          contentContainerStyle={styles.list}
-          scrollEnabled={false}
-          renderItem={({item, index}) => (
-            <FloatPressable 
-              onPress={() => handlePress(index)}
-              type={choiceIndex === index ? "selected" : "default"}
-              style={[styles.button, {width: BTN_WIDTH}]}
-            >
-              <View style={{flexDirection: 'row', width: '100%'}}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <FlatList 
+            data={splits.selection}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+            contentContainerStyle={styles.list}
+            columnWrapperStyle={styles.row}
+            scrollEnabled={false}
+            renderItem={({item, index}) => (
+              <ThemedPressable 
+                onPress={() => handlePress(index)}
+                type={choiceIndex === index ? "selected" : "default"}
+                style={[styles.button, {width: BTN_WIDTH}]}
+              >
                 <View style={styles.buttonTextContainer}>
-                  <ThemedText style={styles.buttonText}>{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
+                  <ThemedText>{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
                 </View>
-                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                  <Pressable style={styles.checkButton}
-                    onPress={() => handlePress(index)}
-                  >
-                    <View style={[styles.check, {opacity: choiceIndex === index ? 1 : 0}]} />
-                  </Pressable>
-                </View>
-              </View>
-            </FloatPressable>
-          )}
-        />
+              </ThemedPressable>
+            )}
+          />
+          <PopupPressable popupBody={popupBody}>
+            <ThemedText>?</ThemedText>
+          </PopupPressable>
+        </View>
       }
 
       footer={
@@ -117,11 +143,11 @@ export default function Base() {
     );
 }
 
-  
 function createStyles(colors) {
   return StyleSheet.create({
     title: {
       fontSize: 20,
+      marginVertical: 16,
       textAlign: 'center',
       alignSelf: 'center',
     },
@@ -129,52 +155,22 @@ function createStyles(colors) {
       flexGrow: 1,
       width: '100%',
     },
+    row: {
+      justifyContent: 'flex-start',
+      marginBottom: 2 * BUTTON_MARGIN,
+    },
     button: {
-      height: 40,
-      margin: 0,
-      marginBottom: 15,
+      minHeight: 150,
+      marginLeft: BUTTON_MARGIN,
+      marginRight: BUTTON_MARGIN,
+      marginBottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     buttonTextContainer: {
-      flex: 4,
+      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100%',
-    },
-    buttonText: {
-      width: '100%',
-      marginLeft: "30%",
-      fontSize: 16,
-      marginBottom: 2,
-      textAlign: "left",
-    },
-    checkButton: {
-      backgroundColor: colors.background,
-      marginLeft: 10,
-      color: "green",
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: 20,
-      height: 20,
-      borderRadius: 4,      
-    },
-    check: {
-      width: 10,
-      height: 10,
-      backgroundColor: colors.tint,
-      borderRadius: 2,
-    },
-    subtextContainer: {
-      flex: 3,
-      justifyContent: 'flex-start',
-      alignItems: 'flex-start',
-      width: '100%',
-    },
-    subtext: {
-      paddingLeft: 10,
-      fontSize: 12,
-      lineHeight: 16,
-      marginBottom: 2,
-      textAlign: 'left',
     },
     submitButton: {
       borderWidth: 0,
@@ -183,6 +179,34 @@ function createStyles(colors) {
       margin: BUTTON_MARGIN,
       justifyContent: 'center',
       alignItems: 'center',
+    }, 
+    popupEntry: {
+      padding: 10,
+      width: '100%',
+      minHeight: 100, 
+      flexGrow: 1,
+      borderColor: colors.accentLight,
+      borderWidth: 1,
+      borderLeftWidth: 0,
+      borderRightWidth: 0,
+      borderBottomWidth: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    subText: {
+      paddingLeft: 2,
+      lineHeight: 25,
+    },
+    sampleText: {
+      textAlign: 'center',
+      fontSize: 14,
+      paddingBottom: 2
+    },
+    checkButton: {
+      width: 24,
+      height: 24,
+      borderColor: "white",
     }
   }); 
 }
+

@@ -41,6 +41,10 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 26,
   },
+  subheader: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
   subtitle: {
     fontSize: 26,
     fontWeight: "bold",

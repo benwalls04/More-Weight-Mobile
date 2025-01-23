@@ -1,53 +1,71 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useThemeContext } from '@/hooks/ThemeContext';
+import { ThemedPressable } from '@/components/ThemedPressable';
+import { COLORS } from '../constants/Colors';
 
-const Popup = ({ visible, onClose }) => {
+const Popup = ({ visible, onClose, body }) => {
+  const { theme } = useThemeContext();
+  const colors = theme === "dark" ? COLORS.dark : COLORS.light;
+  const styles = createStyles(colors);
+
   return (
     <Modal
       visible={visible}
       transparent={true}
       animationType="fade"
-      onRequestClose={onClose} // Close the popup if back button is pressed (on Android)
+      onRequestClose={onClose} 
     >
       <View style={styles.overlay}>
         <View style={styles.popupContainer}>
-          <Text style={styles.popupText}>This is your Popup!</Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeText}>Close</Text>
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row', width: '100%'}}>
+            {body()}
+          </View>
+          <View style={styles.buttonContainer}>
+            <ThemedPressable type="selected" onPress={onClose} style={styles.closeButton}>
+                <Text style={styles.closeText}>Close</Text>
+            </ThemedPressable>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
-  },
-  popupContainer: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
-  popupText: {
-    fontSize: 20,
-    marginBottom: 20,
-  },
-  closeButton: {
-    backgroundColor: '#3498db',
-    padding: 10,
-    borderRadius: 5,
-  },
-  closeText: {
-    color: 'white',
-    fontSize: 16,
-  },
-});
+function createStyles (colors) {
+  return StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    },
+    popupContainer: {
+      backgroundColor: colors.popupColor,
+      borderRadius: 10,
+      maxHeight: "75%",
+      width: '90%',
+      alignItems: 'center',
+      paddingBottom: 20,
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      width: '100%',
+      position: 'absolute',
+      bottom: -15,
+    },
+    closeButton: {
+      borderRadius: 0,
+      width: "75%", 
+      height: 30,
+    },
+    closeText: {
+      textAlign: 'center',
+      color: 'white',
+      fontSize: 16,
+    },
+  });
+}
 
 export default Popup;

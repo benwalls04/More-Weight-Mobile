@@ -30,10 +30,11 @@ export default function Bias() {
     <SurveyGrid
       title={SURVEY_DATA.bias.title}
       data={SURVEY_DATA.bias.options}
-      numColumns={4}
+      numColumns={3}
       handleNext={handleNext}
       nextRoute={'base'}
       type={'many'}
+      btnGrow={true}
     ></SurveyGrid>
   )
 }

@@ -19,10 +19,9 @@ export default function Split() {
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
+  // FIXME: loading screen
   // FIXME: this is a mess. Use a tree stucture and a class
   // FIXME: add a counter under each choice (num of splits like this one)
-  // FIXME: standardized UI (vertically) 
-  // FIXME: better keys for colors 
 
   const partition = async () => {
     if (choiceIndex > -1 && leaf[0].length > 2 && leaf[1].length > 2) {

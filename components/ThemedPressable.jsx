@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 
@@ -21,7 +21,7 @@ export function ThemedPressable({
           borderRadius: 4,
           justifyContent: "center",
         },
-        styles[type] || styles.default,
+        styles[type] || styles.default, 
         style,
       ]}
       {...otherProps}
@@ -45,7 +45,7 @@ function createStyles(colors) {
       backgroundColor: colors.accent,
       borderColor: colors.accent,
       color: colors.text,
-    }
+    }, 
   })
 }
 

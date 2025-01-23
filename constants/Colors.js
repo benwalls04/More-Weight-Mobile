@@ -20,6 +20,7 @@ export const COLORS = {
     buttonColorSelected: redTwo,
     borderColorSelected: redTwo,
     textSelected: "white",
+    shadowColor: grayThree,
   }, 
   dark: {
     text: grayOne, 

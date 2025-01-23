@@ -16,7 +16,7 @@ export default function Experience() {
     <SurveyGrid
       title={SURVEY_DATA.experience.title}
       data={SURVEY_DATA.experience.options}
-      numColumns={2}
+      numColumns={3}
       handleNext={handleNext}
       nextRoute={'days'}
       type={'one'}

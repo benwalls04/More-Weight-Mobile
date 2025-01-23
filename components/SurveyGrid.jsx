@@ -16,6 +16,7 @@ export default function SurveyGrid({
   numColumns,
   handleNext,
   nextRoute,
+  btnGrow = false,
   ...otherProps
 }) {
   const [selected, setSelected] = useState([]);
@@ -32,10 +33,10 @@ export default function SurveyGrid({
     }
   }
   
-  const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;
   const rem = data.length % numColumns;
   const maxIndx = data.length - rem + 1;
   const OF_BTN_WIDTH = (windowWidth - (rem + 1) * BUTTON_MARGIN * 2) / rem;
+  const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;
 
   return (
     <ThemedView>
@@ -61,7 +62,7 @@ export default function SurveyGrid({
             <ThemedPressable 
               onPress={() => handlePress(item.id)}
               type={selected.includes(item.id) ? "selected" : "default"}
-              style={[styles.button, {width: item.id < maxIndx ? BTN_WIDTH : BTN_WIDTH}]}
+              style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}]}
             >
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>
             </ThemedPressable>

@@ -6,7 +6,7 @@ export default function SurveyLayout() {
   return (
     <SurveyProvider>
       <SplitsProvider>
-        <Stack screenOptions={{ headerShown: false }}>
+        <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
           <Stack.Screen name="index"/>
           <Stack.Screen name="days"/>
           <Stack.Screen name="bias"/>

@@ -3,6 +3,7 @@ import { ThemedPressable } from "./ThemedPressable";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { ThemedLayout } from "./ThemedLayout";
+import SurveyNavBar from "./SurveyNavBar";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 const windowWidth = Dimensions.get('window').width * .85;
@@ -70,19 +71,10 @@ export default function SurveyGrid({
         />
       }
       footer={
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <ThemedPressable onPress={type === 'many' ? () => router.back() : () => {}} style={type === 'one' ? {display: 'none'} : styles.submitButton} type="accent">
-            <ThemedText>Back</ThemedText>
-          </ThemedPressable>
-
-          <ThemedPressable 
-          onPress={type === 'many' ? () => handleNext(selected, nextRoute) : () => {}}
-          style={type === 'one' ? {display: 'none'} : styles.submitButton}
-          type="selected"
-          >
-            <ThemedText>Next</ThemedText>
-          </ThemedPressable>
-        </View>
+        <SurveyNavBar 
+          handleSubmit={() => handleNext(selected, nextRoute)}
+          handleBack={() => router.back()}
+        />
       }
     />
     </ThemedView>

@@ -25,9 +25,10 @@ export default function Base() {
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
-  // FIXME: replace includes list with info pop up
   // FIXME: function that changes long description to short: IE shoul, biceps, triceps -> arms 
-
+  // FIXME: for 7 days, the component mounts before the data is loaded, so it shows nothing
+  // FIXME: get all the logic for handling tree out 
+  
   const handleNext = async () => {
     if (choiceIndex > -1){
         const newSplits = {...splits};
@@ -109,7 +110,7 @@ export default function Base() {
                 style={[styles.button, {width: BTN_WIDTH}]}
               >
                 <View style={styles.buttonTextContainer}>
-                  <ThemedText>{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
+                  <ThemedText style={styles.buttonText}>{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
                 </View>
               </ThemedPressable>
             )}
@@ -171,6 +172,11 @@ function createStyles(colors) {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+      padding: 10,
+    },
+    buttonText: {
+      textAlign: 'center',
+      lineHeight: 20,
     },
     submitButton: {
       borderWidth: 0,

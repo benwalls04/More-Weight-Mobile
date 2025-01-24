@@ -1,11 +1,12 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedLayout } from "@/components/ThemedLayout";
+import LoadingScreen from "@/components/LoadingScreen";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
 import { ThemedPressable } from "@/components/ThemedPressable";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 
@@ -15,7 +16,8 @@ const BTN_WIDTH =  (windowWidth - (3) * BUTTON_MARGIN * 2) / 2;
 
 export default function Split() {
 
-  const { setSplits, setLeaf, leaf, setDecisions, decisions } = useSplitsContext();
+  const { setSplits, setLeaf, leaf, setDecisions, decisions, root } = useSplitsContext();
+  const [ isLoading, setIsLoading ] = useState(true);
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
@@ -23,12 +25,25 @@ export default function Split() {
   // FIXME: this is a mess. Use a tree stucture and a class
   // FIXME: add a counter under each choice (num of splits like this one)
 
+  useEffect(() => {
+    const renderTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+
+    // Clean up timeouts on component unmount
+    return () => {
+      clearTimeout(renderTimeout);
+    };
+  }, []);
+
   const partition = async () => {
     if (choiceIndex > -1 && leaf[0].length > 2 && leaf[1].length > 2) {
+      setIsLoading(true);
       const response = await axios.post('https://more-weight.com/partition', { splits: leaf[choiceIndex]});
       setLeaf(response.data);
       setDecisions(prev => [...prev, leaf]);
       setChoiceIndex(-1);
+      setIsLoading(false);
     } else {
       Alert.alert("Error");
     }
@@ -39,9 +54,8 @@ export default function Split() {
       setSplits(root);
       router.back(); 
     } else {
-      setLeaf(decisions);
       let decisionsCpy = [...decisions];
-      setChoices(decisionsCpy.pop());
+      setLeaf(decisionsCpy.pop());
       setDecisions(decisionsCpy);
       setChoiceIndex(-1);
     }
@@ -61,6 +75,11 @@ export default function Split() {
     setChoiceIndex(index)
   }
 
+  if (isLoading) {
+    return (
+      <LoadingScreen />
+    )
+  } else {
   return (
     <ThemedView>
       <ThemedLayout
@@ -136,6 +155,7 @@ export default function Split() {
       />
     </ThemedView>
     );
+  }
 }
 
   

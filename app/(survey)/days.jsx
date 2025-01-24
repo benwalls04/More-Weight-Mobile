@@ -6,7 +6,7 @@ import { Alert } from "react-native";
 
 export default function Days() {
 
-  const { setRoute, setDays } = useSurveyContext();
+  const { setDays } = useSurveyContext();
   const router = useRouter();
 
   const handleNext = (selected, nextRoute) => {
@@ -14,7 +14,6 @@ export default function Days() {
       let days = Array(7).fill("rest");
       selected.forEach(i => days[i - 1] = "lift");
       setDays(days);
-      setRoute(nextRoute);
       router.push(nextRoute);
     } else {
       Alert.alert("Please select at least 3 days");

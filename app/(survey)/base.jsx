@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { PopupPressable } from "@/components/PopupPressable";
 import { ThemedLayout } from "@/components/ThemedLayout";
+import LoadingScreen from "@/components/LoadingScreen";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useRouter } from "expo-router";
@@ -20,6 +21,7 @@ export default function Base() {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
+  const [loading, setLoading] = useState(false);
 
   const { setBase, setSplits, splits, setLeaf } = useSplitsContext();
   const router = useRouter();
@@ -36,11 +38,13 @@ export default function Base() {
         newSplits.selection = value;
         setSplits(newSplits);
       if (Array.isArray(newSplits.selection[0])){
+          setLoading(true);
           const response = await axios.post('https://more-weight.com/partition', { splits: newSplits.selection });
           newSplits.selection = response.data;
           setLeaf(response.data)
           setSplits(newSplits);
           setBase(SPLIT_TITLES[key])
+          setLoading(false);
           router.push("/split");
         } 
     }
@@ -78,6 +82,10 @@ export default function Base() {
         )}
       />
     )
+  }
+
+  if (loading) {
+    return <LoadingScreen />
   }
   
   return (
@@ -148,7 +156,6 @@ function createStyles(colors) {
   return StyleSheet.create({
     title: {
       fontSize: 20,
-      marginVertical: 16,
       textAlign: 'center',
       alignSelf: 'center',
     },

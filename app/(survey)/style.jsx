@@ -4,13 +4,12 @@ import SurveyRange from "@/components/SurveyRange";
 import { useRouter } from "expo-router";
 
 export default function Style() {
-  const { setRoute, setStyle } = useSurveyContext();
+  const { setStyle } = useSurveyContext();
   const router = useRouter();
 
   const handleNext = (selected, nextRoute) => {
     // FIXME: Add logic to handle the selected style
     setStyle(selected);
-    setRoute(nextRoute);
     router.push(nextRoute);
   }
 

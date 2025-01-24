@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 import { useUserContext } from "./UserContext";
-import { ROUTES } from "@/constants/Survey";
 
 export const SurveyContext = React.createContext();
 
@@ -13,6 +12,8 @@ export function useSurveyContext() {
 
   return surveyState;
 }
+
+// FIXME: make an index for current route and an array of all routes (constant) for navigation 
 
 export function SurveyProvider({children}) {
 
@@ -29,15 +30,11 @@ export function SurveyProvider({children}) {
     return params;
   }
 
-  const [route, setRoute] = useState(ROUTES[0]);
   const [experience, setExperience] = useState('');
   const [days, setDays] = useState({});
   const [bias, setBias] = useState({});
   const [base, setBase] = useState([]);
-  const [root, setRoot] = useState([]);
-  const [splits, setSplits] = useState([]);
-  const [leaf, setLeaf] = useState([]);
-  const [decisions, setDecisions] = useState([]);
+  const [split, setSplit] = useState([]);
   const [style, setStyle] = useState(-1.0);
   const [sets, setSets] = useState(-1);
   const [time, setTime] = useState(-1.0);
@@ -59,18 +56,11 @@ export function SurveyProvider({children}) {
   });
 
   const surveyState = {
-    route: route,
-    setRoute: setRoute,
     setExperience: setExperience,
     setDays: setDays,
     setBias: setBias,
     setBase: setBase,
-    setSplits: setSplits,
-    splits: splits,
-    setLeaf: setLeaf,
-    leaf: leaf,
-    setDecisions: setDecisions,
-    decisions: decisions,
+    setSplit: setSplit,
     setStyle: setStyle,
     setSets: setSets,
     setTime: setTime,

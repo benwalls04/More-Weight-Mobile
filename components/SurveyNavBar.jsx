@@ -27,7 +27,7 @@ export default function SurveyNavBar({ handleSubmit, handleBack, handleMiddle, m
           <ThemedPressable 
             onPress={handleMiddle}
             style={[styles.button, { width: '50%' }]}
-            type="accent"
+            type={midType}
           >
             <ThemedText>{midText}</ThemedText>
           </ThemedPressable>
@@ -39,7 +39,7 @@ export default function SurveyNavBar({ handleSubmit, handleBack, handleMiddle, m
             styles.button,
             { width: hasMiddleButton ? '25%' : '50%' }
           ]}
-          type={midType}
+          type={"selected"}
         >
           <ThemedText>Next</ThemedText>
         </ThemedPressable>

@@ -4,12 +4,11 @@ import SurveyGrid from "@/components/SurveyGrid";
 import { useRouter } from "expo-router";
 
 export default function Time() {
-  const { setRoute, setTime } = useSurveyContext();
+  const { setTime } = useSurveyContext();
   const router = useRouter();
 
   const handleNext = (selected, nextRoute) => {
     setTime(selected[0]);
-    setRoute(nextRoute);
     router.push(nextRoute);
   }
 

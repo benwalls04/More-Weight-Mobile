@@ -1,6 +1,7 @@
 import { useSurveyContext } from "@/hooks/SurveyContext";
 import { SURVEY_DATA } from "@/constants/Survey";
 import SurveyGrid from "@/components/SurveyGrid";
+import SurveyNumber from "@/components/SurveyNumber";
 import { useRouter } from "expo-router";
 
 export default function Experience() {
@@ -13,13 +14,12 @@ export default function Experience() {
   }
 
   return (
-    <SurveyGrid
+    <SurveyNumber
       title={SURVEY_DATA.experience.title}
-      data={SURVEY_DATA.experience.options}
-      numColumns={3}
       handleNext={handleNext}
+      textAfter={"years"}
       nextRoute={'days'}
-      type={'one'}
-    ></SurveyGrid>
+      max={10}
+    ></SurveyNumber>
   )
 }

@@ -4,6 +4,8 @@ import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
 import SurveyNavBar from "@/components/SurveyNavBar";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import PopupPressable from "@/components/PopupPressable";
+import Popup from "@/components/Popup";
 
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useSurveyContext } from "@/hooks/SurveyContext";
@@ -82,13 +84,21 @@ export default function Split() {
     )
   } 
 
+  const popupBody = () => {
+    return (
+      <View>
+        <ThemedText>More Info</ThemedText>
+      </View>
+    )
+  }
+
   return (
     <ThemedView>
       <ThemedLayout
         header={
           <ThemedText 
-            style={styles.title}
-            numberOfLines={1}
+            type="title"
+            numberOfLines={2}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
           >
@@ -97,45 +107,50 @@ export default function Split() {
         }
 
         body={
-          <FlatList 
-            data={leaf}
-            keyExtractor={(item, outerIndex) => outerIndex.toString()}
-            numColumns={2}
-            contentContainerStyle={styles.list}
-            columnWrapperStyle={styles.row}
-            scrollEnabled={false}
-            renderItem={({item, index: outerIndex}) => (
-              <View>
-                <ThemedPressable 
-                  onPress={() => setChoiceIndex(outerIndex)}
-                  type={"default"}
-                  style={[styles.button, {width: BTN_WIDTH, borderColor: colors.accentLight}]}
-                >
-                <FlatList
-                  data={item[0]}
-                  keyExtractor={(item, innerIndex) => innerIndex.toString()}
-                  contentContainerStyle={styles.subtextContainer}
-                  renderItem={({item, index: innerIndex}) => (
-                    <View style={{
-                      width: BTN_WIDTH, 
-                      borderTopWidth: innerIndex > 0 ? 1 : 0, 
-                      borderTopColor: colors.accentLight,
-                      backgroundColor: listItemColor(item, leaf[(outerIndex + 1) % 2][0], innerIndex, colors),
-                    }}>
-                      <ThemedText style={styles.subtext}>{item}</ThemedText>
-                    </View>
-                  )}
-                />
-                </ThemedPressable>
-                <View style={styles.checkContainer}>
-                  <ThemedPressable style={[styles.check, {borderColor: colors.accentLight}]}
-                    type={choiceIndex === outerIndex ? "selected" : "default"}
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <FlatList 
+              data={leaf}
+              keyExtractor={(item, outerIndex) => outerIndex.toString()}
+              numColumns={2}
+              contentContainerStyle={styles.list}
+              columnWrapperStyle={styles.row}
+              scrollEnabled={false}
+              renderItem={({item, index: outerIndex}) => (
+                <View>
+                  <ThemedPressable 
                     onPress={() => setChoiceIndex(outerIndex)}
+                    type={"default"}
+                    style={[styles.button, {width: BTN_WIDTH, borderColor: colors.accentLight}]}
+                  >
+                  <FlatList
+                    data={item[0]}
+                    keyExtractor={(item, innerIndex) => innerIndex.toString()}
+                    contentContainerStyle={styles.subtextContainer}
+                    renderItem={({item, index: innerIndex}) => (
+                      <View style={{
+                        width: BTN_WIDTH, 
+                        borderTopWidth: innerIndex > 0 ? 1 : 0, 
+                        borderTopColor: colors.accentLight,
+                        backgroundColor: listItemColor(item, leaf[(outerIndex + 1) % 2][0], innerIndex, colors),
+                      }}>
+                        <ThemedText style={styles.subtext}>{item}</ThemedText>
+                      </View>
+                    )}
                   />
+                  </ThemedPressable>
+                  <View style={styles.checkContainer}>
+                    <ThemedPressable style={[styles.check, {borderColor: colors.accentLight}]}
+                      type={choiceIndex === outerIndex ? "selected" : "default"}
+                      onPress={() => setChoiceIndex(outerIndex)}
+                    />
+                  </View>
                 </View>
-              </View>
-            )}
-          />
+              )}
+            />
+            <PopupPressable popupBody={popupBody}>
+              <ThemedText>More Info</ThemedText>
+            </PopupPressable>
+          </View>
         }
 
         footer={
@@ -144,7 +159,7 @@ export default function Split() {
             handleNext={handleNext}
             handleMiddle={partition}
             midText={"Show Me More"}
-            midType={canPartition && choiceIndex > -1 ? "selected" : "accent"}
+            midType={canPartition && choiceIndex > -1 ? "primary" : "secondary"}
           />
         }
       />
@@ -153,8 +168,6 @@ export default function Split() {
   }
 
 const listItemColor = (item, adjItems, index, colors) => {
-  console.log(adjItems);
-
   if (!adjItems.includes(item)) {
     return colors.accentLight
   } else if (adjItems[index] != item) {

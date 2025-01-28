@@ -2,10 +2,12 @@ import { FlatList, StyleSheet, Dimensions, View } from "react-native";
 import { ThemedPressable } from "./ThemedPressable";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
-import { ThemedLayout } from "./ThemedLayout";
+import { ThemedLayout } from "./ThemedLayoutNew";
 import SurveyNavBar from "./SurveyNavBar";
 import { useState } from "react";
 import { useRouter } from "expo-router";
+import { useSurveyContext } from "@/hooks/SurveyContext";
+
 const windowWidth = Dimensions.get('window').width * .85;
 const BUTTON_MARGIN = 3;
 
@@ -14,38 +16,41 @@ export default function SurveyGrid({
   type = "one",
   title,
   data,
-  numColumns,
-  handleNext,
-  nextRoute,
+  key,
+  numColumns = 2,
   btnGrow = false,
   ...otherProps
 }) {
   const [selected, setSelected] = useState([]);
   const router = useRouter();
+  const { setData } = useSurveyContext();
 
   const handlePress = (index) => {
     if (selected.includes(index)) {
       setSelected(selected.filter(item => item !== index));
+      setData(key, selected.filter(item => item !== index));
     } else if (type === 'many') {
       setSelected([...selected, index]);
+      setData(key, [...selected, index]);
     } else if (type === 'one') {
       setSelected([index]);
-      handleNext(selected, nextRoute)
+      setData(key, [index]);
     }
   }
   
-  const rem = data.length % numColumns;
-  const maxIndx = data.length - rem + 1;
-  const OF_BTN_WIDTH = (windowWidth - (rem + 1) * BUTTON_MARGIN * 2) / rem;
+  //const rem = data.length % numColumns;
+  //const maxIndx = data.length - rem + 1;
+  //const OF_BTN_WIDTH = (windowWidth - (rem + 1) * BUTTON_MARGIN * 2) / rem;
+
   const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;
 
   return (
-    <ThemedView>
+    <ThemedView style={{borderWidth: 0}}>
       <ThemedLayout
       header={
         <ThemedText 
-          style={styles.title}
-          numberOfLines={1}
+          type="title"
+          numberOfLines={2}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
         >
@@ -70,12 +75,6 @@ export default function SurveyGrid({
           )}
         />
       }
-      footer={
-        <SurveyNavBar 
-          handleSubmit={() => handleNext(selected, nextRoute)}
-          handleBack={() => router.back()}
-        />
-      }
     />
     </ThemedView>
   )
@@ -83,7 +82,7 @@ export default function SurveyGrid({
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 20,
+    fontSize: 30,
     alignSelf: 'center',
   },
   list: {

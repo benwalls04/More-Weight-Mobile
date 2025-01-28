@@ -4,7 +4,7 @@ import { COLORS } from "@/constants/Colors";
 import Popup from "@/components/Popup";
 import { useState, useEffect } from "react";
 
-export function PopupPressable({
+export default function PopupPressable({
   style,
   children,
   popupBody,
@@ -35,9 +35,8 @@ export function PopupPressable({
     ]).start();
 
     const timeout = setTimeout(() => {
-      // Show the popup if hold duration is long enough (e.g., 1 second)
       setPopupVisible(true);
-    }, 250); 
+    }, 0); 
 
     setHoldTimeout(timeout);
   };
@@ -87,18 +86,16 @@ function createStyles(colors) {
       height: '100%',
       justifyContent: 'center',
       alignItems: 'center',
-      borderRadius: 4,
+      paddingHorizontal: 20,
       backgroundColor: colors.buttonColorSelected,
       zIndex: 2,
     },
     button: {
       backgroundColor: colors.buttonColor,
-      borderColor: colors.borderColor,
+      borderColor: colors.buttonBorder,
       color: colors.text,
       height: 40,
-      width: 40,
       borderWidth: 1,
-      borderRadius: 4,
       justifyContent: "center",
       shadowColor: colors.shadowColor,
       shadowOffset: {width: 2, height: 3},

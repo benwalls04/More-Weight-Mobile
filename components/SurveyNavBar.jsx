@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 const BUTTON_MARGIN = 3;
 
-export default function SurveyNavBar({ handleSubmit, handleBack, handleMiddle, midText, midType="selected" }) {
+export default function SurveyNavBar({ handleNext, handleBack, handleMiddle, midText, midType="selected" }) {
   const router = useRouter();
   const hasMiddleButton = handleMiddle && midText;
 
@@ -16,32 +16,30 @@ export default function SurveyNavBar({ handleSubmit, handleBack, handleMiddle, m
           onPress={handleBack ? handleBack : () => router.back()}
           style={[
             styles.button,
-            { width: hasMiddleButton ? '25%' : '50%' }
+            { width: '15%'}
           ]}
-          type="accent"
+          type="transparent"
         >
-          <ThemedText>Back</ThemedText>
+          <ThemedText>&lt;</ThemedText>
         </ThemedPressable>
 
-        {hasMiddleButton && (
-          <ThemedPressable 
-            onPress={handleMiddle}
-            style={[styles.button, { width: '50%' }]}
-            type={midType}
-          >
-            <ThemedText>{midText}</ThemedText>
-          </ThemedPressable>
-        )}
+        <ThemedPressable 
+          onPress={handleMiddle}
+          style={[styles.button, { width: '70%', visibility: hasMiddleButton ? 'visible' : 'hidden' }]}
+          type={midType}
+        >
+          <ThemedText>{midText}</ThemedText>
+        </ThemedPressable>
 
         <ThemedPressable 
-          onPress={handleSubmit}
+          onPress={handleNext}
           style={[
             styles.button,
-            { width: hasMiddleButton ? '25%' : '50%' }
+            { width: "15%" }
           ]}
-          type={"selected"}
+          type={"transparent"}
         >
-          <ThemedText>Next</ThemedText>
+          <ThemedText>&gt;</ThemedText>
         </ThemedPressable>
       </View>
     </View>

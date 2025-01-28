@@ -26,7 +26,8 @@ export function ThemedView({
             justifyContent: "center",
             alignItems: "center",
             width: "85%",
-            height: "90%",
+            height: "100%",
+            flex: 1,
           },
           style,
         ]}

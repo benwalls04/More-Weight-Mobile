@@ -5,17 +5,50 @@ export const SurveyContext = React.createContext();
 
 export function useSurveyContext() {
   const surveyState = useContext(SurveyContext);
-
-  if (surveyState === undefined) {
-    throw new Error("useUserContext must be used within a UserProvider");
-  }
-
   return surveyState;
 }
 
 // FIXME: make an index for current route and an array of all routes (constant) for navigation 
 
 export function SurveyProvider({children}) {
+
+  const setData = (key, value) => {
+    switch (key) {
+      case "experience":
+        setExperience(value);
+        break;
+      case "days":
+        setDays(value);
+        break;
+      case "bias":
+        setBias(value);
+        break;
+      case "style":
+        setStyle(value);
+        break;
+      case "sets":
+        setSets(value);
+        break;
+      case "time":
+        setTime(value);
+        break;
+      case "accessories":
+        setAccessories(value);
+        break;
+      case "regions":
+        setRegions(value);
+        break;
+      case "movements":
+        setMovements(value);
+        break;
+      case "base":
+        setBase(value);
+        break;
+      case "split":
+        setSplit(value);
+        break;
+    }
+  }
 
   const finish = () => {
     //const userState = useUserContext();
@@ -56,20 +89,22 @@ export function SurveyProvider({children}) {
   });
 
   const surveyState = {
-    setExperience: setExperience,
-    setDays: setDays,
-    setBias: setBias,
-    setBase: setBase,
-    setSplit: setSplit,
-    setStyle: setStyle,
-    setSets: setSets,
-    setTime: setTime,
-    setAccessories: setAccessories,
-    setRegions: setRegions,
-    setMovements: setMovements, 
+    experience: [experience, setExperience],
+    days: [days, setDays],
+    bias: [bias, setBias],
+    style: [style, setStyle],
+    sets: [sets, setSets],
+    time: [time, setTime],
+    accessories: [accessories, setAccessories],
+    regions: [regions, setRegions],
+    movements: [movements, setMovements], 
+    base: [base, setBase],
+    split: [split, setSplit],
     formatParams: formatParams,
-    finish: finish
+    finish: finish, 
+    setData: setData
   }
+
 
   return (
     <SurveyContext.Provider value={surveyState}>

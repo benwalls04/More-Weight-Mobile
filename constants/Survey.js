@@ -1,6 +1,8 @@
-export const SURVEY_DATA = {
-  experience: {
+export const SURVEY_DATA = [
+  {
+    key: "experience",
     id: 1,
+    type: "one",
     title: "What is your experience level?",
     options: [
       {
@@ -15,10 +17,13 @@ export const SURVEY_DATA = {
         id: 3,
         title: "4+ years",
       }
-    ]
-  }, 
-  days: {
+    ],
+    cols: 3
+  },
+  {
+    key: "days",
     id: 2,
+    type: "many",
     title: "Which days would you like to lift?",
     options: [
       {
@@ -36,7 +41,7 @@ export const SURVEY_DATA = {
       {
         id: 4,
         title: "Th",
-      }, 
+      },
       {
         id: 5,
         title: "F",
@@ -44,16 +49,19 @@ export const SURVEY_DATA = {
       {
         id: 6,
         title: "S",
-      }, 
+      },
       {
         id: 7,
         title: "Su",
       }
-    ]
-  }, 
-  bias: {
+    ],
+    cols: 4
+  },
+  {
+    key: "bias",
     id: 3,
-    title: "Which muscle groups would you like to bias?", 
+    type: "many",
+    title: "Which muscle groups would you like to bias?",
     options: [
       {
         id: 1,
@@ -79,28 +87,20 @@ export const SURVEY_DATA = {
         id: 6,
         title: "Triceps",
       },
-    ]
-  }, 
-  split: {
-    id: 4,
-    screens: [
-      {
-        title: "Which split type do you prefer?",
-        options: null
-      }, 
-      {
-        title: "Which routine do you prefer?",
-        options: null
-      }
-    ]
+    ],
+    cols: 3
   },
-  style: {
-    id: 5, 
-    title: "What is your training goal?", 
+  {
+    key: "style",
+    id: 4,
+    type: "range",
+    title: "What is your training goal?",
     options: ["size", "strength"]
-  }, 
-  sets: {
-    id: 7,
+  },
+  {
+    key: "sets",
+    id: 5,
+    type: "one",
     title: "How many sets would you like for each movement?",
     options: [
       {
@@ -115,10 +115,13 @@ export const SURVEY_DATA = {
         id: 3,
         title: "4",
       }
-    ]
-  }, 
-  time: {
-    id: 8,
+    ],
+    cols: 3
+  },
+  {
+    key: "time",
+    id: 6,
+    type: "one",
     title: "How long would you like to spend working out (minutes)?",
     options: [
       {
@@ -132,7 +135,7 @@ export const SURVEY_DATA = {
       {
         id: 3,
         title: 60,
-      }, 
+      },
       {
         id: 4,
         title: 75,
@@ -149,10 +152,13 @@ export const SURVEY_DATA = {
         id: 7,
         title: 120,
       }
-    ]
-  }, 
-  accessories: {
-    id: 9,
+    ],
+    cols: 4
+  },
+  {
+    key: "accessories",
+    id: 7,
+    type: "many",
     title: "Which accessory groups would you like to work on?",
     options: [
       {
@@ -179,33 +185,38 @@ export const SURVEY_DATA = {
         id: 6,
         title: "Forearms",
       },
-    ]
-  }, 
-  regions: {
-    id: 10,
+    ],
+    cols: 3
+  },
+  {
+    key: "regions",
+    id: 8,
+    type: "range",
     screens: [
       {
         title: "What region of the chest would you like to bias?",
         options: [
           "lower chest", "upper chest"
         ]
-      }, 
+      },
       {
         title: "What region of the back would you like to bias?",
         options: [
           "lats", "upper back"
         ]
-      }, 
+      },
       {
         title: "What region of the chest would you like to bias?",
         options: [
           "quads", "hamstrings"
         ]
-      }, 
+      },
     ]
-  }, 
-  movements: {
-    id: 11,
+  },
+  {
+    key: "movements",
+    id: 9,
+    type: "one",
     title: "Which movement do you prefer?",
     screens: [
       {
@@ -216,7 +227,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Smith Machine Bench Press"},
           {id: 4, title: "Machine Chest Press"},
         ]
-      }, 
+      },
       {
         id: "vert-press",
         options: [
@@ -225,7 +236,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Smith Machine Overhead Press"},
           {id: 4, title: "Machine Overhead Press"},
         ]
-      }, 
+      },
       {
         id: "horiz-pull",
         options: [
@@ -234,7 +245,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Seated Cable Row"},
           {id: 4, title: "Machine Row"},
         ]
-      }, 
+      },
       {
         id: "vert-pull",
         options: [
@@ -243,7 +254,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Kneeling Cable Row"},
           {id: 4, title: "Machine Pulldown"},
         ]
-      }, 
+      },
       {
         id: "knee-flex",
         options: [
@@ -252,7 +263,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Front Squat"},
           {id: 4, title: "Leg Press"},
         ]
-      }, 
+      },
       {
         id: "hip-ext",
         options: [
@@ -261,7 +272,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Dumbell Romanian Deadlift"},
           {id: 4, title: "Barbell Hip Thrust"},
         ]
-      }, 
+      },
       {
         id: "curl",
         options: [
@@ -270,7 +281,7 @@ export const SURVEY_DATA = {
           {id: 3, title: "Dumbell Hammer Curl"},
           {id: 4, title: "Preacher Curl"},
         ]
-      }, 
+      },
       {
         id: "ext",
         options: [
@@ -281,8 +292,23 @@ export const SURVEY_DATA = {
         ]
       }
     ]
+  },
+  {
+    key: "split",
+    id: 10,
+    type: "many",
+    screens: [
+      {
+        title: "Which split type do you prefer?",
+        options: null
+      },
+      {
+        title: "Which routine do you prefer?",
+        options: null
+      }
+    ]
   }
-}
+]
 
 export const ROUTES = [
   "experience", "days", "bias", "base", "split", "style", "sets", "time", "accessories", "regions", "movements"

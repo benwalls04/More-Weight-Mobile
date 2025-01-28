@@ -1,13 +1,14 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
-import { PopupPressable } from "@/components/PopupPressable";
+import PopupPressable from "@/components/PopupPressable";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
+import SurveyNavBar from "@/components/SurveyNavBar";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useRouter } from "expo-router";
-import { View, StyleSheet, Dimensions, FlatList, Pressable } from "react-native";
+import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { useState } from "react";
 import { SPLIT_TITLES, SPLIT_SAMPLES } from "@/constants/Survey";
 import { COLORS } from "@/constants/Colors";
@@ -93,8 +94,8 @@ export default function Base() {
       <ThemedLayout
         header={
           <ThemedText 
-            style={styles.title}
-            numberOfLines={1}
+            type="title"
+            numberOfLines={2}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
         >
@@ -124,28 +125,16 @@ export default function Base() {
             )}
           />
           <PopupPressable popupBody={popupBody}>
-            <ThemedText>?</ThemedText>
+            <ThemedText>More Info</ThemedText>
           </PopupPressable>
         </View>
       }
 
       footer={
-        <View style={{justifyContent: 'center', width: '100%', flexDirection: 'row'}}>
-          <ThemedPressable 
-            onPress={() => router.back()}
-            style={styles.submitButton}
-            type="accent"
-        >
-          <ThemedText>Back</ThemedText>
-        </ThemedPressable>
-        <ThemedPressable 
-          onPress={() => handleNext()}
-          style={styles.submitButton}
-          type="selected"
-        >
-          <ThemedText>Next</ThemedText>
-          </ThemedPressable>
-        </View>
+        <SurveyNavBar 
+          handleBack={() => router.back()}
+          handleNext={() =>handleNext()}
+        />
         }
       />
     </ThemedView>
@@ -218,7 +207,7 @@ function createStyles(colors) {
     checkButton: {
       width: 24,
       height: 24,
-      borderColor: "white",
+      borderColor: "gray",
     }
   }); 
 }

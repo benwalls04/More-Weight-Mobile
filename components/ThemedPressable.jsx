@@ -33,7 +33,7 @@ function createStyles(colors) {
   return StyleSheet.create({
     default: {
       backgroundColor: colors.buttonColor,
-      borderColor: colors.tint,
+      borderColor: colors.buttonBorder,
       color: colors.text,
     }, 
     selected: {
@@ -41,11 +41,21 @@ function createStyles(colors) {
       borderColor: colors.borderColorSelected,
       color: colors.textSelected,
     },
-    accent: {
+    primary: {
+      backgroundColor: colors.tint,
+      borderColor: colors.tint,
+      color: colors.text,
+    },
+    secondary: {
       backgroundColor: colors.accent,
       borderColor: colors.accent,
       color: colors.text,
     }, 
+    transparent: {
+      backgroundColor: "transparent",
+      borderColor: "transparent",
+      color: colors.text,
+    },
   })
 }
 

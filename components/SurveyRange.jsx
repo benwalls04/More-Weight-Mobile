@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions, View } from "react-native";
 import { ThemedView } from "./ThemedView";
-import { ThemedLayout } from "./ThemedLayout";
+import { ThemedLayout } from "./ThemedLayoutNew";
 import { ThemedText } from "./ThemedText";
 import { useState } from "react";
 import Slider from '@react-native-community/slider';
@@ -17,6 +17,7 @@ export default function SurveyRange({
   title,
   data,
   handleNext,
+  key,
   nextRoute,
   ...otherProps
 }) {
@@ -28,6 +29,7 @@ export default function SurveyRange({
   const handleSubmit = () => {
     handleNext(value, nextRoute);
   };
+
 
   return (
     <ThemedView>

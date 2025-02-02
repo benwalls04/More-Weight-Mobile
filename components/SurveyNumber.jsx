@@ -35,10 +35,6 @@ export default function SurveyNumber({
     }
   };
 
-  const handleSubmit = () => {
-    handleNext(value, nextRoute);
-  };
-
   return (
     <ThemedView>
       <ThemedLayout
@@ -77,12 +73,6 @@ export default function SurveyNumber({
           <ThemedText style={styles.text}>{textAfter}</ThemedText>
         </View>
       </View>
-      }
-      footer={  
-        <SurveyNavBar 
-          handleNext={handleSubmit}
-          handleBack={() => router.back()}
-        />
       }
       />
     </ThemedView>

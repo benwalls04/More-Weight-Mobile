@@ -189,129 +189,135 @@ export const SURVEY_DATA = [
     cols: 3
   },
   {
-    key: "regions",
+    key: "chest-region",
     id: 8,
     type: "range",
-    screens: [
-      {
-        title: "What region of the chest would you like to bias?",
-        options: [
-          "lower chest", "upper chest"
-        ]
-      },
-      {
-        title: "What region of the back would you like to bias?",
-        options: [
-          "lats", "upper back"
-        ]
-      },
-      {
-        title: "What region of the chest would you like to bias?",
-        options: [
-          "quads", "hamstrings"
-        ]
-      },
-    ]
+    title: "What region of the chest would you like to bias?",
+    options: ["lower chest", "upper chest"],
+  }, 
+  {
+    key: "back-region",
+    id: 9,
+    type: "range",
+    title: "What region of the back would you like to bias?",
+    options: ["lats", "upper back"],
   },
   {
-    key: "movements",
-    id: 9,
+    key: "legs-region",
+    id: 10,
+    type: "range",
+    title: "What region of the legs would you like to bias?",
+    options: ["quads", "hamstrings"],
+  },
+  {
+    key: "horiz-press",
+    id: 11,
     type: "one",
     title: "Which movement do you prefer?",
-    screens: [
-      {
-        id: "horiz-press",
-        options: [
-          {id: 1, title: "Barbell Bench Press"},
-          {id: 2, title: "Dumbell Bench Press"},
-          {id: 3, title: "Smith Machine Bench Press"},
-          {id: 4, title: "Machine Chest Press"},
-        ]
-      },
-      {
-        id: "vert-press",
-        options: [
-          {id: 1, title: "Military Press"},
-          {id: 2, title: "Dumbell Overhead Press"},
-          {id: 3, title: "Smith Machine Overhead Press"},
-          {id: 4, title: "Machine Overhead Press"},
-        ]
-      },
-      {
-        id: "horiz-pull",
-        options: [
-          {id: 1, title: "T-Bar Row"},
-          {id: 2, title: "Barbell Row"},
-          {id: 3, title: "Seated Cable Row"},
-          {id: 4, title: "Machine Row"},
-        ]
-      },
-      {
-        id: "vert-pull",
-        options: [
-          {id: 1, title: "Pull Ups"},
-          {id: 2, title: "Lat Pulldown"},
-          {id: 3, title: "Kneeling Cable Row"},
-          {id: 4, title: "Machine Pulldown"},
-        ]
-      },
-      {
-        id: "knee-flex",
-        options: [
-          {id: 1, title: "Barbell Squat"},
-          {id: 2, title: "Hack Squat"},
-          {id: 3, title: "Front Squat"},
-          {id: 4, title: "Leg Press"},
-        ]
-      },
-      {
-        id: "hip-ext",
-        options: [
-          {id: 1, title: "Barbell Deadlift"},
-          {id: 2, title: "Barbell Romanian Deadlift"},
-          {id: 3, title: "Dumbell Romanian Deadlift"},
-          {id: 4, title: "Barbell Hip Thrust"},
-        ]
-      },
-      {
-        id: "curl",
-        options: [
-          {id: 1, title: "Dumbell Curl"},
-          {id: 2, title: "Cable Curl"},
-          {id: 3, title: "Dumbell Hammer Curl"},
-          {id: 4, title: "Preacher Curl"},
-        ]
-      },
-      {
-        id: "ext",
-        options: [
-          {id: 1, title: "Tricep Pushdown"},
-          {id: 2, title: "Cable Overhead Extension"},
-          {id: 3, title: "Skullcrusher"},
-          {id: 4, title: "Machine Tricep Extension"},
-        ]
-      }
-    ]
+    options: [
+      {id: 1, title: "Barbell Bench Press"},
+      {id: 2, title: "Dumbell Bench Press"},
+      {id: 3, title: "Smith Machine Bench Press"},
+      {id: 4, title: "Machine Chest Press"},
+    ], 
+    cols: 2,
   },
   {
-    key: "split",
-    id: 10,
-    type: "many",
-    screens: [
-      {
-        title: "Which split type do you prefer?",
-        options: null
-      },
-      {
-        title: "Which routine do you prefer?",
-        options: null
-      }
-    ]
+    key: "vert-press",
+    id: 12,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "Military Press"},
+      {id: 2, title: "Dumbell Overhead Press"},
+      {id: 3, title: "Smith Machine Overhead Press"},
+      {id: 4, title: "Machine Overhead Press"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: "horiz-pull",
+    id: 13,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "T-Bar Row"},
+      {id: 2, title: "Barbell Row"},
+      {id: 3, title: "Seated Cable Row"},
+      {id: 4, title: "Machine Row"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: "vert-pull",
+    id: 14,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "Pull Ups"},
+      {id: 2, title: "Lat Pulldown"},
+      {id: 3, title: "Kneeling Cable Row"},
+      {id: 4, title: "Machine Pulldown"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: "knee-flex",
+    id: 15,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "Barbell Squat"},
+      {id: 2, title: "Hack Squat"},
+      {id: 3, title: "Front Squat"},
+      {id: 4, title: "Leg Press"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: "hip-ext",
+    id: 16,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "Barbell Deadlift"},
+      {id: 2, title: "Barbell Romanian Deadlift"},
+      {id: 3, title: "Dumbell Romanian Deadlift"},
+      {id: 4, title: "Barbell Hip Thrust"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: "curl",
+    id: 17,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "Dumbell Curl"},
+      {id: 2, title: "Cable Curl"},
+      {id: 3, title: "Dumbell Hammer Curl"},
+      {id: 4, title: "Preacher Curl"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: "ext",
+    id: 18,
+    type: "one",
+    title: "Which movement do you prefer?",
+    options: [
+      {id: 1, title: "Tricep Pushdown"},
+      {id: 2, title: "Cable Overhead Extension"},
+      {id: 3, title: "Skullcrusher"},
+      {id: 4, title: "Machine Tricep Extension"},
+    ], 
+    cols: 2,
+  },
+  {
+    key: 'split',
+    id: 19,
+    type: 'submit',
   }
-]
-
-export const ROUTES = [
-  "experience", "days", "bias", "base", "split", "style", "sets", "time", "accessories", "regions", "movements"
 ]
 
 export const SPLIT_SAMPLES = {

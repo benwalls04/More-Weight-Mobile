@@ -6,6 +6,7 @@ import { useState } from "react";
 import Slider from '@react-native-community/slider';
 import { useRouter } from "expo-router";
 import { useThemeContext } from "@/hooks/ThemeContext";
+import { useSurveyContext } from "@/hooks/SurveyContext";
 import SurveyNavBar from "./SurveyNavBar";
 import { COLORS } from "@/constants/Colors";
 
@@ -16,20 +17,14 @@ export default function SurveyRange({
   style,
   title,
   data,
-  handleNext,
-  key,
-  nextRoute,
+  surveyIndex,
   ...otherProps
 }) {
   const [value, setValue] = useState(0.5);
   const router = useRouter();
   const { theme } = useThemeContext();
+  const { surveyData, updateSurveyData } = useSurveyContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
-
-  const handleSubmit = () => {
-    handleNext(value, nextRoute);
-  };
-
 
   return (
     <ThemedView>
@@ -37,8 +32,8 @@ export default function SurveyRange({
         header={
           <View>
             <ThemedText 
-              style={styles.title}
-              numberOfLines={1}
+              type="title"
+              numberOfLines={2}
               adjustsFontSizeToFit
               minimumFontScale={0.5}
             >
@@ -54,7 +49,7 @@ export default function SurveyRange({
               minimumValue={0}
               maximumValue={1}
               value={0.5}
-              onValueChange={setValue}
+              onValueChange={() => updateSurveyData(surveyIndex, value)}
               minimumTrackTintColor={colors.borderColor}
               maximumTrackTintColor="#E0E0E0"
               thumbTintColor={colors.borderColor}
@@ -67,12 +62,6 @@ export default function SurveyRange({
               </View>
             </View>
           }
-        footer = {
-          <SurveyNavBar 
-            handleSubmit={handleSubmit}
-            handleBack={() => router.back()}
-          />
-        }
       />
     </ThemedView>
   );

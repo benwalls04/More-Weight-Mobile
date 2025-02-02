@@ -16,26 +16,25 @@ export default function SurveyGrid({
   type = "one",
   title,
   data,
-  key,
+  surveyIndex,
   numColumns = 2,
   btnGrow = false,
   ...otherProps
 }) {
-  const [selected, setSelected] = useState([]);
-  const router = useRouter();
-  const { setData } = useSurveyContext();
+  const { surveyData, updateSurveyData } = useSurveyContext();
 
   const handlePress = (index) => {
-    if (selected.includes(index)) {
-      setSelected(selected.filter(item => item !== index));
-      setData(key, selected.filter(item => item !== index));
+    let newData = {...surveyData}[surveyIndex];
+
+    if (newData.includes(index)) {
+      newData.filter(item => item !== index);
     } else if (type === 'many') {
-      setSelected([...selected, index]);
-      setData(key, [...selected, index]);
+      newData = [...newData, index];
     } else if (type === 'one') {
-      setSelected([index]);
-      setData(key, [index]);
+      newData = [index];
     }
+
+    updateSurveyData(surveyIndex, newData);
   }
   
   //const rem = data.length % numColumns;
@@ -67,7 +66,7 @@ export default function SurveyGrid({
           renderItem={({item}) => (
             <ThemedPressable 
               onPress={() => handlePress(item.id)}
-              type={selected.includes(item.id) ? "selected" : "default"}
+              type={surveyData[surveyIndex].includes(item.id) ? "selected" : "default"}
               style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}]}
             >
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>

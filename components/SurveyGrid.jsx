@@ -3,11 +3,7 @@ import { ThemedPressable } from "./ThemedPressable";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { ThemedLayout } from "./ThemedLayoutNew";
-import SurveyNavBar from "./SurveyNavBar";
-import { useState } from "react";
-import { useRouter } from "expo-router";
 import { useSurveyContext } from "@/hooks/SurveyContext";
-
 const windowWidth = Dimensions.get('window').width * .85;
 const BUTTON_MARGIN = 3;
 
@@ -19,6 +15,8 @@ export default function SurveyGrid({
   surveyIndex,
   numColumns = 2,
   btnGrow = false,
+  btnHeight,
+  listRef, 
   ...otherProps
 }) {
   const { surveyData, updateSurveyData } = useSurveyContext();
@@ -27,14 +25,23 @@ export default function SurveyGrid({
     let newData = {...surveyData}[surveyIndex];
 
     if (newData.includes(index)) {
-      newData.filter(item => item !== index);
+      newData = newData.filter(item => item !== index);
     } else if (type === 'many') {
       newData = [...newData, index];
     } else if (type === 'one') {
       newData = [index];
+      scrollToNext();
     }
 
     updateSurveyData(surveyIndex, newData);
+  }
+
+  const scrollToNext = () => {
+      console.log(surveyIndex);
+      listRef.current.scrollToIndex({
+        index: surveyIndex + 1,
+        animated: true,
+      });
   }
   
   //const rem = data.length % numColumns;
@@ -67,7 +74,7 @@ export default function SurveyGrid({
             <ThemedPressable 
               onPress={() => handlePress(item.id)}
               type={surveyData[surveyIndex].includes(item.id) ? "selected" : "default"}
-              style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}]}
+              style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}, {height: btnHeight}]}
             >
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>
             </ThemedPressable>
@@ -97,6 +104,11 @@ const styles = StyleSheet.create({
     marginRight: BUTTON_MARGIN,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonText: {
+    lineHeight: 20,
+    textAlign: 'center',
+    paddingHorizontal: 5,
   },
   submitButton: {
     borderWidth: 0,

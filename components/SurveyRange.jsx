@@ -20,10 +20,9 @@ export default function SurveyRange({
   surveyIndex,
   ...otherProps
 }) {
-  const [value, setValue] = useState(0.5);
-  const router = useRouter();
   const { theme } = useThemeContext();
   const { surveyData, updateSurveyData } = useSurveyContext();
+  const value = surveyData[surveyIndex][0]
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
 
   return (
@@ -48,10 +47,10 @@ export default function SurveyRange({
               style={styles.slider}
               minimumValue={0}
               maximumValue={1}
-              value={0.5}
+              value={value ? value : .5}
               onValueChange={() => updateSurveyData(surveyIndex, value)}
               minimumTrackTintColor={colors.borderColor}
-              maximumTrackTintColor="#E0E0E0"
+              maximumTrackTintColor={colors.borderColor}
               thumbTintColor={colors.borderColor}
               tapToSeek={true}
             />

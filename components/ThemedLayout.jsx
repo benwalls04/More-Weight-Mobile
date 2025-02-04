@@ -17,10 +17,6 @@ export function ThemedLayout({
       <View style={{flex: 2, justifyContent: "flex-start", marginVertical: 16}}>
         {body}
       </View>
-
-      <View style={{flex: .5, justifyContent: "flex-end"}}>
-        {footer}
-      </View>
     </View>
   );
 }

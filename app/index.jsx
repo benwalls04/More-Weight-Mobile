@@ -24,7 +24,7 @@ const WelcomePage = () => {
               <ThemedPressable onPress={() => router.push("/LogInPage")} style={Styles.button}>
                 <ThemedText style={Styles.buttonText}>Returning User</ThemedText>
               </ThemedPressable>
-              <ThemedPressable onPress={() => router.push("/(survey_new)")} style={Styles.button}>
+              <ThemedPressable onPress={() => router.push("/(survey)")} style={Styles.button}>
                 <ThemedText style={Styles.buttonText}>New User</ThemedText>
               </ThemedPressable>  
             </View>
@@ -38,7 +38,7 @@ export default WelcomePage;
 
 const Styles = StyleSheet.create({
     title: {
-      fontSize: 26,
+      fontSize: 28,
       textAlign: "center",
     }, 
     buttonContainer: {

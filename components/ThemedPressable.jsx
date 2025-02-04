@@ -18,7 +18,7 @@ export function ThemedPressable({
           height: 60,
           width: "100%",
           borderWidth: 1,
-          borderRadius: 0,
+          borderRadius: 4,
           justifyContent: "center",
         },
         styles[type] || styles.default, 

@@ -37,7 +37,6 @@ export default function SurveyGrid({
   }
 
   const scrollToNext = () => {
-      console.log(surveyIndex);
       listRef.current.scrollToIndex({
         index: surveyIndex + 1,
         animated: true,

@@ -11,11 +11,14 @@ import { ThemedView } from "@/components/ThemedView"
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedPressable } from "@/components/ThemedPressable"
 import { ThemedLayout } from "@/components/ThemedLayout"
+import { useSurveyContext } from "@/hooks/SurveyContext";
 
 export default function Survey() {
 
+  const { goToBase } = useSurveyContext();
+
   const entry = (item, ref) => {
-    if (item.id >= SURVEY_DATA.find(item => item.key === "horiz-press").id && item.id <= SURVEY_DATA.find(item => item.key === "ext").id) {
+    if (item.id >= SURVEY_DATA.find(item => item.key === "horizontal-press").id && item.id <= SURVEY_DATA.find(item => item.key === "extension").id) {
       return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={item.id - 1} btnHeight={65} listRef={ref}/>;
     }
 
@@ -44,7 +47,7 @@ export default function Survey() {
               width: "100%",
               alignSelf: "center",
             }}
-            onPress={() => console.log("Proceed clicked!")}>
+            onPress={() => goToBase()}>
               <ThemedText style={{fontSize: 20, textAlign: "center"}}>
                 Yes
               </ThemedText>    

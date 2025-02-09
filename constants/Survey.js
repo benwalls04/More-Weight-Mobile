@@ -8,20 +8,23 @@ export const SURVEY_DATA = [
       {
         id: 1,
         title: "0-2 years",
+        res: 'b'
       },
       {
         id: 2,
         title: "0-4 years",
+        res: 'i'
       },
       {
         id: 3,
         title: "4+ years",
+        res: 'a'
       }
     ],
     cols: 3
   },
   {
-    key: "days",
+    key: "schedule",
     id: 2,
     type: "many",
     title: "Which days would you like to lift?",
@@ -66,26 +69,32 @@ export const SURVEY_DATA = [
       {
         id: 1,
         title: "Chest",
+        res: "chest"
       },
       {
         id: 2,
         title: "Back",
+        res: "back"
       },
       {
         id: 3,
         title: "Legs",
+        res: "legs"
       },
       {
         id: 4,
         title: "Shoulders",
+        res: "shoulders"
       },
       {
         id: 5,
         title: "Biceps",
+        res: "biceps"
       },
       {
         id: 6,
         title: "Triceps",
+        res: "triceps"
       },
     ],
     cols: 3
@@ -106,14 +115,17 @@ export const SURVEY_DATA = [
       {
         id: 1,
         title: "2",
+        res: 2
       },
       {
         id: 2,
         title: "3",
+        res: 3
       },
       {
         id: 3,
         title: "4",
+        res: 4
       }
     ],
     cols: 3
@@ -127,30 +139,37 @@ export const SURVEY_DATA = [
       {
         id: 1,
         title: 30,
+        res: 30
       },
       {
         id: 2,
         title: 45,
+        res: 45
       },
       {
         id: 3,
         title: 60,
+        res: 60
       },
       {
         id: 4,
         title: 75,
+        res: 75
       },
       {
         id: 5,
         title: 90,
+        res: 90
       },
       {
         id: 6,
         title: 105,
+        res: 105
       },
       {
         id: 7,
         title: 120,
+        res: 120
       }
     ],
     cols: 4
@@ -164,126 +183,132 @@ export const SURVEY_DATA = [
       {
         id: 1,
         title: "Calves",
+        res: "calves"
       },
       {
         id: 2,
         title: "Abs",
+        res: "abs"
       },
       {
         id: 3,
         title: "Traps",
+        res: "traps"
       },
       {
         id: 4,
         title: "Side Deltoids",
+        res: "side deltoids"
       },
       {
         id: 5,
         title: "Rear Deltoids",
+        res: "rear deltoids"
       },
       {
         id: 6,
         title: "Forearms",
+        res: "forearms"
       },
     ],
     cols: 3
   },
   {
-    key: "chest-region",
+    key: "chest",
     id: 8,
     type: "range",
     title: "What region of the chest would you like to bias?",
     options: ["lower chest", "upper chest"],
   }, 
   {
-    key: "back-region",
+    key: "back",
     id: 9,
     type: "range",
     title: "What region of the back would you like to bias?",
     options: ["lats", "upper back"],
   },
   {
-    key: "legs-region",
+    key: "legs",
     id: 10,
     type: "range",
     title: "What region of the legs would you like to bias?",
     options: ["quads", "hamstrings"],
   },
   {
-    key: "horiz-press",
+    key: "horizontal-press",
     id: 11,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Barbell Bench Press"},
-      {id: 2, title: "Dumbell Bench Press"},
-      {id: 3, title: "Smith Machine Bench Press"},
-      {id: 4, title: "Machine Chest Press"},
+      {id: 1, title: "Barbell Bench Press", res: "barbell bench press"},
+      {id: 2, title: "Dumbell Bench Press", res: "dumbell bench press"},
+      {id: 3, title: "Smith Machine Bench Press", res: "smith machine bench press"},
+      {id: 4, title: "Machine Chest Press", res: "machine chest press"},
     ], 
     cols: 2,
   },
   {
-    key: "vert-press",
+    key: "vertical-press",
     id: 12,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Military Press"},
-      {id: 2, title: "Dumbell Overhead Press"},
-      {id: 3, title: "Smith Machine Overhead Press"},
-      {id: 4, title: "Machine Overhead Press"},
+      {id: 1, title: "Military Press", res: "military press"},
+      {id: 2, title: "Dumbell Overhead Press", res: "dumbell overhead press"},
+      {id: 3, title: "Smith Machine Overhead Press", res: "smith machine overhead press"},
+      {id: 4, title: "Machine Overhead Press", res: "machine overhead press"},
     ], 
     cols: 2,
   },
   {
-    key: "horiz-pull",
+    key: "horizontal-pull",
     id: 13,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "T-Bar Row"},
-      {id: 2, title: "Barbell Row"},
-      {id: 3, title: "Seated Cable Row"},
-      {id: 4, title: "Machine Row"},
+      {id: 1, title: "T-Bar Row", res: "t-bar row"},
+      {id: 2, title: "Barbell Row", res: "barbell row"},
+      {id: 3, title: "Seated Cable Row", res: "seated cable row"},
+      {id: 4, title: "Machine Row", res: "machine row"},
     ], 
     cols: 2,
   },
   {
-    key: "vert-pull",
+    key: "vertical-pull",
     id: 14,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Pull Ups"},
-      {id: 2, title: "Lat Pulldown"},
-      {id: 3, title: "Kneeling Cable Row"},
-      {id: 4, title: "Machine Pulldown"},
+      {id: 1, title: "Pull Ups", res: "pull ups"},
+      {id: 2, title: "Lat Pulldown", res: "lat pulldown"},
+      {id: 3, title: "Kneeling Cable Row", res: "kneeling cable row"},
+      {id: 4, title: "Machine Pulldown", res: "machine pulldown"},
     ], 
     cols: 2,
   },
   {
-    key: "knee-flex",
+    key: "knee-flexion",
     id: 15,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Barbell Squat"},
-      {id: 2, title: "Hack Squat"},
-      {id: 3, title: "Front Squat"},
-      {id: 4, title: "Leg Press"},
+      {id: 1, title: "Barbell Squat", res: "barbell squat"},
+      {id: 2, title: "Hack Squat", res: "hack squat"},
+      {id: 3, title: "Front Squat", res: "front squat"},
+      {id: 4, title: "Leg Press", res: "leg press"},
     ], 
     cols: 2,
   },
   {
-    key: "hip-ext",
+    key: "hip-extension",
     id: 16,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Barbell Deadlift"},
-      {id: 2, title: "Barbell Romanian Deadlift"},
-      {id: 3, title: "Dumbell Romanian Deadlift"},
-      {id: 4, title: "Barbell Hip Thrust"},
+      {id: 1, title: "Barbell Deadlift", res: "barbell deadlift"},
+      {id: 2, title: "Barbell Romanian Deadlift", res: "barbell romanian deadlift"},
+      {id: 3, title: "Dumbell Romanian Deadlift", res: "dumbell romanian deadlift"},
+      {id: 4, title: "Barbell Hip Thrust", res: "barbell hip thrust"},
     ], 
     cols: 2,
   },
@@ -293,23 +318,23 @@ export const SURVEY_DATA = [
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Dumbell Curl"},
-      {id: 2, title: "Cable Curl"},
-      {id: 3, title: "Dumbell Hammer Curl"},
-      {id: 4, title: "Preacher Curl"},
+      {id: 1, title: "Dumbell Curl", res: "dumbell curl"},
+      {id: 2, title: "Cable Curl", res: "cable curl"},
+      {id: 3, title: "Dumbell Hammer Curl", res: "dumbell hammer curl"},
+      {id: 4, title: "Preacher Curl", res: "preacher curl"},
     ], 
     cols: 2,
   },
   {
-    key: "ext",
+    key: "extension",
     id: 18,
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {id: 1, title: "Tricep Pushdown"},
-      {id: 2, title: "Cable Overhead Extension"},
-      {id: 3, title: "Skullcrusher"},
-      {id: 4, title: "Machine Tricep Extension"},
+      {id: 1, title: "Tricep Pushdown", res: "tricep pushdown"},
+      {id: 2, title: "Cable Overhead Extension", res: "cable overhead extension"},
+      {id: 3, title: "Skullcrusher", res: "skullcrusher"},
+      {id: 4, title: "Machine Tricep Extension", res: "machine tricep extension"},
     ], 
     cols: 2,
   },

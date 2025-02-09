@@ -17,18 +17,18 @@ export default function Survey() {
 
   const { goToBase } = useSurveyContext();
 
-  const entry = (item, ref) => {
-    if (item.id >= SURVEY_DATA.find(item => item.key === "horizontal-press").id && item.id <= SURVEY_DATA.find(item => item.key === "extension").id) {
-      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={item.id - 1} btnHeight={65} listRef={ref}/>;
+  const entry = (item, index, ref) => {
+    if (index >= SURVEY_DATA.findIndex(item => item.key === "horizontal-press") && index <= SURVEY_DATA.findIndex(item => item.key === "extension")) {
+      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref}/>;
     }
 
     switch (item.type) {
       case "one":
-        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={item.id - 1} listRef={ref}/>;
+        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref}/>;
       case "many":
-        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={item.id - 1}/>;
+        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index}/>;
       case "range":
-        return <SurveyRange data={item.options} title={item.title} surveyIndex={item.id - 1}/>;
+        return <SurveyRange data={item.options} title={item.title} surveyIndex={index}/>;
       case "number":
         return <SurveyNumber key={item.key}/>;
       case "submit":
@@ -37,6 +37,7 @@ export default function Survey() {
   }
 
   const Proceed = () => {
+    // FIXME: ADD A CHECK BEFORE GOING TO BASE, MAKE SURE ALL DATA IS FILLED OUT
     return (
       <ThemedView>
         <ThemedLayout 
@@ -66,7 +67,7 @@ export default function Survey() {
       style={{flex: 1}}
       data={SURVEY_DATA} 
       ref={ref}
-      keyExtractor={(item) => item.id} 
+      keyExtractor={(item, index) => index.toString()} 
       pagingEnabled={true}
       ItemSeparatorComponent={() => null}
       initialNumToRender={SURVEY_DATA.length}
@@ -79,7 +80,7 @@ export default function Survey() {
       renderItem={({ item, index }) => {
         return (
           <View style={{height: windowHeight}}>
-            {entry(item, ref)}
+            {entry(item, index, ref)}
           </View>
         )
       }}

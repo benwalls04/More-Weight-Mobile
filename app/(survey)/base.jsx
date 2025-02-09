@@ -104,7 +104,7 @@ export default function Base() {
         }
 
       body={
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex: 1, alignItems: 'center'}}>
           <FlatList 
             data={splits.selection}
             keyExtractor={(item, index) => index.toString()}
@@ -122,20 +122,24 @@ export default function Base() {
                   <ThemedText style={styles.buttonText}>{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
                 </View>
               </ThemedPressable>
-            )}
+            )}        
           />
-          <PopupPressable popupBody={popupBody}>
-            <ThemedText>More Info</ThemedText>
-          </PopupPressable>
+
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
+            <ThemedPressable onPress={() => router.back()} style={styles.submitButton}> 
+              <ThemedText>Back</ThemedText>
+            </ThemedPressable>
+
+            <ThemedPressable onPress={() => handleNext()} style={styles.submitButton}>
+              <ThemedText>Next</ThemedText>
+            </ThemedPressable>
+          </View>
+
+            <PopupPressable popupBody={popupBody} style={{marginTop: BUTTON_MARGIN, width: windowWidth, marginLeft: 10}}>
+              <ThemedText>More Info</ThemedText>
+            </PopupPressable>
         </View>
       }
-
-      footer={
-        <SurveyNavBar 
-          handleBack={() => router.back()}
-          handleNext={() =>handleNext()}
-        />
-        }
       />
     </ThemedView>
     );
@@ -176,11 +180,12 @@ function createStyles(colors) {
     },
     submitButton: {
       borderWidth: 0,
-      height: 30,
+      height: 40,
       width: '50%',
       margin: BUTTON_MARGIN,
       justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: colors.accentLight,
     }, 
     popupEntry: {
       padding: 10,

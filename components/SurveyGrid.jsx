@@ -65,14 +65,14 @@ export default function SurveyGrid({
       body={
         <FlatList         
           data={data}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => index.toString()}
           numColumns={numColumns}
           contentContainerStyle={styles.list}
           columnWrapperStyle={numColumns > 1 ? styles.row : null}
-          renderItem={({item}) => (
+          renderItem={({item, index}) => (
             <ThemedPressable 
-              onPress={() => handlePress(item.id)}
-              type={surveyData[surveyIndex].includes(item.id) ? "selected" : "default"}
+              onPress={() => handlePress(index)}
+              type={surveyData[surveyIndex].includes(index) ? "selected" : "default"}
               style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}, {height: btnHeight}]}
             >
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>

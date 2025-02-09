@@ -8,8 +8,8 @@ import PopupPressable from "@/components/PopupPressable";
 import Popup from "@/components/Popup";
 
 import { useSplitsContext } from "@/hooks/SplitsContext";
-import { useSurveyContext } from "@/hooks/SurveyContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
+import { useUserContext } from "@/hooks/UserContext";
 
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
@@ -20,13 +20,13 @@ import { COLORS } from "@/constants/Colors";
 
 
 const windowWidth = Dimensions.get('window').width * .85;
-const BUTTON_MARGIN = 0;
+const BUTTON_MARGIN = 3;
 const BTN_WIDTH =  (windowWidth - (3) * BUTTON_MARGIN * 2) / 2;
 
 export default function Split() {
 
   const { setSplits, setLeaf, leaf, setDecisions, decisions, root } = useSplitsContext();
-  const { setSplit } = useSurveyContext();
+  const { setSplit } = useUserContext();
   const [ isLoading, setIsLoading ] = useState(false);
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
@@ -47,7 +47,6 @@ export default function Split() {
       setDecisions(prev => [...prev, leaf]);
       setChoiceIndex(-1);
       setIsLoading(false);
-
       if (leaf[0].length < 2 && leaf[1].length < 2) {
         setCanPartition(false);
       }
@@ -72,7 +71,6 @@ export default function Split() {
     if (choiceIndex > -1) {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);
-      router.push('/style');
     } else {
       Alert.alert("Error");
     }
@@ -147,12 +145,26 @@ export default function Split() {
                 </View>
               )}
             />
-            <PopupPressable popupBody={popupBody}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
+              <ThemedPressable onPress={() => handleBack()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]}> 
+                <ThemedText>Back</ThemedText>
+              </ThemedPressable>
+
+              <ThemedPressable onPress={() => partition()} style={[styles.submitButton, {backgroundColor: canPartition && choiceIndex > -1 ? colors.tint : colors.accentLight, width: '50%'}]}> 
+                <ThemedText>Show Me More</ThemedText>
+              </ThemedPressable>
+
+              <ThemedPressable onPress={() => handleNext()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]}>
+                <ThemedText>Select</ThemedText>
+              </ThemedPressable>
+            </View>
+
+            <PopupPressable popupBody={popupBody} style={{marginTop: BUTTON_MARGIN, width: windowWidth, marginLeft: 10}}>
               <ThemedText>More Info</ThemedText>
             </PopupPressable>
           </View>
         }
-
+        
         footer={
           <SurveyNavBar 
             handleBack={handleBack}
@@ -197,6 +209,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 0
   },
+  submitButton: {
+      borderWidth: 0,
+      height: 40,
+      width: '33%',
+      margin: BUTTON_MARGIN,
+      justifyContent: 'center',
+      alignItems: 'center',
+  }, 
   buttonTextContainer: {
     flex: 1,
     justifyContent: 'center',

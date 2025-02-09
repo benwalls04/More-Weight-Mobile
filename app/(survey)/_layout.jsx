@@ -4,10 +4,10 @@ import { SplitsProvider } from "@/hooks/SplitsContext";
 
 export default function SurveyLayout() {
   return (
-    <SurveyProvider>
-      <SplitsProvider>
+    <SplitsProvider>
+      <SurveyProvider>
         <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}></Stack>
-      </SplitsProvider>
-    </SurveyProvider>
+      </SurveyProvider>
+    </SplitsProvider>
   );
 }

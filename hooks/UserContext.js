@@ -17,6 +17,7 @@ export function UserProvider({children}) {
   const [routine, setRoutine] = useState([]);
   const [exp, setExp] = useState(-1);
   const [numSets, setNumSets] = useState(-1);
+  const [split, setSplit] = useState([]);
 
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
@@ -47,6 +48,8 @@ export function UserProvider({children}) {
     setUsername: setUsername, 
     routine: routine, 
     setRoutine: setRoutine,
+    split: split,
+    setSplit: setSplit,
     info: {
       exp: exp, 
       setExp: setExp, 

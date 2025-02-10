@@ -3,7 +3,7 @@ import { Text, StyleSheet } from "react-native";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { useFonts } from "expo-font";
-import { Play_400Regular, Play_700Bold } from "@expo-google-fonts/play"; // Import Play font
+import { Play_400Regular, Play_700Bold } from "@expo-google-fonts/play"; 
 
 export function ThemedText({
   style,
@@ -69,4 +69,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#0a7ea4",
   },
+  error: {
+    color: 'red',
+    fontSize: 14,
+    lineHeight: 30,
+  }
 });

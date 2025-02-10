@@ -14,10 +14,26 @@ export function useSurveyContext() {
 
 export function SurveyProvider({children}) {
 
-  // fixme set up this context call
-  const { setUserData } = useUserContext();
+  // FIXME: set up this context call
+  const { setInfo } = useUserContext();
   const { setRoot, setSplits, setLeaf } = useSplitsContext();
   const router = useRouter();
+
+  const checkErrors = () => {
+    let errors = {}
+
+    SURVEY_DATA.forEach((item, index) => {
+      if (item.required && surveyData[index].length === 0) {
+        errors[index] = "This field is required";
+      } else if (item.type === "many" && item.minimum && surveyData[index].length < item.minimum) {
+        errors[index] = "Please select at least " + item.minimum + " options";
+      }
+    })
+
+    console.log(errors);
+
+    return errors;
+  }
 
   const formatData = () => {
     let res = {};
@@ -45,10 +61,9 @@ export function SurveyProvider({children}) {
     res.style = style_choice < .33 ? "b" : style_choice < .66 ? "n" : "p";
     skip.add(STYLE_INDX);
 
-    skip.add(SURVEY_DATA.length - 1);
+    skip.add(SURVEY_DATA.length);
 
     // ABOVE NEED TO BE FORMALIZED 
-
     SURVEY_DATA.forEach((INFO, INDX) => {
       if (skip.has(INDX)) return;
 
@@ -75,11 +90,9 @@ export function SurveyProvider({children}) {
     setSurveyData(newData);
   }
 
-  const goToBase = async () => {
+  const getSplits = async () => {
     // render loading screen from caller 
 
-    // format data all data - set user data to that
-    // add a check to make sure data is filled, if 
     const userData = formatData();
     const params = {schedule: userData.schedule, bias: userData.bias}
 
@@ -88,6 +101,8 @@ export function SurveyProvider({children}) {
       setLeaf(response.data.selection);
       setRoot(response.data);
     });
+
+    setInfo(userData);
 
     router.push('/base')
   }
@@ -102,7 +117,8 @@ export function SurveyProvider({children}) {
     finish: finish, 
     surveyData: surveyData,
     updateSurveyData: updateSurveyData,
-    goToBase: goToBase
+    getSplits: getSplits,
+    checkErrors: checkErrors
   }
 
 

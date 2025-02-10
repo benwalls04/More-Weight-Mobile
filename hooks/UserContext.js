@@ -15,8 +15,7 @@ export function useUserContext() {
 export function UserProvider({children}) {
   const [username, setUsername] = useState("");
   const [routine, setRoutine] = useState([]);
-  const [exp, setExp] = useState(-1);
-  const [numSets, setNumSets] = useState(-1);
+  const [info, setInfo] = useState({});
   const [split, setSplit] = useState([]);
 
   const login = async (username, password) => {
@@ -45,19 +44,14 @@ export function UserProvider({children}) {
 
   const userState = {
     username: username, 
-    setUsername: setUsername, 
     routine: routine, 
     setRoutine: setRoutine,
     split: split,
     setSplit: setSplit,
-    info: {
-      exp: exp, 
-      setExp: setExp, 
-      numSets: numSets, 
-      setNumSets: setNumSets
-    },
+    info: info,
+    setInfo: setInfo,
     login: login,
-    signup: signup
+    signup: signup,
   }
 
   return (

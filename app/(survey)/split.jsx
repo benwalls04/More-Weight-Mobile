@@ -37,7 +37,6 @@ export default function Split() {
 
   // FIXME: this is a mess. Use a tree stucture and a class
   // FIXME: add a counter under each choice (num of splits like this one)
-  
 
   const partition = async () => {
     if (choiceIndex > -1 && canPartition) {
@@ -71,6 +70,8 @@ export default function Split() {
     if (choiceIndex > -1) {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);
+
+      // FIXME: go to sign up page 
     } else {
       Alert.alert("Error");
     }
@@ -131,7 +132,7 @@ export default function Split() {
                         borderTopColor: colors.accentLight,
                         backgroundColor: listItemColor(item, leaf[(outerIndex + 1) % 2][0], innerIndex, colors),
                       }}>
-                        <ThemedText style={styles.subtext}>{item}</ThemedText>
+                        <ThemedText style={styles.subtext}>{prettyPrint(item)}</ThemedText>
                       </View>
                     )}
                   />
@@ -164,19 +165,17 @@ export default function Split() {
             </PopupPressable>
           </View>
         }
-        
-        footer={
-          <SurveyNavBar 
-            handleBack={handleBack}
-            handleNext={handleNext}
-            handleMiddle={partition}
-            midText={"Show Me More"}
-            midType={canPartition && choiceIndex > -1 ? "primary" : "secondary"}
-          />
-        }
       />
     </ThemedView>
     );
+  }
+
+  function prettyPrint(item) {
+    if (item.includes("biceps") && item.includes("triceps")) {
+      return item.split(' ').filter(word => word !== "biceps" && word !== "triceps" && word !== "shoulders").concat("arms").join(' ');
+    } 
+
+    return item;
   }
 
 const listItemColor = (item, adjItems, index, colors) => {

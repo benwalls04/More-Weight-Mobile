@@ -1,6 +1,6 @@
 import { StyleSheet, Dimensions, View } from "react-native";
 import { ThemedView } from "./ThemedView";
-import { ThemedLayout } from "./ThemedLayoutNew";
+import { ThemedLayout } from "./ThemedLayout";
 import { ThemedText } from "./ThemedText";
 import { useState } from "react";
 import Slider from '@react-native-community/slider';
@@ -59,7 +59,7 @@ export default function SurveyRange({
                 <ThemedText style={styles.rangeLabel}>{data[0]}</ThemedText>
                 <ThemedText style={styles.rangeLabel}>{data[1]}</ThemedText>
               </View>
-            </View>
+          </View>
           }
       />
     </ThemedView>
@@ -88,4 +88,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
   },
+  errorMsg: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
+  }
 }); 

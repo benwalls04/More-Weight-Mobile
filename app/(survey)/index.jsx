@@ -2,7 +2,7 @@ import { SURVEY_DATA } from "@/constants/Survey";
 import { useRouter } from "expo-router";
 import { FlatList, View } from "react-native";
 import { Dimensions } from "react-native";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import SurveyRange from "@/components/SurveyRange";
 import SurveyGrid from "@/components/SurveyGrid";
@@ -15,49 +15,69 @@ import { useSurveyContext } from "@/hooks/SurveyContext";
 
 export default function Survey() {
 
-  const { goToBase } = useSurveyContext();
+  const { getSplits, checkErrors } = useSurveyContext();
 
   const entry = (item, index, ref) => {
     if (index >= SURVEY_DATA.findIndex(item => item.key === "horizontal-press") && index <= SURVEY_DATA.findIndex(item => item.key === "extension")) {
-      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref}/>;
+      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]}/>;
     }
 
     switch (item.type) {
       case "one":
-        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref}/>;
+        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]}/>;
       case "many":
-        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index}/>;
+        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} errorMsg={errors[index]}/>;
       case "range":
         return <SurveyRange data={item.options} title={item.title} surveyIndex={index}/>;
-      case "number":
-        return <SurveyNumber key={item.key}/>;
       case "submit":
         return <Proceed/>
     } 
   }
 
   const Proceed = () => {
-    // FIXME: ADD A CHECK BEFORE GOING TO BASE, MAKE SURE ALL DATA IS FILLED OUT
     return (
       <ThemedView>
-        <ThemedLayout 
-          header={<ThemedText style={{textAlign: "center", fontSize: 28}}>Would you like to proceed?</ThemedText>}
-          body={
-          <ThemedPressable 
+        <ThemedPressable 
             style={{
               width: "100%",
               alignSelf: "center",
+              height: "50%", 
+              border: "none"
             }}
-            onPress={() => goToBase()}>
+            onPress={() => handleNext()}>
               <ThemedText style={{fontSize: 20, textAlign: "center"}}>
-                Yes
+                Click Here To Proceed
               </ThemedText>    
-            </ThemedPressable>}
-        />
+            </ThemedPressable>
       </ThemedView>
     );
   };
-  
+
+  const [errors, setErrors] = useState({});
+  const [errorMode, setErrorMode] = useState(false);
+
+  const errorRouter = () => {
+    if (!ref.current || Object.keys(errors).length === 0) return;
+
+    const firstErrorIndex = Math.min(...Object.keys(errors).map(Number));
+
+    ref.current.scrollToIndex({
+      index: firstErrorIndex,
+      animated: true, 
+      viewPosition: 0 
+    });
+  }
+
+  const handleNext = () => {
+    const errors = checkErrors();
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      setErrorMode(true);
+      errorRouter(); 
+    } else {
+      getSplits();
+    }
+  }
 
   const windowHeight = Dimensions.get('window').height;
   const ref = useRef(null);

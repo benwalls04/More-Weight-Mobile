@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Dimensions, View } from "react-native";
 import { ThemedPressable } from "./ThemedPressable";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
-import { ThemedLayout } from "./ThemedLayoutNew";
+import { ThemedLayout } from "./ThemedLayout";
 import { useSurveyContext } from "@/hooks/SurveyContext";
 const windowWidth = Dimensions.get('window').width * .85;
 const BUTTON_MARGIN = 3;
@@ -17,6 +17,7 @@ export default function SurveyGrid({
   btnGrow = false,
   btnHeight,
   listRef, 
+  errorMsg,
   ...otherProps
 }) {
   const { surveyData, updateSurveyData } = useSurveyContext();
@@ -63,7 +64,8 @@ export default function SurveyGrid({
         </ThemedText>
       }
       body={
-        <FlatList         
+        <View>
+          <FlatList         
           data={data}
           keyExtractor={(item, index) => index.toString()}
           numColumns={numColumns}
@@ -78,7 +80,9 @@ export default function SurveyGrid({
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>
             </ThemedPressable>
           )}
-        />
+          />
+          {errorMsg && <ThemedText type="error">{errorMsg}</ThemedText>}
+        </View>
       }
     />
     </ThemedView>
@@ -116,5 +120,10 @@ const styles = StyleSheet.create({
     margin: BUTTON_MARGIN,
     justifyContent: 'center',
     alignItems: 'center',
+  }, 
+  errorMsg: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
   }
 });

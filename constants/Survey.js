@@ -18,7 +18,8 @@ export const SURVEY_DATA = [
         res: 'a'
       }
     ],
-    cols: 3
+    cols: 3, 
+    required: true
   },
   {
     key: "schedule",
@@ -48,7 +49,8 @@ export const SURVEY_DATA = [
         title: "Su",
       }
     ],
-    cols: 4
+    cols: 4, 
+    minimum: 3
   },
   {
     key: "bias",
@@ -81,7 +83,8 @@ export const SURVEY_DATA = [
         res: "triceps"
       },
     ],
-    cols: 3
+    cols: 3, 
+    minimum: 0
   },
   {
     key: "style",
@@ -108,7 +111,8 @@ export const SURVEY_DATA = [
         res: 4
       }
     ],
-    cols: 3
+    cols: 3, 
+    required: true
   },
   {
     key: "time",
@@ -144,7 +148,8 @@ export const SURVEY_DATA = [
         res: 120
       }
     ],
-    cols: 4
+    cols: 4, 
+    required: true
   },
   {
     key: "accessories",
@@ -176,7 +181,8 @@ export const SURVEY_DATA = [
         res: "forearms"
       },
     ],
-    cols: 3
+    cols: 3, 
+    minimum: 0,
   },
   {
     key: "chest",
@@ -207,6 +213,7 @@ export const SURVEY_DATA = [
       {title: "Machine Chest Press", res: "machine chest press"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "vertical-press",
@@ -219,6 +226,7 @@ export const SURVEY_DATA = [
       {title: "Machine Overhead Press", res: "machine overhead press"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "horizontal-pull",
@@ -231,6 +239,7 @@ export const SURVEY_DATA = [
       {title: "Machine Row", res: "machine row"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "vertical-pull",
@@ -243,6 +252,7 @@ export const SURVEY_DATA = [
       {title: "Machine Pulldown", res: "machine pulldown"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "knee-flexion",
@@ -255,6 +265,7 @@ export const SURVEY_DATA = [
       {title: "Leg Press", res: "leg press"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "hip-extension",
@@ -267,6 +278,7 @@ export const SURVEY_DATA = [
       {title: "Barbell Hip Thrust", res: "barbell hip thrust"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "curl",
@@ -279,6 +291,7 @@ export const SURVEY_DATA = [
       {title: "Preacher Curl", res: "preacher curl"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: "extension",
@@ -291,10 +304,10 @@ export const SURVEY_DATA = [
       {title: "Machine Tricep Extension", res: "machine tricep extension"},
     ], 
     cols: 2,
+    required: true
   },
   {
     key: 'split',
-    id: 19,
     type: 'submit',
   }
 ]

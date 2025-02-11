@@ -30,8 +30,6 @@ export function SurveyProvider({children}) {
       }
     })
 
-    console.log(errors);
-
     return errors;
   }
 

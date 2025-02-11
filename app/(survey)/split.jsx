@@ -2,10 +2,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
-import SurveyNavBar from "@/components/SurveyNavBar";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import PopupPressable from "@/components/PopupPressable";
-import Popup from "@/components/Popup";
 
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
@@ -36,7 +34,7 @@ export default function Split() {
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
 
   // FIXME: this is a mess. Use a tree stucture and a class
-  // FIXME: add a counter under each choice (num of splits like this one)
+  // FIXME: add some sort of key and also popup analytics
 
   const partition = async () => {
     if (choiceIndex > -1 && canPartition) {
@@ -46,7 +44,7 @@ export default function Split() {
       setDecisions(prev => [...prev, leaf]);
       setChoiceIndex(-1);
       setIsLoading(false);
-      if (leaf[0].length < 2 && leaf[1].length < 2) {
+      if (leaf[0].length < 3 && leaf[1].length < 3) {
         setCanPartition(false);
       }
     } else {
@@ -70,8 +68,7 @@ export default function Split() {
     if (choiceIndex > -1) {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);
-
-      // FIXME: go to sign up page 
+      router.push('/SignUpPage');
     } else {
       Alert.alert("Error");
     }
@@ -85,8 +82,8 @@ export default function Split() {
 
   const popupBody = () => {
     return (
-      <View>
-        <ThemedText>More Info</ThemedText>
+      <View style={{height: 100, justifyContent: 'center', alignItems: 'center', width: "100%"}}>
+        <ThemedText style={{fontSize: 18, textAlign: 'center'}}> Analytics Soon</ThemedText>
       </View>
     )
   }
@@ -94,6 +91,8 @@ export default function Split() {
   return (
     <ThemedView>
       <ThemedLayout
+        bodyFlex={2.5}
+
         header={
           <ThemedText 
             type="title"
@@ -106,7 +105,7 @@ export default function Split() {
         }
 
         body={
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <FlatList 
               data={leaf}
               keyExtractor={(item, outerIndex) => outerIndex.toString()}
@@ -146,23 +145,30 @@ export default function Split() {
                 </View>
               )}
             />
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
-              <ThemedPressable onPress={() => handleBack()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]}> 
-                <ThemedText>Back</ThemedText>
-              </ThemedPressable>
-
-              <ThemedPressable onPress={() => partition()} style={[styles.submitButton, {backgroundColor: canPartition && choiceIndex > -1 ? colors.tint : colors.accentLight, width: '50%'}]}> 
-                <ThemedText>Show Me More</ThemedText>
-              </ThemedPressable>
-
-              <ThemedPressable onPress={() => handleNext()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]}>
-                <ThemedText>Select</ThemedText>
-              </ThemedPressable>
+            <View style={{flexDirection: 'row', justifyContent: 'center', width: windowWidth, marginTop: 20}}>
+              {canPartition && choiceIndex > -1 && (
+                <ThemedPressable onPress={() => partition()} style={{backgroundColor: colors.tint, width: "auto", paddingHorizontal: 20}}> 
+                  <ThemedText style={{fontSize: 18, textAlign: 'center'}}>Show {leaf[choiceIndex] ? leaf[choiceIndex].length : 0} more routines like this</ThemedText>
+                </ThemedPressable>
+              )}
             </View>
 
-            <PopupPressable popupBody={popupBody} style={{marginTop: BUTTON_MARGIN, width: windowWidth, marginLeft: 10}}>
-              <ThemedText>More Info</ThemedText>
-            </PopupPressable>
+          </View>
+        }
+
+        footer={
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth, marginTop: 20}}>
+              <ThemedPressable onPress={() => handleBack()} style={[styles.navButton, {alignItems: 'flex-start', flex: 1}]}> 
+                <ThemedText style={{fontSize: 18}}>&lt; go back</ThemedText>
+              </ThemedPressable>
+
+              <PopupPressable popupBody={popupBody} style={[styles.navButton, {alignItems: 'center',  flex: 1, paddingHorizontal: 23}]}>
+                <ThemedText style={{fontSize: 18}}>more info</ThemedText>
+              </PopupPressable>
+
+              <ThemedPressable onPress={() => handleNext()} style={[styles.navButton, {alignItems: 'flex-end', flex: 1}]}>
+                <ThemedText style={{fontSize: 18}}>continue &gt;</ThemedText>
+              </ThemedPressable>
           </View>
         }
       />
@@ -189,13 +195,7 @@ const listItemColor = (item, adjItems, index, colors) => {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 20,
-    textAlign: 'center',
-    alignSelf: 'center',
-  },
   list: {
-    flexGrow: 1,
     width: '100%',
   },
   row: {
@@ -206,15 +206,12 @@ const styles = StyleSheet.create({
     height: "auto",
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 0
+    borderRadius: 0, 
   },
-  submitButton: {
-      borderWidth: 0,
-      height: 40,
-      width: '33%',
-      margin: BUTTON_MARGIN,
-      justifyContent: 'center',
-      alignItems: 'center',
+  navButton: {
+    borderWidth: 0,
+    height: 40,
+    backgroundColor: "none",
   }, 
   buttonTextContainer: {
     flex: 1,
@@ -247,5 +244,5 @@ const styles = StyleSheet.create({
     width: 24, 
     height: 24,
     borderWidth: 1,
-  }
+  },
 }); 

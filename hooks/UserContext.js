@@ -38,8 +38,33 @@ export function UserProvider({children}) {
     }
   }
 
-  const signup = () => {
-    
+  const signup = async (username, password, confirmPassword) => {
+    console.log( 'hi ')
+    if (validInput(username) && validInput(password)) {
+      if (password != confirmPassword) {
+        return "passwords do not match";
+      }
+
+      try {
+        const params = formatParams(info);
+
+        // exp, style, sets, time, numDays, accessories, bias, selection
+        const response = await axios.post('https://more-weight.com/new-user', {
+          inputs: params, username: username.toLowerCase(), password: password.toLowerCase()
+        });
+        setRoutine(response.data.routine);
+        setUsername(username);
+        return "success";
+      } catch (error) {
+        if (error.response?.status === 400) {
+          return "incorrect username and password";
+        }
+        return "error";
+      }
+
+    } else {
+      return "please enter a valid username and password";
+    }
   }
 
   const userState = {

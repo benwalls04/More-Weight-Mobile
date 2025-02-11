@@ -10,8 +10,8 @@ import SurveyNumber from "@/components/SurveyNumber";
 import { ThemedView } from "@/components/ThemedView"
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedPressable } from "@/components/ThemedPressable"
-import { ThemedLayout } from "@/components/ThemedLayout"
 import { useSurveyContext } from "@/hooks/SurveyContext";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function Survey() {
 
@@ -19,16 +19,16 @@ export default function Survey() {
 
   const entry = (item, index, ref) => {
     if (index >= SURVEY_DATA.findIndex(item => item.key === "horizontal-press") && index <= SURVEY_DATA.findIndex(item => item.key === "extension")) {
-      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]}/>;
+      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]} headerLines={item.headerLines} btnGrow={item.btnGrow}/>;
     }
 
     switch (item.type) {
       case "one":
-        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]}/>;
+        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]} btnGrow={item.btnGrow} headerLines={item.headerLines}/>;
       case "many":
-        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} errorMsg={errors[index]}/>;
+        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} errorMsg={errors[index]} btnGrow={item.btnGrow} headerLines={item.headerLines}/>;
       case "range":
-        return <SurveyRange data={item.options} title={item.title} surveyIndex={index}/>;
+        return <SurveyRange data={item.options} title={item.title} surveyIndex={index} headerLines={item.headerLines}/>;
       case "submit":
         return <Proceed/>
     } 
@@ -42,7 +42,8 @@ export default function Survey() {
               width: "100%",
               alignSelf: "center",
               height: "50%", 
-              border: "none"
+              border: "none", 
+              borderWidth: 0,
             }}
             onPress={() => handleNext()}>
               <ThemedText style={{fontSize: 20, textAlign: "center"}}>
@@ -54,7 +55,7 @@ export default function Survey() {
   };
 
   const [errors, setErrors] = useState({});
-  const [errorMode, setErrorMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const errorRouter = () => {
     if (!ref.current || Object.keys(errors).length === 0) return;
@@ -68,19 +69,26 @@ export default function Survey() {
     });
   }
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    setIsLoading(true);
     const errors = checkErrors();
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
-      setErrorMode(true);
       errorRouter(); 
     } else {
-      getSplits();
+      await getSplits();
     }
+    setIsLoading(false);
   }
 
   const windowHeight = Dimensions.get('window').height;
   const ref = useRef(null);
+
+  if (isLoading) {
+    return (
+      <LoadingScreen />
+    )
+  }
 
   return (
     <FlatList

@@ -18,6 +18,7 @@ export default function SurveyRange({
   title,
   data,
   surveyIndex,
+  headerLines = 2,
   ...otherProps
 }) {
   const { theme } = useThemeContext();
@@ -29,16 +30,14 @@ export default function SurveyRange({
     <ThemedView>
       <ThemedLayout 
         header={
-          <View>
-            <ThemedText 
-              type="title"
-              numberOfLines={2}
-              adjustsFontSizeToFit
-              minimumFontScale={0.5}
-            >
-              {title}
-            </ThemedText>
-          </View>
+          <ThemedText 
+            type="title"
+            numberOfLines={headerLines}
+            adjustsFontSizeToFit
+            minimumFontScale={0.5}
+          >
+            {title}
+          </ThemedText>
         }
 
         body={
@@ -48,9 +47,9 @@ export default function SurveyRange({
               minimumValue={0}
               maximumValue={1}
               value={value ? value : .5}
-              onValueChange={() => updateSurveyData(surveyIndex, value)}
-              minimumTrackTintColor={colors.borderColor}
-              maximumTrackTintColor={colors.borderColor}
+              onValueChange={(newValue) => updateSurveyData(surveyIndex, newValue)}
+              minimumTrackTintColor={colors.tint}
+              maximumTrackTintColor={colors.tint}
               thumbTintColor={colors.borderColor}
               tapToSeek={true}
             />
@@ -78,6 +77,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginBottom: 10,
+    marginTop: 10,
   },
   rangeLabel: {
     fontSize: 16,

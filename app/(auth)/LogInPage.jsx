@@ -6,6 +6,7 @@ import { COLORS } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import { ThemedLayout } from "@/components/ThemedLayout";
 
 const LoginPage = () => {
   const [userText, setUserText] = useState("");
@@ -25,12 +26,16 @@ const LoginPage = () => {
 
   return (
     <ThemedView>
-      <View style={Styles.headerContainer}>
-        <ThemedText style={{textAlign: "center"}} type="header">Hi, Welcome Back!</ThemedText>
-      </View>
-      <View style={Styles.inputContainer}>
-        <View style={Styles.input}>
-          <ThemedText>Username</ThemedText>
+      <ThemedLayout
+        header={
+          <View style={Styles.headerContainer}>
+            <ThemedText style={{textAlign: "center"}} type="header">Hi, Welcome Back!</ThemedText>
+          </View>
+        }
+        body={
+          <View style={Styles.inputContainer}>
+            <View style={Styles.input}>
+              <ThemedText>Username</ThemedText>
           <TextInput
             style={Styles.inputText}
             placeholder="Your username"
@@ -48,10 +53,12 @@ const LoginPage = () => {
             secureTextEntry
           />
         </View>
-        <ThemedPressable onPress={() => handleSubmit()}>
+        <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()}>
           <ThemedText style={{textAlign: "center"}}>Log In</ThemedText>
-        </ThemedPressable>
-      </View>
+            </ThemedPressable>
+          </View>
+        }
+      />
     </ThemedView>
   );
 };
@@ -60,17 +67,6 @@ export default LoginPage;
 
 function createStyles (colors) {
   return StyleSheet.create({
-    headerContainer: {
-      flex: 1,
-      justifyContent: "center",
-    }, 
-    inputContainer: {
-      flex: 3,
-      width: "100%",
-      maxWidth: 380,
-      flexDirection: "column",
-      justifyContent: "flex-start",
-    }, 
     input: {
       backgroundColor: colors.background,
       width: "100%", 
@@ -86,11 +82,5 @@ function createStyles (colors) {
       borderWidth: 1,
       borderRadius: 2,
     },
-    button: {
-      maxHeight: 35,
-      marginTop: 45,
-      height: 35,
-      borderRadius: 0,
-    }, 
   })
 }

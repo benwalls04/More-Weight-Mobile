@@ -1,10 +1,11 @@
-import { FlatList, StyleSheet, Dimensions, View } from "react-native";
+import { FlatList, StyleSheet, Dimensions, View, Animated } from "react-native";
 import { ThemedPressable } from "./ThemedPressable";
 import { ThemedView } from "./ThemedView";
 import { ThemedText } from "./ThemedText";
 import { ThemedLayout } from "./ThemedLayout";
 import { useSurveyContext } from "@/hooks/SurveyContext";
 const windowWidth = Dimensions.get('window').width * .85;
+const windowHeight = Dimensions.get('window').height;
 const BUTTON_MARGIN = 3;
 
 export default function SurveyGrid({
@@ -15,12 +16,14 @@ export default function SurveyGrid({
   surveyIndex,
   numColumns = 2,
   btnGrow = false,
+  headerLines = 2,
   btnHeight,
   listRef, 
   errorMsg,
   ...otherProps
 }) {
   const { surveyData, updateSurveyData } = useSurveyContext();
+  const scrollY = new Animated.Value(0);
 
   const handlePress = (index) => {
     let newData = {...surveyData}[surveyIndex];
@@ -38,11 +41,17 @@ export default function SurveyGrid({
   }
 
   const scrollToNext = () => {
-      listRef.current.scrollToIndex({
-        index: surveyIndex + 1,
-        animated: true,
-      });
-  }
+    const nextIndex = surveyIndex + 1;
+    const offset = nextIndex * windowHeight;
+  
+    Animated.timing(scrollY, {
+      toValue: offset, 
+      duration: 3000, 
+      useNativeDriver: false, 
+    }).start();
+  
+    listRef.current.scrollToOffset({ offset, animated: true }); 
+  };
   
   //const rem = data.length % numColumns;
   //const maxIndx = data.length - rem + 1;
@@ -56,7 +65,7 @@ export default function SurveyGrid({
       header={
         <ThemedText 
           type="title"
-          numberOfLines={2}
+          numberOfLines={headerLines}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
         >
@@ -75,7 +84,7 @@ export default function SurveyGrid({
             <ThemedPressable 
               onPress={() => handlePress(index)}
               type={surveyData[surveyIndex].includes(index) ? "selected" : "default"}
-              style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}, {height: btnHeight}]}
+              style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}, {height: 60}]}
             >
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>
             </ThemedPressable>

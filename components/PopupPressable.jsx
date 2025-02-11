@@ -86,10 +86,6 @@ function createStyles(colors) {
       height: '100%',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingHorizontal: 20,
-      borderRadius: 5,
-      backgroundColor: colors.buttonColorSelected,
-      zIndex: 2,
     },
     button: {
       backgroundColor: colors.buttonColor,
@@ -99,11 +95,6 @@ function createStyles(colors) {
       borderRadius: 5,
       borderWidth: 1,
       justifyContent: "center",
-      shadowColor: colors.shadowColor,
-      shadowOffset: {width: 2, height: 3},
-      shadowOpacity: .5,
-      shadowRadius: 4,
-      elevation: 5,
     }, 
   })
 }

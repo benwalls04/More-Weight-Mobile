@@ -4,7 +4,6 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import PopupPressable from "@/components/PopupPressable";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
-import SurveyNavBar from "@/components/SurveyNavBar";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useRouter } from "expo-router";
@@ -22,13 +21,12 @@ export default function Base() {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { setBase, setSplits, splits, setLeaf } = useSplitsContext();
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
-  // FIXME: function that changes long description to short: IE shoul, biceps, triceps -> arms 
   // FIXME: for 7 days, the component mounts before the data is loaded, so it shows nothing
   // FIXME: get all the logic for handling tree out 
   
@@ -39,13 +37,13 @@ export default function Base() {
         newSplits.selection = value;
         setSplits(newSplits);
       if (Array.isArray(newSplits.selection[0])){
-          setLoading(true);
+          setIsLoading(true);
           const response = await axios.post('https://more-weight.com/partition', { splits: newSplits.selection });
           newSplits.selection = response.data;
           setLeaf(response.data)
           setSplits(newSplits);
           setBase(SPLIT_TITLES[key])
-          setLoading(false);
+          setIsLoading(false);
           router.push("/split");
         } 
     }
@@ -85,13 +83,18 @@ export default function Base() {
     )
   }
 
-  if (loading) {
-    return <LoadingScreen />
-  }
+  
+  if (isLoading) {
+    return (
+      <LoadingScreen />
+    )
+  } 
   
   return (
     <ThemedView>
       <ThemedLayout
+        bodyFlex={2.5}
+
         header={
           <ThemedText 
             type="title"
@@ -124,20 +127,22 @@ export default function Base() {
               </ThemedPressable>
             )}        
           />
+        </View>
+      }
 
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
-            <ThemedPressable onPress={() => router.back()} style={styles.submitButton}> 
-              <ThemedText>Back</ThemedText>
+      footer={
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth, marginTop: 20}}>
+            <ThemedPressable onPress={() => router.back()} style={[styles.navButton, {alignItems: 'flex-start', paddingLeft: 0, flex: 1}]}> 
+              <ThemedText style={{fontSize: 18}}>&lt; go back</ThemedText>
             </ThemedPressable>
 
-            <ThemedPressable onPress={() => handleNext()} style={styles.submitButton}>
-              <ThemedText>Next</ThemedText>
-            </ThemedPressable>
-          </View>
-
-            <PopupPressable popupBody={popupBody} style={{marginTop: BUTTON_MARGIN, width: windowWidth, marginLeft: 10}}>
-              <ThemedText>More Info</ThemedText>
+            <PopupPressable popupBody={popupBody} style={[styles.navButton, {alignItems: 'center', paddingHorizontal: 23, flex: 1}]}>
+              <ThemedText style={{fontSize: 18}}>more info</ThemedText>
             </PopupPressable>
+
+            <ThemedPressable onPress={() => handleNext()} style={[styles.navButton, {alignItems: 'flex-end', paddingRight: 0, flex: 1}]}>
+              <ThemedText style={{fontSize: 18}}>continue &gt;</ThemedText>
+            </ThemedPressable>
         </View>
       }
       />
@@ -178,14 +183,10 @@ function createStyles(colors) {
       textAlign: 'center',
       lineHeight: 20,
     },
-    submitButton: {
+    navButton: {
       borderWidth: 0,
       height: 40,
-      width: '50%',
-      margin: BUTTON_MARGIN,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: colors.accentLight,
+      backgroundColor: "none",
     }, 
     popupEntry: {
       padding: 10,

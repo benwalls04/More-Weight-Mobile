@@ -5,6 +5,7 @@ import { COLORS } from "@/constants/Colors";
 export function ThemedPressable({
   style,
   type = "default",
+  btnHeight = 60,
   ...otherProps
 }) {
   const { theme } = useThemeContext();

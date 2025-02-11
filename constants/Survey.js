@@ -50,7 +50,9 @@ export const SURVEY_DATA = [
       }
     ],
     cols: 4, 
-    minimum: 3
+    minimum: 3, 
+    headerLines: 1,
+    btnGrow: true
   },
   {
     key: "bias",
@@ -90,7 +92,8 @@ export const SURVEY_DATA = [
     key: "style",
     type: "range",
     title: "What is your training goal?",
-    options: ["size", "strength"]
+    options: ["size", "strength"], 
+    headerLines: 1
   },
   {
     key: "sets",
@@ -213,6 +216,7 @@ export const SURVEY_DATA = [
       {title: "Machine Chest Press", res: "machine chest press"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -226,6 +230,7 @@ export const SURVEY_DATA = [
       {title: "Machine Overhead Press", res: "machine overhead press"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -239,6 +244,7 @@ export const SURVEY_DATA = [
       {title: "Machine Row", res: "machine row"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -252,6 +258,7 @@ export const SURVEY_DATA = [
       {title: "Machine Pulldown", res: "machine pulldown"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -265,6 +272,7 @@ export const SURVEY_DATA = [
       {title: "Leg Press", res: "leg press"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -278,6 +286,7 @@ export const SURVEY_DATA = [
       {title: "Barbell Hip Thrust", res: "barbell hip thrust"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -291,6 +300,7 @@ export const SURVEY_DATA = [
       {title: "Preacher Curl", res: "preacher curl"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {
@@ -304,6 +314,7 @@ export const SURVEY_DATA = [
       {title: "Machine Tricep Extension", res: "machine tricep extension"},
     ], 
     cols: 2,
+    headerLines: 1,
     required: true
   },
   {

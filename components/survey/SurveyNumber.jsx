@@ -1,7 +1,7 @@
 import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
-import { ThemedText } from "./ThemedText";
-import { ThemedView } from "./ThemedView";
-import { ThemedLayout } from "./ThemedLayout";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
+import { ThemedLayout } from "../ThemedLayout";
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 import SurveyNavBar from "./SurveyNavBar";

@@ -1,8 +1,8 @@
 import { FlatList, StyleSheet, Dimensions, View, Animated } from "react-native";
-import { ThemedPressable } from "./ThemedPressable";
-import { ThemedView } from "./ThemedView";
-import { ThemedText } from "./ThemedText";
-import { ThemedLayout } from "./ThemedLayout";
+import { ThemedPressable } from "../ThemedPressable";
+import { ThemedView } from "../ThemedView";
+import { ThemedText } from "../ThemedText";
+import { ThemedLayout } from "../ThemedLayout";
 import { useSurveyContext } from "@/hooks/SurveyContext";
 const windowWidth = Dimensions.get('window').width * .85;
 const windowHeight = Dimensions.get('window').height;

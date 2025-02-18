@@ -1,6 +1,6 @@
 export const SURVEY_DATA = [
   {
-    key: "experience",
+    key: "exp",
     type: "one",
     title: "What is your experience level?",
     options: [
@@ -280,7 +280,7 @@ export const SURVEY_DATA = [
     type: "one",
     title: "Which movement do you prefer?",
     options: [
-      {title: "Barbell Deadlift", res: "barbell deadlift"},
+      {title: "Barbell Deadlift", res: "deadlift"},
       {title: "Barbell Romanian Deadlift", res: "barbell romanian deadlift"},
       {title: "Dumbell Romanian Deadlift", res: "dumbell romanian deadlift"},
       {title: "Barbell Hip Thrust", res: "barbell hip thrust"},

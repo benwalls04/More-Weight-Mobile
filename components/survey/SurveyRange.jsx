@@ -1,7 +1,7 @@
 import { StyleSheet, Dimensions, View } from "react-native";
-import { ThemedView } from "./ThemedView";
-import { ThemedLayout } from "./ThemedLayout";
-import { ThemedText } from "./ThemedText";
+import { ThemedView } from "../ThemedView";
+import { ThemedLayout } from "../ThemedLayout";
+import { ThemedText } from "../ThemedText";
 import { useState } from "react";
 import Slider from '@react-native-community/slider';
 import { useRouter } from "expo-router";

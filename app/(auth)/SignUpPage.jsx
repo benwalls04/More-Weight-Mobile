@@ -1,4 +1,4 @@
-import { View, TextInput, Pressable, StyleSheet, Alert } from "react-native";
+import { View, TextInput, StyleSheet, Alert } from "react-native";
 import { useState } from "react";
 import { useUserContext } from "@/hooks/UserContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
@@ -23,7 +23,6 @@ const SignupPage = () => {
       Alert.alert(res);
     } 
   }
-  
 
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const Styles = createStyles(colors);

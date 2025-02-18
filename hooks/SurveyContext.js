@@ -1,8 +1,8 @@
 import React, { useState, useContext } from "react";
-import { useUserContext } from "./UserContext";
+import { useUserContext } from "@/hooks/UserContext";
 import { SURVEY_DATA } from "@/constants/Survey"
 import { useRouter } from "expo-router";
-import { useSplitsContext } from "./SplitsContext";
+import { useSplitsContext } from "@/hooks/SplitsContext";
 import axios from "axios";
 
 export const SurveyContext = React.createContext();
@@ -56,7 +56,11 @@ export function SurveyProvider({children}) {
     
     const STYLE_INDX = SURVEY_DATA.findIndex(item => item.key === "style");
     const style_choice = inputs[STYLE_INDX][0];
-    res.style = style_choice < .33 ? "b" : style_choice < .66 ? "n" : "p";
+    if (!style_choice) {
+      res.style = "n";
+    } else {
+      res.style = style_choice < .33 ? "b" : style_choice < .66 ? "n" : "p";
+    }
     skip.add(STYLE_INDX);
 
     skip.add(SURVEY_DATA.length);
@@ -74,8 +78,8 @@ export function SurveyProvider({children}) {
             res[INFO.key].push(val.res)
           }
         })
-      } else if (INFO.type === "range") {
-        res[INFO.key] = inputs[INDX][0] * 100;
+      } else if (INFO.type === "range") { 
+        res[INFO.key] = inputs[INDX][0] ? inputs[INDX][0] * 100 : 50;
       }
     })
 

@@ -21,12 +21,13 @@ export default function Base() {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { setBase, setSplits, splits, setLeaf } = useSplitsContext();
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
+  // FIXME: function that changes long description to short: IE shoul, biceps, triceps -> arms 
   // FIXME: for 7 days, the component mounts before the data is loaded, so it shows nothing
   // FIXME: get all the logic for handling tree out 
   
@@ -37,14 +38,14 @@ export default function Base() {
         newSplits.selection = value;
         setSplits(newSplits);
       if (Array.isArray(newSplits.selection[0])){
-          setIsLoading(true);
+          setLoading(true);
           const response = await axios.post('https://more-weight.com/partition', { splits: newSplits.selection });
           newSplits.selection = response.data;
           setLeaf(response.data)
           setSplits(newSplits);
           setBase(SPLIT_TITLES[key])
-          setIsLoading(false);
-          router.push("/split");
+          setLoading(false);
+          router.push("/(auth)/SignUpPage");
         } 
     }
   };
@@ -83,18 +84,13 @@ export default function Base() {
     )
   }
 
-  
-  if (isLoading) {
-    return (
-      <LoadingScreen />
-    )
-  } 
+  if (loading) {
+    return <LoadingScreen />
+  }
   
   return (
     <ThemedView>
       <ThemedLayout
-        bodyFlex={2.5}
-
         header={
           <ThemedText 
             type="title"
@@ -127,22 +123,20 @@ export default function Base() {
               </ThemedPressable>
             )}        
           />
-        </View>
-      }
 
-      footer={
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth, marginTop: 20}}>
-            <ThemedPressable onPress={() => router.back()} style={[styles.navButton, {alignItems: 'flex-start', paddingLeft: 0, flex: 1}]}> 
-              <ThemedText style={{fontSize: 18}}>&lt; go back</ThemedText>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
+            <ThemedPressable onPress={() => router.back()} style={styles.submitButton}> 
+              <ThemedText>Back</ThemedText>
             </ThemedPressable>
 
-            <PopupPressable popupBody={popupBody} style={[styles.navButton, {alignItems: 'center', paddingHorizontal: 23, flex: 1}]}>
-              <ThemedText style={{fontSize: 18}}>more info</ThemedText>
+            <ThemedPressable onPress={() => handleNext()} style={styles.submitButton}>
+              <ThemedText>Next</ThemedText>
+            </ThemedPressable>
+          </View>
+
+            <PopupPressable popupBody={popupBody} style={{marginTop: BUTTON_MARGIN, width: windowWidth, marginLeft: 10}}>
+              <ThemedText>More Info</ThemedText>
             </PopupPressable>
-
-            <ThemedPressable onPress={() => handleNext()} style={[styles.navButton, {alignItems: 'flex-end', paddingRight: 0, flex: 1}]}>
-              <ThemedText style={{fontSize: 18}}>continue &gt;</ThemedText>
-            </ThemedPressable>
         </View>
       }
       />
@@ -183,10 +177,14 @@ function createStyles(colors) {
       textAlign: 'center',
       lineHeight: 20,
     },
-    navButton: {
+    submitButton: {
       borderWidth: 0,
       height: 40,
-      backgroundColor: "none",
+      width: '50%',
+      margin: BUTTON_MARGIN,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.accentLight,
     }, 
     popupEntry: {
       padding: 10,

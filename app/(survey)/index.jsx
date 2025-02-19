@@ -9,8 +9,12 @@ import { ThemedView } from "@/components/ThemedView"
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedPressable } from "@/components/ThemedPressable"
 import { useSurveyContext } from "@/hooks/SurveyContext";
+import { router } from "expo-router";
 
 export default function Survey() {
+
+  // REMOVE after testing 
+  router.push("/(auth)/SignUpPage");
 
   const { getSplits, checkErrors } = useSurveyContext();
 

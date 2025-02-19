@@ -45,7 +45,7 @@ export default function Base() {
           setSplits(newSplits);
           setBase(SPLIT_TITLES[key])
           setLoading(false);
-          router.push("/(auth)/SignUpPage");
+          router.push("/splits");
         } 
     }
   };

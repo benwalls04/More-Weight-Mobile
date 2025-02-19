@@ -2,20 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal, FlatList, StyleSheet, Image } from 'react-native';
 import { MOVEMENTS } from "@/constants/Movements";
 import { useEditContext } from "@/hooks/EditContext";
+import { useUserContext } from "@/hooks/UserContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
 
 export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
+
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
-  const { tmpRoutine, addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions } = useEditContext();
-  const lowerRep = tmpRoutine[dayIndex][workoutIndex].lowerRep;
-  const upperRep = tmpRoutine[dayIndex][workoutIndex].upperRep;
-  const bias = movement === "new movement"? 'neutral': tmpRoutine[dayIndex][workoutIndex].bias;
+  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions } = useEditContext();
+  const { routineCpy } = useUserContext();
+
+  const lowerRep = routineCpy[dayIndex].movements[workoutIndex].lowerRep;
+  const upperRep = routineCpy[dayIndex].movements[workoutIndex].upperRep;
+  const bias = movement === "new movement"? 'neutral': routineCpy[dayIndex].movements[workoutIndex].bias;
+  // FIXME: add logic for dropdowns after styling. 
+  const showDropdown = false;
 
   const handleBias = (index) => {
     if (tagsSelect[index] === false){

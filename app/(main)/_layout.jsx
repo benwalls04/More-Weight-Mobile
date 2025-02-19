@@ -1,9 +1,14 @@
 import { EditProvider } from "@/hooks/EditContext";
+import { Stack } from "expo-router";
 
-export default function MainLayout() {
+export default function RootLayout() {
   return (
-    <EditProvider>
-      <EditPage />
-    </EditProvider>
-  )
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+
+      <EditProvider>
+        <Stack.Screen name="EditPage" options={{ headerShown: false }} />
+      </EditProvider>
+    </Stack>
+  );
 }

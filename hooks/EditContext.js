@@ -11,28 +11,24 @@ export function useEditContext() {
   return editState;
 }
 
+
 export function EditProvider({children}){
-  const router = useRouter();
-  const { routine, setRoutine, info } = useUserContext();
-  const [tmpRoutine, setTmpRoutine] = useState([]);
-
-  useEffect(() => {
-    setTmpRoutine(routine)
-  }, [routine])
-
+  const { routineCpy, setRoutineCpy, setRoutine, info } = useUserContext();
+  
   const NUM_SETS = info.numSets;
   const EXP_ICON = info.exp;
   const ACCESSORIES = info.accessories;
+  
 
   const finish = async () => {
-    setRoutine(tmpRoutine);
+    setRoutine(routineCpy);
     //router.push("/");
   }
 
   const updateRoutine = (newDay, dayIndex) => {
-    const newRoutine = [...tmpRoutine];
+    const newRoutine = [...routineCpy];
     newRoutine[dayIndex] = newDay;
-    setTmpRoutine(newRoutine);
+    setRoutineCpy(newRoutine);
   }
 
   const findLastIndex = (array, key, value) => {
@@ -54,7 +50,7 @@ export function EditProvider({children}){
   };
 
   const addMovement = (dayIndex, workoutIndex, movement) => {
-    const newRoutine = [...tmpRoutine];
+    const newRoutine = [...routineCpy];
     let movements = newRoutine[dayIndex].movements;
     let sets = newRoutine[dayIndex].sets;
 
@@ -74,11 +70,11 @@ export function EditProvider({children}){
     }
     newRoutine[dayIndex].sets = sets;
     
-    setTmpRoutine(newRoutine);
+    updateRoutine(dayIndex, newRoutine);
   }
 
   const removeMovement = (dayIndex, movement) => {
-    const newDay = [...tmpRoutine][dayIndex];
+    const newDay = [...routineCpy][dayIndex];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -90,7 +86,7 @@ export function EditProvider({children}){
   }
 
   const moveUp = (dayIndex, workoutIndex, movement) => {
-    const newDay = [...tmpRoutine][dayIndex];
+    const newDay = [...routineCpy][dayIndex];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -112,7 +108,7 @@ export function EditProvider({children}){
   }
 
   const moveDown = (dayIndex, workoutIndex, movement) => {
-    const newDay = [...tmpRoutine][dayIndex];
+    const newDay = [...routineCpy][dayIndex];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -135,7 +131,7 @@ export function EditProvider({children}){
   }
 
   const changeMovement = (dayIndex, workoutIndex, oldMovement, newMovement) => {
-    const newDay = [...tmpRoutine][dayIndex];
+    const newDay = [...routineCpy][dayIndex];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -178,7 +174,7 @@ export function EditProvider({children}){
   }
 
   const changeBias = (dayIndex, workoutIndex, movement, newBias) => {
-    const newDay = {...tmpRoutine}[dayIndex];
+    const newDay = {...routineCpy}[dayIndex];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -197,8 +193,10 @@ export function EditProvider({children}){
   }
 
   const getSubOptions = (dayIndex, text) => {
-    const title = tmpRoutine[dayIndex].title
-    const movements = tmpRoutine[dayIndex].movements
+
+    const title = routineCpy[dayIndex].title
+
+    const movements = routineCpy[dayIndex].movements
     let options = [];
     
     for (let name in MOVEMENTS) {
@@ -211,7 +209,6 @@ export function EditProvider({children}){
   }
 
   const editState = {
-    tmpRoutine: tmpRoutine,
     finish: finish,
     updateRoutine: updateRoutine,
     changeMovement: changeMovement,

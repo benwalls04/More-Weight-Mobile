@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import axios from "axios";
 import { router } from "expo-router";
 
@@ -17,8 +17,15 @@ export function useUserContext() {
 export function UserProvider({children}) {
   const [username, setUsername] = useState("");
   const [routine, setRoutine] = useState([]);
+  const [routineCpy, setRoutineCpy] = useState([]);
   const [info, setInfo] = useState({});
   const [split, setSplit] = useState([]);
+
+  useEffect(() => {
+    if (routineCpy.length > 0) {
+      router.push("/(main)/EditPage");
+    }
+  }, [routineCpy]);
 
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
@@ -48,13 +55,56 @@ export function UserProvider({children}) {
       }
 
       try {
-        const params = formatParams(info);
-        const response = await axios.post('https://more-weight.com/new-user', {
-          inputs: params, username: username.toLowerCase(), password: password.toLowerCase()
+        //const params = formatParams(info);
+
+        // FIXME: remove after testing 
+        function generateRandomString(length) {
+          const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+          let result = '';
+          for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+          }
+          return result;
+        }
+
+        const tmpParams = {
+          "accessories": ["abs", "rear deltoids"],
+          "back": 50,
+          "base": "dummy value",
+          "bias": [0.5, 0.75, 0.5, 0.5, 0.75, 0.5],
+          "chest": 50,
+          "curl": "cable curl",
+          "exp": "i",
+          "extension": "cable overhead extension",
+          "hip-extension": "barbell romanian deadlift",
+          "horizontal-press": "dumbell bench press",
+          "horizontal-pull": "barbell row",
+          "knee-flexion": "hack squat",
+          "legs": 50,
+          "numDays": 7,
+          "schedule": ["lift", "lift", "lift", "rest", "rest", "rest", "rest"],
+          "sets": 3,
+          "splits": {
+            "selection": ["back biceps", "legs", "chest shoulders triceps", "rest", "rest", "rest", "rest"]
+          },
+          "style": "n",
+          "time": 45,
+          "title": "dummy value",
+          "vertical-press": "dumbell overhead press",
+          "vertical-pull": "lat pulldown"
+        }
+
+        setInfo(tmpParams);
+      
+        const username = generateRandomString(10);
+        const password = generateRandomString(10);
+
+        const response = await axios.post('http://localhost:3001/new-user', {
+          inputs: tmpParams, username: username.toLowerCase(), password: password.toLowerCase()
         });
         setRoutine(response.data.routine);
+        setRoutineCpy(response.data.routine);
         setUsername(username);
-        router.push("/(main)/EditPage")
       } catch (error) {
         if (error.response) {
           if (error.response.status === 400) {
@@ -87,10 +137,12 @@ export function UserProvider({children}) {
 
   const userState = {
     username: username, 
-    routine: routine, 
     setRoutine: setRoutine,
+    routine: routine, 
     split: split,
     setSplit: setSplit,
+    routineCpy: routineCpy,
+    setRoutineCpy: setRoutineCpy,
     info: info,
     setInfo: setInfo,
     login: login,

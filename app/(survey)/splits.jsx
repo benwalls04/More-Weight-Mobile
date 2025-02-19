@@ -69,7 +69,7 @@ export default function Split() {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);
 
-      // FIXME: go to sign up page 
+      router.push("/(auth)/SignUpPage");
     } else {
       Alert.alert("Error");
     }

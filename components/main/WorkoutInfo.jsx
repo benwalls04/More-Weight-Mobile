@@ -109,24 +109,42 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
 
   return (
     <View style={styles.container}>
-      <ThemedText>{biasText}</ThemedText>
-      <ThemedPressable onPress={() => changeDropdowns(movement)}>
-        <ThemedText>{showDropdown? "-": "+"}</ThemedText>
-      </ThemedPressable>
-      
-      <View style={styles.flexboxRow}>
-        <View style={{ width: '78%' }}>
-          <TextInput
-            style={styles.movementTitle}
-            value={subText}
-            onChange={(e) => handleChange(e)}
-            onFocus={() => setShowSubs(true)}
-            onBlur={handleBlur}
+      <View style={[styles.flexboxRow, {flex: 1}]}>
+        <ThemedPressable onPress={() => changeDropdowns(movement)} style={[{flex: 1}, styles.closeButton]}>
+          <ThemedText style={{textAlign: "center", fontSize: 20}}>{showDropdown? "-": "+"}</ThemedText>
+        </ThemedPressable>
+        
+        <View style={[styles.flexboxRow, {flex: 9}]}>
+          <ThemedText style={{width: "100%"}}>{biasText}</ThemedText>
+
+          <View style={{width: "65%"}}>
+            <TextInput
+              style={styles.movementTitle}
+              value={subText}
+              onChange={(e) => handleChange(e)}
+              onFocus={() => setShowSubs(true)}
+              onBlur={handleBlur}
+            />
+          </View>
+          <ThemedText style={{width: "35%", textAlign: "right", fontSize: 12}}>
+            {lowerRep} - {upperRep} reps
+          </ThemedText>
+
+          <FlatList 
+            data={tags}
+            renderItem={({ item, index }) => (
+              <View style={{marginLeft: 10}}>
+                <ThemedPressable key={index} style={[styles.tag, { backgroundColor: tagsSelect[index] ? colors.tint : "gray"}]} onPress={() => handleBias(index)}>
+                  <ThemedText style={styles.tagText}>{item}</ThemedText>
+                </ThemedPressable>
+              </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tagContainer}
           />
         </View>
-        <ThemedText>
-          {lowerRep} - {upperRep} reps
-        </ThemedText>
       </View>
 
       <Modal visible={showSubs} animationType="slide" transparent={true}>
@@ -143,14 +161,6 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
         </View>
       </Modal>
 
-      <View style={styles.tagBox}>
-        {tags.map((tag, index) => (
-          <ThemedPressable key={index} style={tagsSelect[index] ? styles.tagSelect : styles.tag} onPress={() => handleBias(index)}>
-            <ThemedText>{tag}</ThemedText>
-          </ThemedPressable>
-        ))}
-      </View>
-
       <View style={styles.centerDiv}>
         <View style={styles.btnGrid}>
           <ThemedPressable style={styles.editBtn} onPress={() => setShowSubs(true)}>
@@ -163,10 +173,10 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
             <ThemedText>-</ThemedText>
           </ThemedPressable>
           <ThemedPressable style={styles.editBtn} onPress={() => moveUp(dayIndex, workoutIndex, movement)}>
-            <ThemedText>up</ThemedText>
+            <ThemedText>u</ThemedText>
           </ThemedPressable>
           <ThemedPressable style={styles.editBtn} onPress={() => moveDown(dayIndex, workoutIndex, movement)}>
-            <ThemedText>down</ThemedText>
+            <ThemedText>d</ThemedText>
           </ThemedPressable>
         </View>
       </View>
@@ -181,20 +191,32 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
 function createStyles(colors) { 
   return StyleSheet.create({
   container: {
-    padding: 10,
+    padding: 0,
+    width: '100%',
+    flex: 1,
   },
   iconButton: {
     marginBottom: 5,
   },
   closeButton: {
-    // Add styling for close button
+    borderColor: "none",
+    borderWidth: 0,
+    alignItems: "center"
+  },
+  flexboxCol: {
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   flexboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
   movementTitle: {
-    // Add styling for the movement title text input
+    color: colors.text,
+    textAlign: "left",
+    paddingLeft: 12,
+    fontSize: 18
   },
   modalView: {
     flex: 1,
@@ -207,19 +229,24 @@ function createStyles(colors) {
     backgroundColor: 'white',
     margin: 5,
   },
-  tagBox: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  tagContainer: {
+    marginTop: 8,
+    alignItems: 'flex-start',
+    width: '100%',
+  },
+  tagText: {
+    fontSize: 12,
+    textAlign: 'center',
   },
   tagSelect: {
-    backgroundColor: 'green',
-    padding: 5,
-    margin: 5,
+    backgroundColor: colors.tint,
   },
   tag: {
     backgroundColor: 'gray',
-    padding: 5,
-    margin: 5,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    height: 30,
+    borderColor: "none"
   },
   centerDiv: {
     alignItems: 'center',
@@ -231,6 +258,7 @@ function createStyles(colors) {
     width: '100%',
   },
   editBtn: {
+    flex: 1,
     padding: 10,
     backgroundColor: '#ddd',
   },

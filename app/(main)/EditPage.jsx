@@ -30,7 +30,7 @@ export default function EditPage() {
               data={WEEKDAYS}
               keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={Styles.weekdayBtnContainer}
-            renderItem={({ item, index}) => (
+              renderItem={({ item, index}) => (
               <ThemedPressable onPress={() => setDayIndex(index)} style={Styles.weekdayBtn} type={index === dayIndex ? "selected" : "default"}>
                 <ThemedText>{item}</ThemedText>
               </ThemedPressable>

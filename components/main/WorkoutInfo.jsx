@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, FlatList, StyleSheet, Image } from 'react-native';
+import { View, TextInput, Modal, FlatList, StyleSheet, Dimensions} from 'react-native';
 import { MOVEMENTS } from "@/constants/Movements";
 import { useEditContext } from "@/hooks/EditContext";
 import { useUserContext } from "@/hooks/UserContext";
@@ -7,6 +7,12 @@ import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import PopupPressable from "@/components/PopupPressable";
+import MovementPopup from "@/components/main/MovementPopup";
+import Popup from "@/components/Popup";
+
+const windowWidth = Dimensions.get("window").width;
+const LINE_WIDTH = windowWidth * .9;
 
 export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
 
@@ -14,14 +20,20 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
-  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions } = useEditContext();
+  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets } = useEditContext();
   const { routineCpy } = useUserContext();
 
   const lowerRep = routineCpy[dayIndex].movements[workoutIndex].lowerRep;
   const upperRep = routineCpy[dayIndex].movements[workoutIndex].upperRep;
   const bias = movement === "new movement"? 'neutral': routineCpy[dayIndex].movements[workoutIndex].bias;
-  // FIXME: add logic for dropdowns after styling. 
-  const showDropdown = false;
+    
+  const sets = getSets(dayIndex, movement);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const popupBody = () => {
+    return (
+      <MovementPopup sets={sets} movement={movement} />
+    )
+  }
 
   const handleBias = (index) => {
     if (tagsSelect[index] === false){
@@ -109,10 +121,11 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.flexboxRow, {flex: 1}]}>
-        <ThemedPressable onPress={() => changeDropdowns(movement)} style={[{flex: 1}, styles.closeButton]}>
-          <ThemedText style={{textAlign: "center", fontSize: 20}}>{showDropdown? "-": "+"}</ThemedText>
-        </ThemedPressable>
+      <Popup body={popupBody} visible={popupVisible} onClose={() => setPopupVisible(false)}/>
+      <View style={[styles.flexboxRow]}>
+        <PopupPressable popupBody={popupBody} style={styles.closeButton}>
+            <ThemedText style={{fontSize: 20}}>+</ThemedText>
+        </PopupPressable>
         
         <View style={[styles.flexboxRow, {flex: 9}]}>
           <ThemedText style={{width: "100%"}}>{biasText}</ThemedText>
@@ -161,28 +174,27 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
         </View>
       </Modal>
 
-      <View style={styles.centerDiv}>
-        <View style={styles.btnGrid}>
-          <ThemedPressable style={styles.editBtn} onPress={() => setShowSubs(true)}>
-            <Image source={{ uri: "/media/footer-icons/change-icon.png" }} style={styles.iconImage} />
-          </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} onPress={() => addMovement(dayIndex, workoutIndex, movement)}>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
+        <View style={styles.editBtnGrid}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(dayIndex, workoutIndex, movement)}>
             <ThemedText>+</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} onPress={() => removeMovement(dayIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(dayIndex, movement)}>
             <ThemedText>-</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} onPress={() => moveUp(dayIndex, workoutIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(dayIndex, workoutIndex, movement)}>
             <ThemedText>u</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} onPress={() => moveDown(dayIndex, workoutIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(dayIndex, workoutIndex, movement)}>
             <ThemedText>d</ThemedText>
           </ThemedPressable>
         </View>
-      </View>
 
-      <View style={styles.centerDiv}>
-        <View style={styles.editLine} />
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <View style={styles.editLine}>
+            <ThemedText style={{color: colors.background}}>...</ThemedText>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -193,7 +205,7 @@ function createStyles(colors) {
   container: {
     padding: 0,
     width: '100%',
-    flex: 1,
+    justifyContent: "flex-start",
   },
   iconButton: {
     marginBottom: 5,
@@ -201,7 +213,9 @@ function createStyles(colors) {
   closeButton: {
     borderColor: "none",
     borderWidth: 0,
-    alignItems: "center"
+    width: 30,
+    alignItems: "center",
+    flex: 1,
   },
   flexboxCol: {
     flexDirection: 'column',
@@ -211,6 +225,7 @@ function createStyles(colors) {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
+    marginTop: 10,
   },
   movementTitle: {
     color: colors.text,
@@ -248,28 +263,26 @@ function createStyles(colors) {
     height: 30,
     borderColor: "none"
   },
-  centerDiv: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnGrid: {
+  editBtnGrid: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
+    width: '50%',
+    zIndex: 2
   },
   editBtn: {
     flex: 1,
-    padding: 10,
-    backgroundColor: '#ddd',
+    height: 30,
   },
   iconImage: {
     width: 20,
     height: 20,
   },
   editLine: {
+    backgroundColor: "gray",
     height: 1,
-    backgroundColor: 'gray',
-    marginTop: 10,
-    },
+    width: LINE_WIDTH,
+    marginTop: -30,
+    zIndex: 1
+  },
   });
 }

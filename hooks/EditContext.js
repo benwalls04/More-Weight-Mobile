@@ -3,6 +3,8 @@ import { useUserContext } from "@/hooks/UserContext";
 import { useRouter } from "expo-router";
 import { MOVEMENTS } from "@/constants/Movements";
 import axios from "axios";
+import Popup from "@/components/Popup";
+import MovementPopup from "@/components/main/MovementPopup";
 
 export const EditContext = React.createContext();
 
@@ -208,6 +210,12 @@ export function EditProvider({children}){
     return options;
   }
 
+  const getSets = (dayIndex, movement) => {
+    const sets = routineCpy[dayIndex].sets;
+    const setsForMovement = sets.filter(set => set.movement === movement);
+    return setsForMovement;
+  }
+
   const editState = {
     finish: finish,
     updateRoutine: updateRoutine,
@@ -218,6 +226,7 @@ export function EditProvider({children}){
     moveUp: moveUp,
     moveDown: moveDown,
     getSubOptions: getSubOptions,
+    getSets: getSets,
   }
 
   return (

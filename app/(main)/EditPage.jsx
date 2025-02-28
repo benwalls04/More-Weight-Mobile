@@ -38,8 +38,15 @@ export default function EditPage() {
           />
         </View>
 
-        <WorkoutInfo workoutIndex={0} dayIndex={dayIndex} movement={routineCpy[dayIndex].movements[0].movement} />
-        
+        <FlatList
+          data={routineCpy[dayIndex].movements}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom: 120}}
+          renderItem={({ item, index}) => (
+            <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} />
+          )}
+        />        
             
       </ThemedView>
     </EditProvider>

@@ -57,6 +57,14 @@ function createStyles(colors) {
       borderColor: "transparent",
       color: colors.text,
     },
+    slanted: {
+      backgroundColor: colors.background,
+      padding: 10,
+      alignItems: "center",
+      transform: [{ skewX: '-10deg' }],
+      borderRadius: 0,
+      borderColor: colors.tint
+    }
   })
 }
 

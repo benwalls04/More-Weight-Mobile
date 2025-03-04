@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Modal, FlatList, StyleSheet, Dimensions} from 'react-native';
+import { View, TextInput, FlatList, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import { MOVEMENTS } from "@/constants/Movements";
 import { useEditContext } from "@/hooks/EditContext";
 import { useUserContext } from "@/hooks/UserContext";
@@ -94,19 +94,29 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
   }, [tags]);
 
 
-  const [subOptions, setSubOptions] = useState(getSubOptions(dayIndex, ''));
+  const [subOptions, setSubOptions] = useState([]);
   const [showSubs, setShowSubs] = useState(false);
   const [subText, setSubText] = useState(movement);
 
   const handleChange = (e) => {
     setSubText(e.target.value.toLowerCase());
-    setSubOptions(getSubOptions(dayIndex, e.target.value));
+    const newText = e.target.value.toLowerCase();
+    setSubText(newText);
+    if (showSubs) {
+      setSubOptions(getSubOptions(dayIndex, newText));
+    }
   }
 
   useEffect(() => {
     setSubText(movement);
   }, [movement]);
   useEffect(() => (setSubOptions(getSubOptions(dayIndex, ''))), [movement]);
+
+  const handleFocus = () => {
+    setShowSubs(true);
+    // Load options when dropdown is shown
+    setSubOptions(getSubOptions(dayIndex, subText));
+  };
 
   const handleBlur = () => {
     setTimeout(() => {
@@ -128,18 +138,20 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
         </PopupPressable>
         
         <View style={[styles.flexboxRow, {flex: 9}]}>
-          <ThemedText style={{width: "100%"}}>{biasText}</ThemedText>
-
           <View style={{width: "65%"}}>
+            <ThemedText style={styles.biasText}>{biasText}</ThemedText>
+          </View>
+
+          <View style={{width: "70%"}}>
             <TextInput
               style={styles.movementTitle}
               value={subText}
               onChange={(e) => handleChange(e)}
-              onFocus={() => setShowSubs(true)}
+              onFocus={handleFocus}
               onBlur={handleBlur}
             />
           </View>
-          <ThemedText style={{width: "35%", textAlign: "right", fontSize: 12}}>
+          <ThemedText style={styles.repsText}>
             {lowerRep} - {upperRep} reps
           </ThemedText>
 
@@ -160,19 +172,35 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
         </View>
       </View>
 
-      <Modal visible={showSubs} animationType="slide" transparent={true}>
-        <View style={styles.modalView}>
-          <FlatList
-            data={subOptions}
-            renderItem={({ item }) => (
-              <ThemedPressable onPress={() => changeMovement(dayIndex, workoutIndex, movement, item)}>
-                <ThemedText>{item}</ThemedText>
-              </ThemedPressable>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
-      </Modal>
+      {showSubs && (
+      <View style={[styles.subDropdown, {top: biasText === '' ? 50: 62}]}>
+        <ScrollView
+          nestedScrollEnabled={true}
+          showsVerticalScrollIndicator={true}
+          indicatorStyle="white" // Try setting an explicit color
+          persistentScrollbar={true} // Make scrollbar always visible
+          style={{ 
+            maxHeight: 150,
+            width: '100%' // Ensure full width
+          }}
+          contentContainerStyle={{
+            paddingRight: 5 // Add padding for the scrollbar
+          }}
+        >
+          {subOptions.map((item, index) => (
+            <ThemedPressable 
+              key={index.toString()}
+              style={styles.subOption} 
+              onPress={() => changeMovement(dayIndex, workoutIndex, movement, item)}
+            >
+              <ThemedText>{item}</ThemedText>
+            </ThemedPressable>
+          ))}
+        </ScrollView>
+      </View>
+      )}
+
+
 
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <View style={styles.editBtnGrid}>
@@ -231,18 +259,41 @@ function createStyles(colors) {
     color: colors.text,
     textAlign: "left",
     paddingLeft: 12,
-    fontSize: 18
+    fontSize: 18,
   },
-  modalView: {
-    flex: 1,
+  repsText: {
+    padding: 0,
+    fontSize: 12,
+    textAlign: "left",
+    paddingLeft: 14,
+  },
+  biasText: {
+    fontStyle: "italic",
+    fontSize: 14,
+    lineHeight: 12,
+    textAlign: "left",
+    paddingLeft: 14,
+  },
+  subDropdown: {
+    position: 'absolute',
+    left: 29,
+    width: 250,
+    maxHeight: 105,
+    backgroundColor: colors.background,
+    overflow: 'hidden',
+    zIndex: 4,
+  },
+  subOption: {
+    fontSize: 10,
+    textAlign: 'left',
+    height: 35,
+    backgroundColor: 'rgb(120, 120, 120)',
+    color: 'white',
+    borderColor: 'rgb(62, 62, 62)',
+    borderWidth: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', 
-  },
-  subOptionButton: {
-    padding: 10,
-    backgroundColor: 'white',
-    margin: 5,
+    paddingHorizontal: 10,
+    zIndex: 5,
   },
   tagContainer: {
     marginTop: 8,
@@ -258,10 +309,10 @@ function createStyles(colors) {
   },
   tag: {
     backgroundColor: 'gray',
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     borderRadius: 12,
-    height: 30,
-    borderColor: "none"
+    height: 28,
+    borderWidth: 0,
   },
   editBtnGrid: {
     flexDirection: 'row',

@@ -1,11 +1,11 @@
 import WorkoutInfo from "@/components/main/WorkoutInfo";
 import { useUserContext } from "@/hooks/UserContext";
-import { EditProvider } from "@/hooks/EditContext";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { ThemedText } from "@/components/ThemedText";
 import { FlatList, StyleSheet, View, Dimensions } from "react-native";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { EditProvider, useEditContext } from "@/hooks/EditContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 const windowWidth = Dimensions.get("window").width;
@@ -18,12 +18,11 @@ export default function EditPage() {
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const Styles = createStyles(colors);
 
-  const [dayIndex, setDayIndex] = useState(0)
   const WEEKDAYS = ["M", "T", "W", "Th", "F", "S", "Su"]
   const { routineCpy } = useUserContext();
-      
+  const { dayIndex, setDayIndex } = useEditContext();
+
   return (
-    <EditProvider>
       <ThemedView>
         <View style={Styles.headerContainer}>
           <FlatList 
@@ -47,22 +46,15 @@ export default function EditPage() {
             <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} />
           )}
         />        
-            
-      </ThemedView>
-    </EditProvider>
 
+        <View style={Styles.stickyButtonContainer}>
+          <ThemedPressable style={Styles.doneButton} onPress={() => console.log('Done Editing')}>
+            <ThemedText>Done Editing</ThemedText>
+          </ThemedPressable>
+        </View>
+      </ThemedView>
   )
 }
-
-/*
-<FlatList
-          data={tmpRoutine[dayIndex].movements}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index}) => (
-            <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} />
-          )}
-        />
- */
 
 function createStyles (colors) {
   return StyleSheet.create({
@@ -86,6 +78,23 @@ function createStyles (colors) {
       borderRadius: 0,
       height: 40,
       zIndex: 100
-    }
+    },
+    stickyButtonContainer: {
+      position: 'absolute',
+      bottom: 0,
+      width: '90%',
+      alignItems: 'center',
+      padding: 0,
+      backgroundColor: colors.background,
+      marginBottom: 35,
+    },
+    doneButton: {
+      width: '100%', 
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: 0,
+      backgroundColor: colors.primary, 
+      borderRadius: 5,
+    },
   })
 }

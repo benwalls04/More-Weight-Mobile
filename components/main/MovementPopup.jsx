@@ -6,7 +6,6 @@ import { COLORS } from '@/constants/Colors';
 
 const MovementPopup = ({
   sets,
-  updateSets,
   movement,
 }) => {
   const theme = useThemeContext();
@@ -29,18 +28,6 @@ const MovementPopup = ({
     return true;
   }
 
-  const handleBlur = (value, setIndex, field) => {
-    let updatedSets = { ...sets[setIndex] };
-    const newVal = field === 'RPE' ? parseInt(value) : parseFloat(value);
-    if (!validChange(newVal, field)) {
-      setShowError(true);
-    } else {
-      updatedSets[field] = newVal;
-      setShowError(false);
-      updateSets(updatedSets, setIndex, movement);
-    }
-  };
-
   const renderSetRow = ({ item: set, index }) => (
     <View style={styles.setRow}>
       <ThemedText style={styles.cellText}>{index + 1}</ThemedText>
@@ -61,6 +48,7 @@ const MovementPopup = ({
 
   return (
     <View style={styles.container}>
+      <ThemedText type="header" style={{marginVertical: 15, alignSelf: "center"}}>{movement}</ThemedText>
       <View style={styles.gridContainer}>
         <View style={styles.setsGrid}>
           <View style={styles.headerRow}>
@@ -87,8 +75,8 @@ const MovementPopup = ({
 function createStyles(colors) {
   return StyleSheet.create({
     container: {
-      width: '100%',
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: "column",
     paddingHorizontal: 5,
     paddingVertical: 15,
   },

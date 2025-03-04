@@ -1,11 +1,7 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import { useUserContext } from "@/hooks/UserContext";
-import { useRouter } from "expo-router";
 import { MOVEMENTS } from "@/constants/Movements";
-import axios from "axios";
-import Popup from "@/components/Popup";
-import MovementPopup from "@/components/main/MovementPopup";
-
+import { REST_TIMES } from "@/constants/RestTimes";
 export const EditContext = React.createContext();
 
 export function useEditContext() {
@@ -13,9 +9,23 @@ export function useEditContext() {
   return editState;
 }
 
+const globalDayIndexRef = { current: 0 };
 
 export function EditProvider({children}){
   const { routineCpy, setRoutineCpy, setRoutine, info } = useUserContext();
+  
+  const [dayIndex, setDayIndex] = useState(globalDayIndexRef.current);
+  
+  // Update the global ref when dayIndex changes
+  useEffect(() => {
+    globalDayIndexRef.current = dayIndex;
+  }, [dayIndex]);
+  
+  // Custom setter that updates both state and global ref
+  const setDayIndexWithRef = (newIndex) => {
+    globalDayIndexRef.current = newIndex;
+    setDayIndex(newIndex);
+  };
   
   const NUM_SETS = info.numSets;
   const EXP_ICON = info.exp;
@@ -136,12 +146,13 @@ export function EditProvider({children}){
     const newDay = [...routineCpy][dayIndex];
     let movements = newDay.movements;
     let sets = newDay.sets;
-
     // get info for the new movement 
+    const oldMovementObj = newDay.movements[workoutIndex]
+
     const RPESeq = MOVEMENTS[newMovement].sequences[EXP_ICON];
-    const lowerRep = oldMovement.movement === "new movement"? 8 : oldMovement.lowerRep;
-    const upperRep = oldMovement.movement === "new movement"? 12: oldMovement.upperRep;
-    const newBias = MOVEMENTS[newMovement].biasOrder.includes(oldMovement.bias)? oldMovement.bias : MOVEMENTS[newMovement].biasOrder.includes('neutral')? 'neutral': MOVEMENTS[newMovement].biasOrder[0];
+    const lowerRep = oldMovementObj.movement === "new movement"? 8 : oldMovementObj.lowerRep;
+    const upperRep = oldMovementObj.movement === "new movement"? 12: oldMovementObj.upperRep;
+    const newBias = MOVEMENTS[newMovement].biasOrder.includes(oldMovementObj.bias)? oldMovementObj.bias : MOVEMENTS[newMovement].biasOrder.includes('neutral')? 'neutral': MOVEMENTS[newMovement].biasOrder[0];
 
     // update movements array
     // FIXME: stimulus is not accurate 
@@ -151,18 +162,18 @@ export function EditProvider({children}){
       RPE: RPESeq, 
       lowerRep: lowerRep,
       upperRep: upperRep,
-      stimilus: oldMovement.stimulus, 
+      stimilus: oldMovementObj.stimulus, 
     };
     newDay.movements = movements;
 
     // update allSets array
     // FIXME: last rest is not updated individually 
-    const firstIndex = findFirstIndex(sets, "movement", oldMovement.movement);
+    const firstIndex = findFirstIndex(sets, "movement", oldMovementObj.movement);
     let count = 0;
     for (let i = firstIndex; i < sets.length; i++){
-      if (sets[i].movement === oldMovement.movement){
+      if (sets[i].movement === oldMovementObj.movement){
         sets[i] = {
-          movement: newMovement, RPE: RPESeq[count], rest: restTimes[lowerRep / 2 - 1][RPESeq[count] - 7], num: count + 1, bias: newBias, lowerRep: lowerRep, upperRep: upperRep
+          movement: newMovement, RPE: RPESeq[count], rest: REST_TIMES[lowerRep / 2 - 1][RPESeq[count] - 7], num: count + 1, bias: newBias, lowerRep: lowerRep, upperRep: upperRep
         }
         count++;
       }
@@ -201,8 +212,15 @@ export function EditProvider({children}){
     const movements = routineCpy[dayIndex].movements
     let options = [];
     
+    // FIXME: order the subs by relevance 
     for (let name in MOVEMENTS) {
       if (!movements.some(entry => entry.movement === name) && (title.includes(MOVEMENTS[name].primary) || ACCESSORIES.includes(MOVEMENTS[name].primary) && name.includes(text))) {
+        options.push(name)
+      }
+    }
+
+    for (let name in MOVEMENTS) {
+      if (movements.some(entry => entry.movement === name) && (title.includes(MOVEMENTS[name].primary) || ACCESSORIES.includes(MOVEMENTS[name].primary) && name.includes(text))) {
         options.push(name)
       }
     }
@@ -227,6 +245,8 @@ export function EditProvider({children}){
     moveDown: moveDown,
     getSubOptions: getSubOptions,
     getSets: getSets,
+    dayIndex: dayIndex,
+    setDayIndex: setDayIndexWithRef,
   }
 
   return (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect,useContext } from "react";
+import { useRouter } from "expo-router";
 import { useUserContext } from "@/hooks/UserContext";
 import { MOVEMENTS } from "@/constants/Movements";
 import { REST_TIMES } from "@/constants/RestTimes";
@@ -10,6 +11,7 @@ export function useEditContext() {
 }
 
 const globalDayIndexRef = { current: 0 };
+const router = useRouter();
 
 export function EditProvider({children}){
   const { routineCpy, setRoutineCpy, setRoutine, info } = useUserContext();
@@ -34,7 +36,7 @@ export function EditProvider({children}){
 
   const finish = async () => {
     setRoutine(routineCpy);
-    //router.push("/");
+    router.push("/(main)/(tabs)/Workout");
   }
 
   const updateRoutine = (newDay, dayIndex) => {

@@ -20,7 +20,7 @@ export default function EditPage() {
 
   const WEEKDAYS = ["M", "T", "W", "Th", "F", "S", "Su"]
   const { routineCpy } = useUserContext();
-  const { dayIndex, setDayIndex } = useEditContext();
+  const { dayIndex, setDayIndex, finish } = useEditContext();
 
   return (
       <ThemedView>
@@ -48,7 +48,7 @@ export default function EditPage() {
         />        
 
         <View style={Styles.stickyButtonContainer}>
-          <ThemedPressable style={Styles.doneButton} onPress={() => console.log('Done Editing')}>
+          <ThemedPressable style={Styles.doneButton} onPress={() => finish()}>
             <ThemedText>Done Editing</ThemedText>
           </ThemedPressable>
         </View>

@@ -14,11 +14,11 @@ import Popup from "@/components/Popup";
 const windowWidth = Dimensions.get("window").width;
 const LINE_WIDTH = windowWidth * .9;
 
-export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
+export default function WorkoutInfo({workoutIndex, dayIndex, movement, workoutFlag=true}) {
 
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
-  const styles = createStyles(colors);
+  const styles = createStyles(colors, workoutFlag);
 
   const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets } = useEditContext();
   const { routineCpy } = useUserContext();
@@ -62,14 +62,21 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
   const initTags = () => {
     let tags = [];
 
-    if (movement !== "new movement"){
-      MOVEMENTS[movement].biasOrder.forEach(icon => {
-        if (!tags.includes(icon)){
-          tags.push(icon)
+    if (!workoutFlag){
+      if (movement !== "new movement"){
+        MOVEMENTS[movement].biasOrder.forEach(icon => {
+          if (!tags.includes(icon)){
+            tags.push(icon)
+          }
+        })
+        if (tags.length === 1 && tags[0] === 'neutral'){
+            tags = [MOVEMENTS[movement].primary];
         }
-      })
-      if (tags.length === 1 && tags[0] === 'neutral'){
-        tags = [MOVEMENTS[movement].primary];
+      }
+    } else {
+      tags = [MOVEMENTS[movement].primary];
+      if (bias !== 'neutral'){
+        tags.push(bias);
       }
     }
 
@@ -82,12 +89,17 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
   }, [biasText, movement]);
 
   const initTagsSelect = () => { 
-    if (tags.length === 1){
-      return [false];
+    if (!workoutFlag){
+      if (tags.length === 1){
+        return [false];
+      } else {
+        return tags.map(tag => tag === bias);
+      }
     } else {
-      return tags.map(tag => tag === bias);
+      return [false];
     }
   }
+
   const [tagsSelect, setTagsSelect] = useState(initTagsSelect()); 
   useEffect(() => {
     setTagsSelect(initTagsSelect());
@@ -137,7 +149,7 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
             <ThemedText style={{fontSize: 20}}>+</ThemedText>
         </PopupPressable>
         
-        <View style={[styles.flexboxRow, {flex: 9}]}>
+        <View style={[styles.flexboxRow, {flex: 9}, {marginTop: biasText === '' ? 0 : 10}]}>
           <View style={{width: "65%"}}>
             <ThemedText style={styles.biasText}>{biasText}</ThemedText>
           </View>
@@ -147,8 +159,9 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
               style={styles.movementTitle}
               value={subText}
               onChange={(e) => handleChange(e)}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
+              onFocus={!workoutFlag ? handleFocus : () => {}}
+              onBlur={!workoutFlag ? handleBlur : () => {}}
+              editable={!workoutFlag}
             />
           </View>
           <ThemedText style={styles.repsText}>
@@ -200,8 +213,6 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
       </View>
       )}
 
-
-
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <View style={styles.editBtnGrid}>
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(dayIndex, workoutIndex, movement)}>
@@ -228,7 +239,7 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement}) {
   );
 };
 
-function createStyles(colors) { 
+function createStyles(colors, workoutFlag) { 
   return StyleSheet.create({
   container: {
     padding: 0,
@@ -253,7 +264,7 @@ function createStyles(colors) {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    marginTop: 10,
+    marginTop: workoutFlag ? 0 : 10,
   },
   movementTitle: {
     color: colors.text,
@@ -265,12 +276,12 @@ function createStyles(colors) {
     padding: 0,
     fontSize: 12,
     textAlign: "left",
-    paddingLeft: 14,
+    paddingLeft: 26,
   },
   biasText: {
     fontStyle: "italic",
-    fontSize: 14,
-    lineHeight: 12,
+    fontSize: 12,
+    lineHeight: 6,
     textAlign: "left",
     paddingLeft: 14,
   },
@@ -287,8 +298,8 @@ function createStyles(colors) {
     fontSize: 10,
     textAlign: 'left',
     height: 35,
-    backgroundColor: 'rgb(120, 120, 120)',
-    color: 'white',
+    backgroundColor: colors.accent,
+    color: colors.text,
     borderColor: 'rgb(62, 62, 62)',
     borderWidth: 1,
     justifyContent: 'center',
@@ -296,7 +307,7 @@ function createStyles(colors) {
     zIndex: 5,
   },
   tagContainer: {
-    marginTop: 8,
+    marginTop: 5,
     alignItems: 'flex-start',
     width: '100%',
   },
@@ -308,21 +319,22 @@ function createStyles(colors) {
     backgroundColor: colors.tint,
   },
   tag: {
-    backgroundColor: 'gray',
+    backgroundColor: colors.accent,
     paddingHorizontal: 8,
     borderRadius: 12,
     height: 28,
     borderWidth: 0,
   },
   editBtnGrid: {
+    visibility: workoutFlag ? 'hidden' : 'visible',
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '50%',
-    zIndex: 2
+    zIndex: 2,
   },
   editBtn: {
     flex: 1,
-    height: 30,
+    height: workoutFlag ? 0 : 30,
   },
   iconImage: {
     width: 20,

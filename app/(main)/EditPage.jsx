@@ -3,16 +3,27 @@ import { useUserContext } from "@/hooks/UserContext";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { ThemedText } from "@/components/ThemedText";
+import FooterButton from "@/components/main/FooterButton";
 import { FlatList, StyleSheet, View, Dimensions } from "react-native";
-import { useState } from "react";
-import { EditProvider, useEditContext } from "@/hooks/EditContext";
+import { useEditContext } from "@/hooks/EditContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
+import { EditProvider } from "@/hooks/EditContext";
 const windowWidth = Dimensions.get("window").width;
 const HEADER_WIDTH = windowWidth * .9;
 
 
-export default function EditPage() {
+const EditPage = () => {
+  return (
+    <EditProvider>
+      <EditPageContent />
+    </EditProvider>
+  );
+};
+
+export default EditPage;
+
+function EditPageContent() {
 
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
@@ -43,15 +54,11 @@ export default function EditPage() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingBottom: 120}}
           renderItem={({ item, index}) => (
-            <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} />
+            <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} workoutFlag={false} />
           )}
         />        
 
-        <View style={Styles.stickyButtonContainer}>
-          <ThemedPressable style={Styles.doneButton} onPress={() => finish()}>
-            <ThemedText>Done Editing</ThemedText>
-          </ThemedPressable>
-        </View>
+        <FooterButton clickEvent={finish} text={"Done Editing"}/>
       </ThemedView>
   )
 }
@@ -78,23 +85,6 @@ function createStyles (colors) {
       borderRadius: 0,
       height: 40,
       zIndex: 100
-    },
-    stickyButtonContainer: {
-      position: 'absolute',
-      bottom: 0,
-      width: '90%',
-      alignItems: 'center',
-      padding: 0,
-      backgroundColor: colors.background,
-      marginBottom: 35,
-    },
-    doneButton: {
-      width: '100%', 
-      alignItems: 'center',
-      justifyContent: 'center',
-      margin: 0,
-      backgroundColor: colors.primary, 
-      borderRadius: 5,
     },
   })
 }

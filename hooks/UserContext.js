@@ -23,7 +23,7 @@ export function UserProvider({children}) {
 
   useEffect(() => {
     if (routineCpy.length > 0) {
-      router.push("/(main)");
+      router.push("/(main)/EditPage");
     }
   }, [routineCpy]);
 

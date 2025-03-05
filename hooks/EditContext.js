@@ -1,8 +1,9 @@
-import React, { useState, useEffect,useContext } from "react";
-import { useRouter } from "expo-router";
+import React, { useState, useEffect, useContext } from "react";
+import { useRouter, usePathname } from "expo-router";
 import { useUserContext } from "@/hooks/UserContext";
 import { MOVEMENTS } from "@/constants/Movements";
 import { REST_TIMES } from "@/constants/RestTimes";
+
 export const EditContext = React.createContext();
 
 export function useEditContext() {
@@ -11,9 +12,9 @@ export function useEditContext() {
 }
 
 const globalDayIndexRef = { current: 0 };
-const router = useRouter();
 
 export function EditProvider({children}){
+  const router = useRouter();
   const { routineCpy, setRoutineCpy, setRoutine, info } = useUserContext();
   
   const [dayIndex, setDayIndex] = useState(globalDayIndexRef.current);
@@ -28,22 +29,22 @@ export function EditProvider({children}){
     globalDayIndexRef.current = newIndex;
     setDayIndex(newIndex);
   };
-  
-  const NUM_SETS = info.numSets;
-  const EXP_ICON = info.exp;
-  const ACCESSORIES = info.accessories;
-  
-
-  const finish = async () => {
-    setRoutine(routineCpy);
-    router.push("/(main)/(tabs)/Workout");
-  }
 
   const updateRoutine = (newDay, dayIndex) => {
     const newRoutine = [...routineCpy];
     newRoutine[dayIndex] = newDay;
     setRoutineCpy(newRoutine);
   }
+
+  const finish = async () => {
+    setRoutine(routineCpy);
+    router.navigate("/(main)/(tabs)/WorkoutPage");
+  }
+
+  const NUM_SETS = info.numSets;
+  const EXP_ICON = info.exp;
+  const ACCESSORIES = info.accessories;
+  
 
   const findLastIndex = (array, key, value) => {
     return array.reduceRight((acc, item, index) => {
@@ -237,17 +238,17 @@ export function EditProvider({children}){
   }
 
   const editState = {
-    finish: finish,
-    updateRoutine: updateRoutine,
-    changeMovement: changeMovement,
-    changeBias: changeBias,
-    addMovement: addMovement,
-    removeMovement: removeMovement,
-    moveUp: moveUp,
-    moveDown: moveDown,
-    getSubOptions: getSubOptions,
-    getSets: getSets,
-    dayIndex: dayIndex,
+    finish,
+    updateRoutine,
+    changeMovement,
+    changeBias,
+    addMovement,
+    removeMovement,
+    moveUp,
+    moveDown,
+    getSubOptions,
+    getSets,
+    dayIndex,
     setDayIndex: setDayIndexWithRef,
   }
 
@@ -255,5 +256,5 @@ export function EditProvider({children}){
     <EditContext.Provider value={editState}>
       {children}
     </EditContext.Provider>
-  )
+  );
 }

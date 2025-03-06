@@ -3,6 +3,7 @@ import { StyleSheet, FlatList } from 'react-native';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import WorkoutInfo from "@/components/main/WorkoutInfo";
+import SetScreen from "@/components/main/SetScreen";
 import FooterButton from "@/components/main/FooterButton";
 import MainHeader from "@/components/main/MainHeader";
 import { useThemeContext } from "@/hooks/ThemeContext";
@@ -14,23 +15,32 @@ export default function WorkoutPage() {
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
-  const { routineCpy, dayIndex, dayName } = useWorkoutContext();
-  
-  return (
-    <ThemedView style={styles.container}>
-      <MainHeader title={routineCpy[dayIndex].title} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
-      <FlatList
-        data={routineCpy[dayIndex].movements}
-        keyExtractor={(item, index) => index.toString()}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 70}}
-        renderItem={({ item, index}) => (
-          <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} />
-        )}
-      />        
-      <FooterButton text={"Begin Workout"} clickEvent={() => {}} marginBottom={12} />
-    </ThemedView>
-  );
+  const { workoutCpy, dayName, workoutFlag, setWorkoutFlag, setTime } = useWorkoutContext();
+
+  const handleStartWorkout = () => {
+    setWorkoutFlag(true);
+    setTime(0)
+  }
+
+  if (!workoutFlag) {
+    return (
+      <ThemedView style={styles.container}>
+        <MainHeader title={workoutCpy.title} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
+        <FlatList
+          data={workoutCpy.movements}
+          keyExtractor={(item, index) => index.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{paddingBottom: 70}}
+          renderItem={({ item, index}) => (
+            <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={true}/>
+          )}
+        />        
+        <FooterButton text={"Begin Workout"} clickEvent={() => handleStartWorkout()} marginBottom={12} />
+      </ThemedView>
+    );
+  } else {
+    return (<SetScreen />)
+  }
 }
 
 function createStyles(colors) {

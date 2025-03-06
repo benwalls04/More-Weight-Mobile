@@ -11,37 +11,35 @@ export function useEditContext() {
   return editState;
 }
 
-const globalDayIndexRef = { current: 0 };
+const dayIndexRef = { current: 0 };
 
 export function EditProvider({children}){
   const router = useRouter();
   const { routineCpy, setRoutineCpy, setRoutine, info } = useUserContext();
   
-  const [dayIndex, setDayIndex] = useState(globalDayIndexRef.current);
+  const [dayIndex, setDayIndex] = useState(dayIndexRef.current);
   
-  // Update the global ref when dayIndex changes
   useEffect(() => {
-    globalDayIndexRef.current = dayIndex;
+    dayIndexRef.current = dayIndex;
   }, [dayIndex]);
   
-  // Custom setter that updates both state and global ref
   const setDayIndexWithRef = (newIndex) => {
-    globalDayIndexRef.current = newIndex;
+    dayIndexRef.current = newIndex;
     setDayIndex(newIndex);
   };
 
-  const updateRoutine = (newDay, dayIndex) => {
+  const updateRoutine = (newDay) => {
     const newRoutine = [...routineCpy];
-    newRoutine[dayIndex] = newDay;
+    newRoutine[dayIndexRef.current] = newDay;
     setRoutineCpy(newRoutine);
   }
 
   const finish = async () => {
     setRoutine(routineCpy);
-    router.navigate("/(main)/(tabs)/WorkoutPage");
+    router.replace("/(main)/(tabs)/WorkoutPage");
   }
 
-  const NUM_SETS = info.numSets;
+  const NUM_SETS = info.sets;
   const EXP_ICON = info.exp;
   const ACCESSORIES = info.accessories;
   
@@ -56,6 +54,7 @@ export function EditProvider({children}){
   };
 
   const findFirstIndex = (array, key, value) => {
+
     return array.reduce((acc, item, index) => {
       if (acc === -1 && item[key] === value) {
         return index;
@@ -64,10 +63,10 @@ export function EditProvider({children}){
     }, -1);
   };
 
-  const addMovement = (dayIndex, workoutIndex, movement) => {
+  const addMovement = (workoutIndex, movement) => {
     const newRoutine = [...routineCpy];
-    let movements = newRoutine[dayIndex].movements;
-    let sets = newRoutine[dayIndex].sets;
+    let movements = newRoutine[dayIndexRef.current].movements;
+    let sets = newRoutine[dayIndexRef.current].sets;
 
     movements.splice(workoutIndex + 1, 0, {
       movement: "new movement", 
@@ -77,19 +76,20 @@ export function EditProvider({children}){
       upperRep: 0,
       stimulus: 0, 
     });
-    newRoutine[dayIndex].movements = movements;
+    newRoutine[dayIndexRef.current].movements = movements;
 
     const lastIndex = findLastIndex(sets, "movement", movement);
+
     for (let i = 0; i < NUM_SETS; i++){
       sets.splice(lastIndex + 1, 0, { movement: "new movement", lowerRep: 0, upperRep: 0, RPE: 0, rest: 0, num: i + 1});
     }
-    newRoutine[dayIndex].sets = sets;
-    
-    updateRoutine(dayIndex, newRoutine);
+
+    newRoutine[dayIndexRef.current].sets = sets;    
+    updateRoutine(newRoutine[dayIndexRef.current]);
   }
 
-  const removeMovement = (dayIndex, movement) => {
-    const newDay = [...routineCpy][dayIndex];
+  const removeMovement = (movement) => {
+    const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -97,11 +97,11 @@ export function EditProvider({children}){
     sets = sets.filter(set => set.movement !== movement);
     newDay.sets = sets;
     newDay.movements = movements;
-    updateRoutine(dayIndex, newDay);
+    updateRoutine(newDay);
   }
 
-  const moveUp = (dayIndex, workoutIndex, movement) => {
-    const newDay = [...routineCpy][dayIndex];
+  const moveUp = (workoutIndex, movement) => {
+    const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -119,11 +119,11 @@ export function EditProvider({children}){
     newDay.movements = movements;
     newDay.sets = sets;
 
-    updateRoutine(dayIndex, newDay);
+    updateRoutine(newDay);
   }
 
-  const moveDown = (dayIndex, workoutIndex, movement) => {
-    const newDay = [...routineCpy][dayIndex];
+  const moveDown = (workoutIndex, movement) => {
+    const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -142,14 +142,14 @@ export function EditProvider({children}){
     newDay.movements = movements;
     newDay.sets = sets;
 
-    updateRoutine(dayIndex, newDay);
+    updateRoutine(newDay);
   }
 
-  const changeMovement = (dayIndex, workoutIndex, oldMovement, newMovement) => {
-    const newDay = [...routineCpy][dayIndex];
+  const changeMovement = (workoutIndex, newMovement) => {
+    const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
-    // get info for the new movement 
+    
     const oldMovementObj = newDay.movements[workoutIndex]
 
     const RPESeq = MOVEMENTS[newMovement].sequences[EXP_ICON];
@@ -157,8 +157,6 @@ export function EditProvider({children}){
     const upperRep = oldMovementObj.movement === "new movement"? 12: oldMovementObj.upperRep;
     const newBias = MOVEMENTS[newMovement].biasOrder.includes(oldMovementObj.bias)? oldMovementObj.bias : MOVEMENTS[newMovement].biasOrder.includes('neutral')? 'neutral': MOVEMENTS[newMovement].biasOrder[0];
 
-    // update movements array
-    // FIXME: stimulus is not accurate 
     movements[workoutIndex] = {
       movement: newMovement, 
       bias: newBias,
@@ -167,11 +165,11 @@ export function EditProvider({children}){
       upperRep: upperRep,
       stimilus: oldMovementObj.stimulus, 
     };
+
     newDay.movements = movements;
 
-    // update allSets array
-    // FIXME: last rest is not updated individually 
     const firstIndex = findFirstIndex(sets, "movement", oldMovementObj.movement);
+
     let count = 0;
     for (let i = firstIndex; i < sets.length; i++){
       if (sets[i].movement === oldMovementObj.movement){
@@ -183,14 +181,11 @@ export function EditProvider({children}){
     }
     newDay.sets = sets;
 
-    // FIXME: make this a response in the workout info component 
-    //setShowSubs(false);
-    //setSubText(newMovement);
-    updateRoutine(dayIndex, newDay);
+    updateRoutine(newDay);
   }
 
-  const changeBias = (dayIndex, workoutIndex, movement, newBias) => {
-    const newDay = {...routineCpy}[dayIndex];
+  const changeBias = (workoutIndex, movement, newBias) => {
+    const newDay = {...routineCpy}[dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
@@ -205,17 +200,14 @@ export function EditProvider({children}){
     }
     newDay.sets = sets;
 
-    updateRoutine(dayIndex, newDay);
+    updateRoutine(newDay);
   }
 
-  const getSubOptions = (dayIndex, text) => {
-
-    const title = routineCpy[dayIndex].title
-
-    const movements = routineCpy[dayIndex].movements
+  const getSubOptions = (text) => {
+    const title = routineCpy[dayIndexRef.current].title;
+    const movements = routineCpy[dayIndexRef.current].movements;
     let options = [];
     
-    // FIXME: order the subs by relevance 
     for (let name in MOVEMENTS) {
       if (!movements.some(entry => entry.movement === name) && (title.includes(MOVEMENTS[name].primary) || ACCESSORIES.includes(MOVEMENTS[name].primary) && name.includes(text))) {
         options.push(name)
@@ -231,8 +223,8 @@ export function EditProvider({children}){
     return options;
   }
 
-  const getSets = (dayIndex, movement) => {
-    const sets = routineCpy[dayIndex].sets;
+  const getSets = (movement) => {
+    const sets = routineCpy[dayIndexRef.current].sets;
     const setsForMovement = sets.filter(set => set.movement === movement);
     return setsForMovement;
   }

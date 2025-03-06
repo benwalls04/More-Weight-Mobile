@@ -82,10 +82,10 @@ export function UserProvider({children}) {
           "knee-flexion": "hack squat",
           "legs": 50,
           "numDays": 7,
-          "schedule": ["lift", "lift", "lift", "rest", "rest", "rest", "rest"],
+          "schedule": ["rest", "rest", "lift", "lift", "lift", "lift", "rest"],
           "sets": 3,
           "splits": {
-            "selection": ["back biceps", "legs", "chest shoulders triceps", "rest", "rest", "rest", "rest"]
+            "selection": ["rest", "rest", "chest shoulders triceps", "back biceps", "legs", "triceps biceps shoulders", "rest"]
           },
           "style": "n",
           "time": 45,

@@ -14,20 +14,19 @@ import Popup from "@/components/Popup";
 const windowWidth = Dimensions.get("window").width;
 const LINE_WIDTH = windowWidth * .9;
 
-export default function WorkoutInfo({workoutIndex, dayIndex, movement, workoutFlag=true}) {
+export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workoutFlag}) {
 
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, workoutFlag);
 
   const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets } = useEditContext();
-  const { routineCpy } = useUserContext();
 
-  const lowerRep = routineCpy[dayIndex].movements[workoutIndex].lowerRep;
-  const upperRep = routineCpy[dayIndex].movements[workoutIndex].upperRep;
-  const bias = movement === "new movement"? 'neutral': routineCpy[dayIndex].movements[workoutIndex].bias;
+  const lowerRep = workoutCpy.movements[workoutIndex].lowerRep;
+  const upperRep = workoutCpy.movements[workoutIndex].upperRep;
+  const bias = movement === "new movement"? 'neutral': workoutCpy.movements[workoutIndex].bias;
     
-  const sets = getSets(dayIndex, movement);
+  const sets = getSets(movement);
   const [popupVisible, setPopupVisible] = useState(false);
   const popupBody = () => {
     return (
@@ -41,7 +40,7 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement, workoutFl
       let newTagsSelect = new Array(tagsSelect.length).fill(false);
       newTagsSelect[index] = true;
       setTagsSelect(newTagsSelect);
-      changeBias(dayIndex, workoutIndex, movement, newBias);
+      changeBias(workoutIndex, movement, newBias);
       setBiasText(MOVEMENTS[movement].variants[newBias]);
     }
   }
@@ -115,19 +114,19 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement, workoutFl
     const newText = e.target.value.toLowerCase();
     setSubText(newText);
     if (showSubs) {
-      setSubOptions(getSubOptions(dayIndex, newText));
+      setSubOptions(getSubOptions(newText));
     }
   }
 
   useEffect(() => {
     setSubText(movement);
   }, [movement]);
-  useEffect(() => (setSubOptions(getSubOptions(dayIndex, ''))), [movement]);
+  useEffect(() => (setSubOptions(getSubOptions(''))), [movement]);
 
   const handleFocus = () => {
     setShowSubs(true);
     // Load options when dropdown is shown
-    setSubOptions(getSubOptions(dayIndex, subText));
+    setSubOptions(getSubOptions(subText));
   };
 
   const handleBlur = () => {
@@ -204,7 +203,7 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement, workoutFl
             <ThemedPressable 
               key={index.toString()}
               style={styles.subOption} 
-              onPress={() => changeMovement(dayIndex, workoutIndex, movement, item)}
+              onPress={() => changeMovement(workoutIndex, item)}
             >
               <ThemedText>{item}</ThemedText>
             </ThemedPressable>
@@ -215,16 +214,16 @@ export default function WorkoutInfo({workoutIndex, dayIndex, movement, workoutFl
 
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <View style={styles.editBtnGrid}>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(dayIndex, workoutIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
             <ThemedText>+</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(dayIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(movement)}>
             <ThemedText>-</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(dayIndex, workoutIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(workoutIndex, movement)}>
             <ThemedText>u</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(dayIndex, workoutIndex, movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
             <ThemedText>d</ThemedText>
           </ThemedPressable>
         </View>

@@ -32,6 +32,7 @@ function EditPageContent() {
   const WEEKDAYS = ["M", "T", "W", "Th", "F", "S", "Su"]
   const { routineCpy } = useUserContext();
   const { dayIndex, setDayIndex, finish } = useEditContext();
+  const workoutCpy = routineCpy[dayIndex];
 
   return (
       <ThemedView>
@@ -54,7 +55,7 @@ function EditPageContent() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{paddingBottom: 120}}
           renderItem={({ item, index}) => (
-            <WorkoutInfo workoutIndex={index} dayIndex={dayIndex} movement={item.movement} workoutFlag={false} />
+            <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={false} />
           )}
         />        
 

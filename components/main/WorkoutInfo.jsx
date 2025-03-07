@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, FlatList, StyleSheet, Dimensions, ScrollView} from 'react-native';
 import { MOVEMENTS } from "@/constants/Movements";
 import { useEditContext } from "@/hooks/EditContext";
-import { useUserContext } from "@/hooks/UserContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
+import SubList from "@/components/main/SubList";
 import PopupPressable from "@/components/PopupPressable";
 import MovementPopup from "@/components/main/MovementPopup";
 import Popup from "@/components/Popup";
@@ -153,7 +153,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
             <ThemedText style={styles.biasText}>{biasText}</ThemedText>
           </View>
 
-          <View style={{width: "70%"}}>
+          <View style={{width: "70%", zIndex: 1}}>
             <TextInput
               style={styles.movementTitle}
               value={subText}
@@ -185,34 +185,10 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
       </View>
 
       {showSubs && (
-      <View style={[styles.subDropdown, {top: biasText === '' ? 50: 62}]}>
-        <ScrollView
-          nestedScrollEnabled={true}
-          showsVerticalScrollIndicator={true}
-          indicatorStyle="white" // Try setting an explicit color
-          persistentScrollbar={true} // Make scrollbar always visible
-          style={{ 
-            maxHeight: 150,
-            width: '100%' // Ensure full width
-          }}
-          contentContainerStyle={{
-            paddingRight: 5 // Add padding for the scrollbar
-          }}
-        >
-          {subOptions.map((item, index) => (
-            <ThemedPressable 
-              key={index.toString()}
-              style={styles.subOption} 
-              onPress={() => changeMovement(workoutIndex, item)}
-            >
-              <ThemedText>{item}</ThemedText>
-            </ThemedPressable>
-          ))}
-        </ScrollView>
-      </View>
+        <SubList list={subOptions} changeMovement={changeMovement} workoutIndex={workoutIndex} style={{top: biasText === '' ? 40: 55}}/>
       )}
 
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: showSubs ? 85 : 15}}>
         <View style={styles.editBtnGrid}>
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
             <ThemedText>+</ThemedText>
@@ -270,6 +246,7 @@ function createStyles(colors, workoutFlag) {
     textAlign: "left",
     paddingLeft: 12,
     fontSize: 18,
+    zIndex: 0
   },
   repsText: {
     padding: 0,
@@ -283,27 +260,6 @@ function createStyles(colors, workoutFlag) {
     lineHeight: 6,
     textAlign: "left",
     paddingLeft: 14,
-  },
-  subDropdown: {
-    position: 'absolute',
-    left: 29,
-    width: 250,
-    maxHeight: 105,
-    backgroundColor: colors.background,
-    overflow: 'hidden',
-    zIndex: 4,
-  },
-  subOption: {
-    fontSize: 10,
-    textAlign: 'left',
-    height: 35,
-    backgroundColor: colors.accent,
-    color: colors.text,
-    borderColor: 'rgb(62, 62, 62)',
-    borderWidth: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    zIndex: 5,
   },
   tagContainer: {
     marginTop: 5,

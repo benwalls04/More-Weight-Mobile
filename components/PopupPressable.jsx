@@ -8,6 +8,7 @@ export default function PopupPressable({
   style,
   children,
   popupBody,
+  visible=true,
   ...otherProps
 }) {
   const { theme } = useThemeContext();
@@ -35,7 +36,9 @@ export default function PopupPressable({
     ]).start();
 
     const timeout = setTimeout(() => {
-      setPopupVisible(true);
+      if (visible) {
+        setPopupVisible(true);
+      }
     }, 0); 
 
     setHoldTimeout(timeout);

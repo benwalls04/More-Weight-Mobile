@@ -3,6 +3,7 @@ import { useRouter, usePathname } from "expo-router";
 import { useUserContext } from "@/hooks/UserContext";
 import { MOVEMENTS } from "@/constants/Movements";
 import { REST_TIMES } from "@/constants/RestTimes";
+import getSubList from "@/functions/getSubsList";
 
 export const EditContext = React.createContext();
 
@@ -42,7 +43,6 @@ export function EditProvider({children}){
   const NUM_SETS = info.sets;
   const EXP_ICON = info.exp;
   const ACCESSORIES = info.accessories;
-  
 
   const findLastIndex = (array, key, value) => {
     return array.reduceRight((acc, item, index) => {
@@ -206,21 +206,8 @@ export function EditProvider({children}){
   const getSubOptions = (text) => {
     const title = routineCpy[dayIndexRef.current].title;
     const movements = routineCpy[dayIndexRef.current].movements;
-    let options = [];
-    
-    for (let name in MOVEMENTS) {
-      if (!movements.some(entry => entry.movement === name) && (title.includes(MOVEMENTS[name].primary) || ACCESSORIES.includes(MOVEMENTS[name].primary) && name.includes(text))) {
-        options.push(name)
-      }
-    }
 
-    for (let name in MOVEMENTS) {
-      if (movements.some(entry => entry.movement === name) && (title.includes(MOVEMENTS[name].primary) || ACCESSORIES.includes(MOVEMENTS[name].primary) && name.includes(text))) {
-        options.push(name)
-      }
-    }
-
-    return options;
+    return getSubList(title, movements, text, ACCESSORIES);
   }
 
   const getSets = (movement) => {

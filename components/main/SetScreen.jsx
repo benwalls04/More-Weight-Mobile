@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions} from "react-native";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
@@ -7,6 +7,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { useUserContext } from "@/hooks/UserContext";
+import SubList from "@/components/main/SubList";
+import PopupPressable from "@/components/PopupPressable";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -15,7 +17,7 @@ export default function SetScreen() {
   const { info } = useUserContext();
   const NUM_SETS = info.sets;
 
-  const { setWorkoutFlag, setIndex, currMovement, setCurrMovement, time, setTime, workoutCpy, index, setNum, setSetNum } = useWorkoutContext();
+  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, subList} = useWorkoutContext();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);  // Create styles with colors
@@ -27,7 +29,7 @@ export default function SetScreen() {
   const [weight, setWeight] = useState("");
   const [rpe, setRpe] = useState("");
   const [reps, setReps] = useState("");
-
+  
   // Format time from decimal minutes (e.g. 2.25) to MM:SS
   const formatTime = (timeInMinutes) => {
     if (!timeInMinutes || timeInMinutes < 0.0167) return "0:00"; // Less than 1 second
@@ -37,43 +39,43 @@ export default function SetScreen() {
     const seconds = totalSeconds % 60;
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
-
-  const nextSet = () => {
-    if (index < workoutCpy.sets.length - 1) {
-      setTime(workoutCpy.sets[index].rest);
-      setIndex(index + 1);
-      setSetNum(setNum + 1);
-      
-      const newMovement = workoutCpy.sets[index + 1].movement;
-      if (newMovement !== currMovement) {
-        setCurrMovement(newMovement);
-        setSetNum(1);
-      }
-    } else {
-      setWorkoutFlag(false);
-    }
+  
+  const subPopupBody = () => {
+    return (
+      <View style={{width: '100%', alignItems: 'center', height: 250}}>
+        <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A Substitute</ThemedText>
+        <SubList 
+          list={subList} 
+          changeMovement={substitute} 
+          workoutIndex={index} 
+          style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
+          height={178}
+          selectInteract={true}
+        />
+      </View>
+    )
   }
 
   return (
     <ThemedView style={{justifyContent: 'flex-start'}}>
       {/* Top action buttons */}
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.actionButton}>
-          <ThemedText style={styles.actionButtonText}>Substitute</ThemedText>
+        <PopupPressable visible={setNum === 1} popupBody={subPopupBody} style={[styles.actionButton, styles.popupBtn]}>
+          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Substitute</ThemedText>
+        </PopupPressable>
+        <TouchableOpacity style={styles.actionButton} onPress={setNum === 1? () => doNext() : () => {}}>
+          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do next</ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <ThemedText style={styles.actionButtonText}>Do next</ThemedText>
+        <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => doLast() : () => {}}>
+          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do last</ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
-          <ThemedText style={styles.actionButtonText}>Do last</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={styles.actionButton} onPress={() => nextSet(true)}>
           <ThemedText style={styles.actionButtonText}>Skip Set</ThemedText>
         </TouchableOpacity>
       </View>
       
       {/* Exercise name */}
-      <ThemedText style={styles.exerciseName}>
+      <ThemedText style={styles.exerciseName} numberOfLines={1} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
         {currMovement}
       </ThemedText>
       
@@ -91,7 +93,7 @@ export default function SetScreen() {
       </View>
       
       {/* Timer */}
-      <View style={[styles.timerContainer, {borderColor: time > 0 ? colors.text : colors.tint}]}>
+      <View style={[styles.timerContainer, {borderColor: time > 0 ? colors.tint : colors.text}]}>
         <ThemedText style={styles.timerText}>
           {formatTime(time || 0)}
         </ThemedText>
@@ -134,7 +136,7 @@ export default function SetScreen() {
         </View>
 
         {/* Log set button */}
-        <ThemedPressable type="slanted" style={styles.logButton} onPress={nextSet}>
+        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(false)}>
           <ThemedText style={styles.logButtonText}>log set</ThemedText>
         </ThemedPressable>
       </View>
@@ -163,16 +165,19 @@ function createStyles(colors) {
       height: 55,
       justifyContent: 'center',
     },
+    popupBtn: {
+      width: "100%",
+    },
     actionButtonText: {
       textAlign: 'center',
       fontSize: 14,
-      color: colors.tint,
+      color: colors.text,
     },
     exerciseName: {
       fontSize: 28,
       fontWeight: 'bold',
       textAlign: 'center',
-      marginBottom: 15,
+      paddingBottom: 15,
     },
     setInfoContainer: {
       flexDirection: 'row',

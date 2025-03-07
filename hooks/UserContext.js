@@ -57,16 +57,6 @@ export function UserProvider({children}) {
       try {
         //const params = formatParams(info);
 
-        // FIXME: remove after testing 
-        function generateRandomString(length) {
-          const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-          let result = '';
-          for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
-          }
-          return result;
-        }
-
         const tmpParams = {
           "accessories": ["abs", "rear deltoids"],
           "back": 50,
@@ -95,10 +85,11 @@ export function UserProvider({children}) {
         }
 
         setInfo(tmpParams);
-      
-        const username = generateRandomString(10);
-        const password = generateRandomString(10);
 
+        console.log(username)
+        console.log(password)
+        console.log(tmpParams)
+      
         const response = await axios.post('http://localhost:3001/new-user', {
           inputs: tmpParams, username: username.toLowerCase(), password: password.toLowerCase()
         });
@@ -135,6 +126,23 @@ export function UserProvider({children}) {
     }
   }
 
+  const logSet = async (movement, weight, reps) => {
+    await axios.post('http://localhost:3001/log-set', {
+      username: username,
+      movement: movement,
+      weight: weight,
+      reps: reps,
+      RPE: 10
+    });
+  }
+
+  const getTargets = async (movement) => {
+    const response = await axios.get('http://localhost:3001/get-last', {
+      params: { username: username, movement: movement, numberOfSets: info.sets }
+    });
+    return [response.data.weight, response.data.reps];
+  }
+
   const userState = {
     username: username, 
     setRoutine: setRoutine,
@@ -147,6 +155,8 @@ export function UserProvider({children}) {
     setInfo: setInfo,
     login: login,
     signup: signup,
+    logSet: logSet,
+    getTargets: getTargets
   }
 
   return (

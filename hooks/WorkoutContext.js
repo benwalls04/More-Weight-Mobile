@@ -27,12 +27,14 @@ export function useWorkoutContext() {
 
 export function WorkoutProvider({children}) {
 
-  const { routine, info } = useUserContext();
+  const { routine, info, logSet, getTargets } = useUserContext();
   const exp = info.exp;
   const numSets = info.sets;
 
   const [time, setTime] = useState(timeRef.current);
   const [timerInterval, setTimerInterval] = useState(null);
+  const [weightExp, setWeightExp] = useState(0);
+  const [repsExp, setRepsExp] = useState(0);
   
   useEffect(() => {
     timeRef.current = time;
@@ -62,35 +64,17 @@ export function WorkoutProvider({children}) {
     setTimerInterval(interval);
   };
 
-  const setTimeWithRef = (newTime) => {
-    timeRef.current = newTime;
-    setTime(newTime);
-    if (newTime > 0) {
-      startTimer(newTime);
-    }
-  };
-
   const [workoutFlag, setWorkoutFlag] = useState(workoutFlagRef.current);
 
   useEffect(() => {
     workoutFlagRef.current = workoutFlag;
   }, [workoutFlag]);
 
-  const setWorkoutFlagWithRef = (newWorkoutFlag) => {
-    workoutFlagRef.current = newWorkoutFlag;
-    setWorkoutFlag(newWorkoutFlag);
-  };
-
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     indexRef.current = index;
   }, [index]);
-
-  const setIndexWithRef = (newIndex) => {
-    indexRef.current = newIndex;
-    setIndex(newIndex);
-  };
 
   const startWorkout = () => {
     setWorkoutFlag(true);
@@ -129,9 +113,12 @@ export function WorkoutProvider({children}) {
   }
 
   const [subList, setSubList] = useState([]);
-  const nextSet = (skippedSet = false) => {
+  const nextSet = (skippedSet = false, weight, reps) => {
     if (index < workoutCpy.sets.length - 1) {
       if (!skippedSet) {
+        logSet(currMovement, weight, reps);
+        setWeightExp(weight);
+        setRepsExp(reps);
         setTime(workoutCpy.sets[index].rest);
         startTimer(workoutCpy.sets[index].rest);
       } 
@@ -142,10 +129,13 @@ export function WorkoutProvider({children}) {
       if (newMovement !== currMovement) {
         setCurrMovement(newMovement);
         setMovementIndex(movementIndex + 1);
+        setSubList(getSubOptions(newMovement));
         setSetNum(1);
+        const [targetWeight, targetReps] = getTargets(newMovement)
+        setWeightExp(targetWeight);
+        setRepsExp(targetReps);
       }
 
-      setSubList(getSubOptions(newMovement));
     } else {
       setWorkoutFlag(false);
     }
@@ -205,6 +195,8 @@ export function WorkoutProvider({children}) {
     time: time,
     workoutFlag: workoutFlag,
     setNum: setNum,
+    weightExp: weightExp,
+    repsExp: repsExp,
     doNext: doNext,
     doLast: doLast,
     nextSet: nextSet,

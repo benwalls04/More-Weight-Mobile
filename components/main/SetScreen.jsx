@@ -9,6 +9,7 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { useUserContext } from "@/hooks/UserContext";
 import SubList from "@/components/main/SubList";
 import PopupPressable from "@/components/PopupPressable";
+import { AntDesign } from '@expo/vector-icons';
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -17,7 +18,7 @@ export default function SetScreen() {
   const { info } = useUserContext();
   const NUM_SETS = info.sets;
 
-  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, subList} = useWorkoutContext();
+  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, subList, weightExp, repsExp} = useWorkoutContext();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);  // Create styles with colors
@@ -26,9 +27,12 @@ export default function SetScreen() {
   const setStr = "Set " + setNum + "/" + NUM_SETS;
 
   // Dummy state for inputs
-  const [weight, setWeight] = useState("");
-  const [rpe, setRpe] = useState("");
-  const [reps, setReps] = useState("");
+  const [weight, setWeight] = useState(weightExp === 0? "" : weightExp);
+  const [reps, setReps] = useState(repsExp === 0? "" : repsExp);
+  useEffect(() => {
+    setWeight(weightExp === 0? "" : weightExp);
+    setReps(repsExp === 0? "" : repsExp);
+  }, [currMovement])
   
   // Format time from decimal minutes (e.g. 2.25) to MM:SS
   const formatTime = (timeInMinutes) => {
@@ -55,6 +59,44 @@ export default function SetScreen() {
       </View>
     )
   }
+
+  const handleWeightChange = (text) => {
+    // Only allow digits
+    if (text === "" || /^\d+$/.test(text)) {
+      setWeight(text);
+    }
+  };
+
+  const handleRepsChange = (text) => {
+    // Only allow digits
+    if (text === "" || /^\d+$/.test(text)) {
+      setReps(text);
+    }
+  };
+
+  const incrementWeight = () => {
+    const currentWeight = parseInt(weight) || 0;
+    setWeight((currentWeight + 5).toString());
+  };
+
+  const decrementWeight = () => {
+    const currentWeight = parseInt(weight) || 0;
+    if (currentWeight >= 5) {
+      setWeight((currentWeight - 5).toString());
+    }
+  };
+
+  const incrementReps = () => {
+    const currentReps = parseInt(reps) || 0;
+    setReps((currentReps + 1).toString());
+  };
+
+  const decrementReps = () => {
+    const currentReps = parseInt(reps) || 0;
+    if (currentReps > 0) {
+      setReps((currentReps - 1).toString());
+    }
+  };
 
   return (
     <ThemedView style={{justifyContent: 'flex-start'}}>
@@ -103,40 +145,49 @@ export default function SetScreen() {
       <View style={styles.inputContainer}>
         <View style={styles.inputGroup}>
           <ThemedText style={styles.inputLabel}>Weight:</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={weight}
-            onChangeText={setWeight}
-            keyboardType="numeric"
-            placeholder="0"
-            placeholderTextColor={colors.text}
-          />
+          <View style={styles.inputWithArrows}>
+            <TextInput
+              style={styles.input}
+              value={weight}
+              onChangeText={handleWeightChange}
+              keyboardType="numeric"
+              placeholder="0"
+              placeholderTextColor={colors.text}
+            />
+            <View style={styles.arrowContainer}>
+              <TouchableOpacity onPress={incrementWeight} style={styles.arrow}>
+                <AntDesign name="caretup" size={12} color={colors.text} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={decrementWeight} style={styles.arrow}>
+                <AntDesign name="caretdown" size={12} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
         <View style={styles.inputGroup}>
           <ThemedText style={styles.inputLabel}>Reps:</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={reps}
-            onChangeText={setReps}
-            keyboardType="numeric"
-            placeholder="0"
-            placeholderTextColor={colors.text}
-          />
-        </View>
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.inputLabel}>RPE:</ThemedText>
-          <TextInput
-            style={styles.input}
-            value={rpe}
-            onChangeText={setRpe}
-            keyboardType="numeric"
-            placeholder="0"
-            placeholderTextColor={colors.text}
-          />
+          <View style={styles.inputWithArrows}>
+            <TextInput
+              style={styles.input}
+              value={reps}
+              onChangeText={handleRepsChange}
+              keyboardType="numeric"
+              placeholder="0"
+              placeholderTextColor={colors.text}
+            />
+            <View style={styles.arrowContainer}>
+              <TouchableOpacity onPress={incrementReps} style={styles.arrow}>
+                <AntDesign name="caretup" size={12} color={colors.text} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={decrementReps} style={styles.arrow}>
+                <AntDesign name="caretdown" size={12} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
 
         {/* Log set button */}
-        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(false)}>
+        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(false, weight, reps)}>
           <ThemedText style={styles.logButtonText}>log set</ThemedText>
         </ThemedPressable>
       </View>
@@ -212,17 +263,18 @@ function createStyles(colors) {
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      width: '100%',
       borderWidth: 2,
       borderColor: colors.accentLight,
       borderRadius: 4,
-      paddingHorizontal: 12,
+      paddingHorizontal: 26,
       paddingVertical: 16,
       marginBottom: 25,
     },
     inputGroup: {
       flexDirection: 'row',
       alignItems: 'center',
-      width: '33%',
+      width: '50%',
       justifyContent: 'center',
     },
     inputLabel: {
@@ -231,12 +283,27 @@ function createStyles(colors) {
       marginRight: 6,
       textAlign: 'right',
     },
+    inputWithArrows: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    arrowContainer: {
+      marginLeft: 4,
+      height: 30,
+      justifyContent: 'space-between',
+    },
+    arrow: {
+      height: 14,
+      width: 20,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     input: {
       borderWidth: 1,
       borderColor: colors.text,
       color: colors.text,
       borderRadius: 3,
-      width: 45,
+      width: 55,  // Slightly smaller to accommodate arrows
       height: 30,
       textAlign: 'center',
       fontSize: 14,

@@ -18,7 +18,7 @@ const SignupPage = () => {
   const handleSubmit = async () => {
 
     // FIXME: change after testin
-    const res = await signup("benny", "123456789", "123456789");
+    const res = await signup(userText, passText, confirmPassText);
 
     if (res != "success") {
       Alert.alert(res);

@@ -3,6 +3,7 @@ import { useRouter, usePathname } from "expo-router";
 import { useUserContext } from "@/hooks/UserContext";
 import { MOVEMENTS } from "@/constants/Movements";
 import { REST_TIMES } from "@/constants/RestTimes";
+import axios from "axios";
 import getSubList from "@/functions/getSubsList";
 
 export const EditContext = React.createContext();
@@ -16,7 +17,7 @@ const dayIndexRef = { current: 0 };
 
 export function EditProvider({children}){
   const router = useRouter();
-  const { routineCpy, setRoutineCpy, setRoutine, info } = useUserContext();
+  const { routineCpy, setRoutineCpy, setRoutine, info, username } = useUserContext();
   
   const [dayIndex, setDayIndex] = useState(dayIndexRef.current);
   
@@ -36,8 +37,16 @@ export function EditProvider({children}){
   }
 
   const finish = async () => {
-    setRoutine(routineCpy);
-    router.replace("/(main)/(tabs)/WorkoutPage");
+    if (routineCpy.every(day => !day.movements.some(entry => entry.movement === "new movement"))){
+      await axios.post('http://localhost:3001/set-routine', {routine: {title: routineCpy.title, routine: routineCpy}, username: username}).then(response => {
+        //setLog(response.data.movements);
+        //setRecents(response.data.recents);
+        setRoutine(routineCpy);
+        router.replace("/(main)/(tabs)/WorkoutPage");
+      }).catch(error => {
+        console.log("error setting routine");
+      })
+    }
   }
 
   const NUM_SETS = info.sets;

@@ -4,7 +4,7 @@ export const WorkoutContext = React.createContext();
 import { MOVEMENTS } from "@/constants/Movements";
 import getSubList from "@/functions/getSubsList";
 
-const dayIndex = (new Date().getDay() - 1) % 7;
+const dayIndex = (new Date().getDay() + 6) % 7;
 const dayName = new Date().toLocaleDateString('en-US', { 
   weekday: 'long',
   month: 'long',
@@ -27,14 +27,15 @@ export function useWorkoutContext() {
 
 export function WorkoutProvider({children}) {
 
-  const { routine, info, logSet, getTargets } = useUserContext();
-  const exp = info.exp;
-  const numSets = info.sets;
+  const { routine, info, logSet, getTargets, log, recents } = useUserContext();
 
   const [time, setTime] = useState(timeRef.current);
   const [timerInterval, setTimerInterval] = useState(null);
   const [weightExp, setWeightExp] = useState(0);
   const [repsExp, setRepsExp] = useState(0);
+
+  const numSets = info.sets;
+  const exp = info.exp;
   
   useEffect(() => {
     timeRef.current = time;
@@ -131,9 +132,10 @@ export function WorkoutProvider({children}) {
         setMovementIndex(movementIndex + 1);
         setSubList(getSubOptions(newMovement));
         setSetNum(1);
-        const [targetWeight, targetReps] = getTargets(newMovement)
-        setWeightExp(targetWeight);
-        setRepsExp(targetReps);
+        getTargets(newMovement).then(([targetWeight, targetReps]) => {
+          setWeightExp(targetWeight);
+          setRepsExp(targetReps);
+        })
       }
 
     } else {
@@ -183,9 +185,11 @@ export function WorkoutProvider({children}) {
   }
 
   const [workoutCpy, setWorkoutCpy] = useState(routine[dayIndex]);
-  const [currMovement, setCurrMovement] = useState(workoutCpy.sets[index].movement);
+  const [currMovement, setCurrMovement] = useState(workoutCpy.sets[index] ? workoutCpy.sets[index].movement : null);
   const [movementIndex, setMovementIndex] = useState(0);
   const [setNum, setSetNum] = useState(1);
+  const [recentsCpy, setRecentsCpy] = useState(recents);
+  const [logCpy, setLogCpy] = useState(log);
 
   const workoutState = {
     workoutCpy: workoutCpy,
@@ -204,6 +208,8 @@ export function WorkoutProvider({children}) {
     startWorkout: startWorkout,
     substitute: substitute,
     numSets: numSets,
+    recentsCpy: recentsCpy,
+    logCpy: logCpy,
   }
 
   return (

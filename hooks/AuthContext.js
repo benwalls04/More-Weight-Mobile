@@ -22,6 +22,8 @@ export function AuthProvider({ children }) {
         });
         setRoutine(response.data.routine);
         setUsername(username);
+        setLog(response.data.log);
+        setRecents(response.data.recents);
         setIsAuth(true);
         return "success";
       } catch (error) {

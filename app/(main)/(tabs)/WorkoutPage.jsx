@@ -29,8 +29,10 @@ export default function WorkoutPage() {
           renderItem={({ item, index}) => (
             <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={true}/>
           )}
-        />        
-        <FooterButton text={"Begin Workout"} clickEvent={() => startWorkout()} marginBottom={12} />
+        /> 
+        {workoutCpy.title !== "rest" && (
+          <FooterButton text={"Begin Workout"} clickEvent={() => startWorkout()} marginBottom={12} />
+        )}       
       </ThemedView>
     );
   } else {

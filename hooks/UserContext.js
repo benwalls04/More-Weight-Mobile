@@ -18,8 +18,10 @@ export function UserProvider({children}) {
   const [username, setUsername] = useState("");
   const [routine, setRoutine] = useState([]);
   const [routineCpy, setRoutineCpy] = useState([]);
-  const [info, setInfo] = useState({});
+  const [info, setInfo] = useState({sets: 3, exp: "i"});
   const [split, setSplit] = useState([]);
+  const [log, setLog] = useState([]);
+  const [recents, setRecents] = useState([]);
 
   useEffect(() => {
     if (routineCpy.length > 0) {
@@ -30,12 +32,15 @@ export function UserProvider({children}) {
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
       try {
-        const response = await axios.get('https://more-weight.com/login', {
+        const response = await axios.get('http://localhost:3001/login', {
           params: { username, password }
         });
-        setRoutine(response.data.routine);
+        setRoutine(response.data.routine.routine);
+        setLog(response.data.log);
+        setRecents(response.data.recents);
         setUsername(username);
         setInfo(response.data.inputs);
+        router.replace("/(main)/(tabs)/WorkoutPage");
         return "success";
       } catch (error) {
         if (error.response?.status === 400) {
@@ -85,10 +90,6 @@ export function UserProvider({children}) {
         }
 
         setInfo(tmpParams);
-
-        console.log(username)
-        console.log(password)
-        console.log(tmpParams)
       
         const response = await axios.post('http://localhost:3001/new-user', {
           inputs: tmpParams, username: username.toLowerCase(), password: password.toLowerCase()
@@ -156,7 +157,11 @@ export function UserProvider({children}) {
     login: login,
     signup: signup,
     logSet: logSet,
-    getTargets: getTargets
+    getTargets: getTargets,
+    log: log,
+    setLog: setLog,
+    recents: recents,
+    setRecents: setRecents,
   }
 
   return (

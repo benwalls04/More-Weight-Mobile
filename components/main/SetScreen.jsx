@@ -30,9 +30,9 @@ export default function SetScreen() {
   const [weight, setWeight] = useState(weightExp === 0? "" : weightExp);
   const [reps, setReps] = useState(repsExp === 0? "" : repsExp);
   useEffect(() => {
-    setWeight(weightExp === 0? "" : weightExp);
-    setReps(repsExp === 0? "" : repsExp);
-  }, [currMovement])
+    setWeight(weightExp);
+    setReps(repsExp);
+  }, [currMovement, weightExp, repsExp])
   
   // Format time from decimal minutes (e.g. 2.25) to MM:SS
   const formatTime = (timeInMinutes) => {

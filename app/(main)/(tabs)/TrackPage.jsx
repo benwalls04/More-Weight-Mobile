@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Dimensions, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
@@ -6,9 +6,14 @@ import MainHeader from "@/components/main/MainHeader";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
-import Svg, { Path, Line } from 'react-native-svg';
-
+import Svg, { Path } from 'react-native-svg';
+import PopupPressable from "@/components/PopupPressable";
+import { ThemedPressable } from "@/components/ThemedPressable";
 const windowWidth = Dimensions.get('window').width;
+import { MOVEMENTS } from "@/constants/Movements";
+import LogList from "@/components/main/LogList";
+
+const muscleGroups = ["chest", "back", "legs", "shoulders", "biceps", "triceps", "accessories"];
 
 export default function TrackScreen() {
   const { theme } = useThemeContext();
@@ -17,42 +22,45 @@ export default function TrackScreen() {
 
   const {logCpy, recentsCpy} = useWorkoutContext();
 
-  console.log(logCpy);
+  const [selectGroups, setSelectGroups] = useState(Array.from({ length: muscleGroups.length }, (_, i) => i));
+
+  console.log(selectGroups)
+
+  const handleGroupPress = (index) => {
+    if (selectGroups.includes(index)) {
+      setSelectGroups(prev => prev.filter(i => i !== index));
+    } else {
+      setSelectGroups(prev => [...prev, index]);
+    }
+  };
 
   const renderHeader = () => (
     <View>
-      <View style={styles.headerControls}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search"
-          placeholderTextColor={colors.text}
-        />
-        <TouchableOpacity style={styles.sortButton}>
-          <ThemedText>Sort by recents</ThemedText>
-        </TouchableOpacity>
-      </View>
       <View style={styles.muscleGroups}>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>chest</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>back</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>legs</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>shoulders</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>biceps</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>triceps</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.muscleButton, { backgroundColor: colors.tint }]}>
-        <ThemedText>accessories</ThemedText>
-      </TouchableOpacity>
+        <View style={styles.muscleRow}>
+          {muscleGroups.slice(0, 4).map((group, index) => (
+            <ThemedPressable 
+              key={index} 
+              type="slanted" 
+              style={[styles.muscleButton1, selectGroups.includes(index) ? styles.muscleButtonSelected : {}]}
+              onPress={() => handleGroupPress(index)}
+            >
+              <ThemedText>{group}</ThemedText>
+            </ThemedPressable>
+          ))}
+        </View>
+        <View style={styles.muscleRow}>
+          {muscleGroups.slice(4, 7).map((group, index) => (
+            <ThemedPressable 
+              key={index} 
+              type="slanted" 
+              style={[styles.muscleButton2, selectGroups.includes(index + 4) ? styles.muscleButtonSelected : {}]}
+              onPress={() => handleGroupPress(index + 4)}
+            >
+              <ThemedText>{group}</ThemedText>
+            </ThemedPressable>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -84,15 +92,6 @@ export default function TrackScreen() {
     return (
       <View style={styles.graphContainer}>
         <Svg width={width} height={height}>
-          {/* Base line */}
-          <Line
-            x1={padding}
-            y1={height - padding}
-            x2={width - padding}
-            y2={height - padding}
-            stroke={colors.text}
-            strokeWidth="1"
-          />
           {/* Line chart */}
           <Path
             d={path}
@@ -109,43 +108,44 @@ export default function TrackScreen() {
     <View style={styles.exerciseItem}>
       <View style={styles.exerciseHeader}>
         <ThemedText type="header" style={styles.exerciseTitle}>{exercise}</ThemedText>
+        <PopupPressable 
+          popupBody={() =><LogList exercise={exercise}/>}
+          style={styles.viewLogButton}
+        >
+          <ThemedText style={styles.viewLogText}>View Complete Log</ThemedText>
+        </PopupPressable>
       </View>
       {renderGraph(exercise)}
-      <View style={styles.exerciseDetails}>
-        <View style={styles.detailGroup}>
-          <ThemedText>Date</ThemedText>
-          <TextInput 
-            style={styles.valText}
-            value="NA"
-            editable={false}
-          />
-        </View>
-        <View style={styles.detailGroup}>
-          <ThemedText>Weight</ThemedText>
-          <TextInput 
-            style={styles.valText}
-            value="NA"
-            editable={false}
-          />
-        </View>
-        <View style={styles.detailGroup}>
-          <ThemedText>Reps</ThemedText>
-          <TextInput 
-            style={styles.valText}
-            value="NA"
-            editable={false}
-          />
-        </View>
-      </View>
     </View>
   );
 
+  const checkRender = (exercise) => {
+    if (!(exercise in logCpy)) {
+      return false;
+    }
+
+    if (logCpy[exercise].length === 0) {
+      return false;
+    }
+
+    const muscleGroup = MOVEMENTS[exercise].primary;
+
+    if (!muscleGroups.includes(muscleGroup)) {
+      return selectGroups.includes(muscleGroups.length - 1);
+    } else {
+      const muscleIndex = muscleGroups.indexOf(muscleGroup);
+      return selectGroups.includes(muscleIndex);
+    }
+  }
+
+  // FIXME: add the muscle group to the log entries 
+
   return (
-    <ThemedView>
+    <ThemedView style={styles.container}>
       <MainHeader title="Log" subHeaderComponent={renderHeader()} />
-      <ScrollView style={styles.container}>
+      <ScrollView>
         <View style={styles.exerciseList}>
-          {recentsCpy.map(exercise => renderExerciseItem(exercise))}
+          {recentsCpy.map(exercise => checkRender(exercise) && renderExerciseItem(exercise))}
         </View>
       </ScrollView>
     </ThemedView>
@@ -156,33 +156,39 @@ function createStyles(colors) {
   return StyleSheet.create({
     container: {
       flex: 1,
-    },
-    headerControls: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
       paddingHorizontal: 20,
-      marginBottom: 20,
-    },
-    searchInput: {
-      flex: 1,
-      height: 40,
-      borderWidth: 1,
-      borderColor: colors.text,
-      borderRadius: 5,
-      paddingHorizontal: 10,
-      marginRight: 10,
-      color: colors.text,
-    },
-    sortButton: {
-      padding: 10,
+      paddingTop: 25
     },
     muscleGroups: {
-      flexDirection: 'row',
+      marginTop: 20,
+      flexDirection: 'column',
       flexWrap: 'wrap',
       paddingHorizontal: 15,
-      gap: 5,
-      marginBottom: 20,
+      width: windowWidth,
+      alignSelf: 'center',
+      gap: 0,
+    },
+    muscleRow: {
+      flexDirection: 'row',
+      gap: 0,
+    },
+    muscleButtonSelected: {
+      borderColor: colors.background,
+      backgroundColor: colors.tint,
+    },
+    muscleButton1: {
+      width: "25%",
+      height: 35,
+      borderWidth: 1,
+      borderColor: colors.tint,
+      backgroundColor: colors.background,
+    },
+    muscleButton2: {
+      width: "33%",
+      height: 30,
+      borderWidth: 1,
+      borderColor: colors.tint,
+      backgroundColor: colors.background,
     },
     muscleButton: {
       paddingHorizontal: 15,
@@ -190,19 +196,18 @@ function createStyles(colors) {
       borderRadius: 5,
     },
     graphContainer: {
-      height: 100,
+      height: 130,
+      alignSelf: 'center',
       backgroundColor: colors.background,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.accentLight,
+      justifyContent: 'center',
     },
     exerciseList: {
       width: '100%',
       paddingHorizontal: 10,
       paddingTop: 10,
-      gap: 15,
     },
     exerciseItem: {
-      width: windowWidth * .8,
+      width: windowWidth * .85,
       alignSelf: 'center',
       borderWidth: 2,
       borderColor: colors.accentLight,
@@ -214,39 +219,28 @@ function createStyles(colors) {
       shadowRadius: 4,
       elevation: 3,
       overflow: 'hidden',
+      marginBottom: 20,
+      paddingBottom: 0,
     },
     exerciseHeader: {
       borderBottomWidth: 1,
       borderBottomColor: colors.accentLight,
       paddingVertical: 12,
       paddingHorizontal: 15,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     exerciseTitle: {
       fontSize: 16,
       fontWeight: '500',
     },
-    exerciseDetails: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingHorizontal: 15,
-      paddingVertical: 12,
-      width: '100%',
+    viewLogButton: {
+      alignSelf: 'center',
+      borderWidth: 0,
     },
-    detailGroup: {
-      flex: 1,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 6,
-    },
-    valText: {
-      backgroundColor: colors.accent,
-      paddingVertical: 6,
-      paddingHorizontal: 4,
-      borderRadius: 4,
-      width: 40,
-      textAlign: 'center',
-      color: colors.text,
+    viewLogText: {
+      textDecorationLine: 'underline',
     },
   });
 }

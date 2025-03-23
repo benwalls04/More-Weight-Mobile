@@ -4,10 +4,18 @@ import { useThemeContext } from '@/hooks/ThemeContext';
 import { ThemedPressable } from '@/components/ThemedPressable';
 import { COLORS } from '../constants/Colors';
 
-const Popup = ({ visible, onClose, body }) => {
+const Popup = ({ visible, onClose, extraClose, body }) => {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
+
+  const handleClose = () => {
+    onClose();
+
+    if (extraClose) {
+      extraClose();
+    }
+  }
 
   return (
     <Modal
@@ -18,14 +26,14 @@ const Popup = ({ visible, onClose, body }) => {
     >
       <View style={styles.overlay}>
         <View style={styles.popupContainer}>
-          <View style={{flexDirection: 'row', width: '100%'}}>
+          <View style={styles.contentWrapper}>
             {body()}
           </View>
-          <View style={styles.buttonContainer}>
-            <ThemedPressable type="selected" onPress={onClose} style={styles.closeButton}>
-                <Text style={styles.closeText}>Close</Text>
-            </ThemedPressable>
-          </View>
+        </View>
+        <View style={styles.buttonContainer}>
+          <ThemedPressable type="selected" onPress={handleClose} style={styles.closeButton}>
+              <Text style={styles.closeText}>Close</Text>
+          </ThemedPressable>
         </View>
       </View>
     </Modal>
@@ -46,18 +54,20 @@ function createStyles (colors) {
       maxHeight: "75%",
       width: '90%',
       alignItems: 'center',
-      paddingBottom: 20,
     },
+    contentWrapper: {
+      flex: 1,
+      width: '100%',
+      backgroundColor: colors.popupColor,
+    }, 
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       width: '100%',
-      position: 'absolute',
-      bottom: -15,
     },
     closeButton: {
       borderRadius: 0,
-      width: "75%", 
+      width: "90%", 
       height: 30,
     },
     closeText: {

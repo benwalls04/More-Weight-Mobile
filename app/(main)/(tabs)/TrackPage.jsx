@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Dimensions, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import MainHeader from "@/components/main/MainHeader";
+import Graph from "@/components/main/Graph";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
-import Svg, { Path } from 'react-native-svg';
 import PopupPressable from "@/components/PopupPressable";
 import { ThemedPressable } from "@/components/ThemedPressable";
 const windowWidth = Dimensions.get('window').width;
@@ -15,16 +15,156 @@ import LogList from "@/components/main/LogList";
 
 const muscleGroups = ["chest", "back", "legs", "shoulders", "biceps", "triceps", "accessories"];
 
+const logTest = {
+  "barbell row": [
+    {
+      "weight": 100,
+      "reps": 10,
+      "createdAt": "2025-03-08T02:04:35.638Z"
+    },
+    {
+      "weight": 100,
+      "reps": 9,
+      "createdAt": "2025-03-08T02:04:35.638Z"
+    },
+    {
+      "weight": 100,
+      "reps": 8,
+      "createdAt": "2025-03-08T02:04:35.638Z"
+    },
+    {
+      "weight": 105,
+      "reps": 9,
+      "createdAt": "2025-03-11T02:04:35.638Z"
+    },
+    {
+      "weight": 105,
+      "reps": 8,
+      "createdAt": "2025-03-11T02:04:35.638Z"
+    },
+    {
+      "weight": 105,
+      "reps": 8,
+      "createdAt": "2025-03-11T02:04:35.638Z"
+    },
+    {
+      "weight": 107.5,
+      "reps": 9,
+      "createdAt": "2025-03-14T02:04:35.638Z"
+    },
+    {
+      "weight": 107.5,
+      "reps": 8,
+      "createdAt": "2025-03-14T02:04:35.638Z"
+    },
+    {
+      "weight": 107.5,
+      "reps": 7,
+      "createdAt": "2025-03-14T02:04:35.638Z"
+    },
+    {
+      "weight": 110,
+      "reps": 9,
+      "createdAt": "2025-03-17T02:04:35.638Z"
+    },
+    {
+      "weight": 110,
+      "reps": 8,
+      "createdAt": "2025-03-17T02:04:35.638Z"
+    },
+    {
+      "weight": 110,
+      "reps": 7,
+      "createdAt": "2025-03-17T02:04:35.638Z"
+    },
+    {
+      "weight": 112.5,
+      "reps": 9,
+      "createdAt": "2025-03-20T02:04:35.638Z"
+    },
+    {
+      "weight": 112.5,
+      "reps": 7,
+      "createdAt": "2025-03-20T02:04:35.638Z"
+    },
+    {
+      "weight": 112.5,
+      "reps": 6,
+      "createdAt": "2025-03-20T02:04:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 8,
+      "createdAt": "2025-03-23T02:04:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 7,
+      "createdAt": "2025-03-23T02:04:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 7,
+      "createdAt": "2025-03-23T02:04:35.638Z"
+    },
+    {
+      "weight": 117.5,
+      "reps": 8,
+      "createdAt": "2025-03-26T02:04:35.638Z"
+    },
+    {
+      "weight": 117.5,
+      "reps": 7,
+      "createdAt": "2025-03-26T02:04:35.638Z"
+    },
+    {
+      "weight": 117.5,
+      "reps": 6,
+      "createdAt": "2025-03-26T02:04:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 7,
+      "createdAt": "2025-03-29T02:04:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 6,
+      "createdAt": "2025-03-29T02:04:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 6,
+      "createdAt": "2025-03-29T02:04:35.638Z"
+    },
+    {
+      "weight": 122.5,
+      "reps": 7,
+      "createdAt": "2025-04-01T02:04:35.638Z"
+    },
+    {
+      "weight": 122.5,
+      "reps": 6,
+      "createdAt": "2025-04-01T02:04:35.638Z"
+    },
+    {
+      "weight": 122.5,
+      "reps": 5,
+      "createdAt": "2025-04-01T02:04:35.638Z"
+    }
+  ]
+};
+
+const recentsTest = ["barbell row"]
+
 export default function TrackScreen() {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
-  const {logCpy, recentsCpy} = useWorkoutContext();
+  const {logCpy, recentsCpy, makeLogChanges} = useWorkoutContext();
 
   const [selectGroups, setSelectGroups] = useState(Array.from({ length: muscleGroups.length }, (_, i) => i));
-
-  console.log(selectGroups)
 
   const handleGroupPress = (index) => {
     if (selectGroups.includes(index)) {
@@ -65,45 +205,6 @@ export default function TrackScreen() {
     </View>
   );
 
-  const renderGraph = (exercise) => {
-    const exerciseData = logCpy[exercise] || [];
-    const data = exerciseData.map(entry => Number(entry.weight) || 0);
-    
-    if (data.length === 0) return null;
-
-    const width = windowWidth * 0.8;  // Match container width
-    const height = 100;
-    const padding = 10;
-    const graphWidth = width - (padding * 2);
-    const graphHeight = height - (padding * 2);
-
-    // Find min and max for scaling
-    const maxY = Math.max(...data);
-    const minY = Math.min(...data);
-    
-    // Create path
-    let path = '';
-    data.forEach((point, i) => {
-      const x = (i * (graphWidth / (data.length - 1))) + padding;
-      const y = height - (((point - minY) / (maxY - minY)) * graphHeight + padding);
-      path += `${i === 0 ? 'M' : 'L'} ${x} ${y} `;
-    });
-
-    return (
-      <View style={styles.graphContainer}>
-        <Svg width={width} height={height}>
-          {/* Line chart */}
-          <Path
-            d={path}
-            stroke={colors.tint}
-            strokeWidth="2"
-            fill="none"
-          />
-        </Svg>
-      </View>
-    );
-  };
-
   const renderExerciseItem = (exercise) => (
     <View style={styles.exerciseItem}>
       <View style={styles.exerciseHeader}>
@@ -111,11 +212,12 @@ export default function TrackScreen() {
         <PopupPressable 
           popupBody={() =><LogList exercise={exercise}/>}
           style={styles.viewLogButton}
+          onClose={() => makeLogChanges(exercise)}
         >
           <ThemedText style={styles.viewLogText}>View Complete Log</ThemedText>
         </PopupPressable>
       </View>
-      {renderGraph(exercise)}
+      <Graph exercise={exercise}/>
     </View>
   );
 
@@ -194,12 +296,6 @@ function createStyles(colors) {
       paddingHorizontal: 15,
       paddingVertical: 8,
       borderRadius: 5,
-    },
-    graphContainer: {
-      height: 130,
-      alignSelf: 'center',
-      backgroundColor: colors.background,
-      justifyContent: 'center',
     },
     exerciseList: {
       width: '100%',

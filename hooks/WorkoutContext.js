@@ -184,12 +184,25 @@ export function WorkoutProvider({children}) {
     return getSubList(title, movements, movement, accessories);
   }
 
+  const makeLogChanges = (movement) => {
+    const newLog = {...logCpy};
+    
+    Object.entries(logChanges).forEach(([index, value]) => {
+      newLog[movement][index].weight = Number(value.weight);
+      newLog[movement][index].reps = Number(value.reps);
+    });
+    
+    setLogCpy(newLog);
+    setLogChanges({});
+  }
+
   const [workoutCpy, setWorkoutCpy] = useState(routine[dayIndex]);
   const [currMovement, setCurrMovement] = useState(workoutCpy.sets[index] ? workoutCpy.sets[index].movement : null);
   const [movementIndex, setMovementIndex] = useState(0);
   const [setNum, setSetNum] = useState(1);
   const [recentsCpy, setRecentsCpy] = useState(recents);
   const [logCpy, setLogCpy] = useState(log);
+  const [logChanges, setLogChanges] = useState({});
 
   const workoutState = {
     workoutCpy: workoutCpy,
@@ -210,6 +223,9 @@ export function WorkoutProvider({children}) {
     numSets: numSets,
     recentsCpy: recentsCpy,
     logCpy: logCpy,
+    logChanges: logChanges,
+    setLogChanges: setLogChanges, 
+    makeLogChanges: makeLogChanges,
   }
 
   return (

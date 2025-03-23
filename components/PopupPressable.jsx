@@ -8,6 +8,7 @@ export default function PopupPressable({
   style,
   children,
   popupBody,
+  onClose,
   visible=true,
   ...otherProps
 }) {
@@ -76,7 +77,7 @@ export default function PopupPressable({
           {children}
         </View>
       </Pressable>
-      <Popup visible={popupVisible} onClose={closePopup} body={popupBody} />
+      <Popup visible={popupVisible} onClose={closePopup} body={popupBody} extraClose={onClose} />
     </Animated.View>
   );
 }

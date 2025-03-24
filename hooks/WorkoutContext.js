@@ -115,31 +115,33 @@ export function WorkoutProvider({children}) {
 
   const [subList, setSubList] = useState([]);
   const nextSet = (skippedSet = false, weight, reps) => {
-    if (index < workoutCpy.sets.length - 1) {
-      if (!skippedSet) {
-        logSet(currMovement, weight, reps);
-        setWeightExp(weight);
-        setRepsExp(reps);
-        setTime(workoutCpy.sets[index].rest);
-        startTimer(workoutCpy.sets[index].rest);
-      } 
-      setIndex(index + 1);
-      setSetNum(setNum + 1);
-      
-      const newMovement = workoutCpy.sets[index + 1].movement;
-      if (newMovement !== currMovement) {
-        setCurrMovement(newMovement);
-        setMovementIndex(movementIndex + 1);
-        setSubList(getSubOptions(newMovement));
-        setSetNum(1);
-        getTargets(newMovement).then(([targetWeight, targetReps]) => {
-          setWeightExp(targetWeight);
-          setRepsExp(targetReps);
-        })
-      }
+    if (weight > 0 && reps > 0) {
+      if (index < workoutCpy.sets.length - 1) {
+        if (!skippedSet) {
+          logSet(currMovement, weight, reps);
+          setWeightExp(weight);
+          setRepsExp(reps);
+          setTime(workoutCpy.sets[index].rest);
+          startTimer(workoutCpy.sets[index].rest);
+        } 
+        setIndex(index + 1);
+        setSetNum(setNum + 1);
+        
+        const newMovement = workoutCpy.sets[index + 1].movement;
+        if (newMovement !== currMovement) {
+          setCurrMovement(newMovement);
+          setMovementIndex(movementIndex + 1);
+          setSubList(getSubOptions(newMovement));
+          setSetNum(1);
+          getTargets(newMovement).then(([targetWeight, targetReps]) => {
+            setWeightExp(targetWeight);
+            setRepsExp(targetReps);
+          })
+        }
 
-    } else {
-      setWorkoutFlag(false);
+      } else {
+        setWorkoutFlag(false);
+      }
     }
   }
 

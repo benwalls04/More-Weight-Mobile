@@ -17,140 +17,405 @@ const muscleGroups = ["chest", "back", "legs", "shoulders", "biceps", "triceps",
 
 const logTest = {
   "barbell row": [
+    // Session 1: March 1, 2025
     {
-      "weight": 100,
-      "reps": 10,
-      "createdAt": "2025-03-08T02:04:35.638Z"
+      "weight": 95,
+      "reps": 8,
+      "createdAt": "2025-03-01T10:15:35.638Z"
     },
     {
-      "weight": 100,
-      "reps": 9,
-      "createdAt": "2025-03-08T02:04:35.638Z"
+      "weight": 95,
+      "reps": 7,
+      "createdAt": "2025-03-01T10:15:35.638Z"
     },
+    {
+      "weight": 95,
+      "reps": 6,
+      "createdAt": "2025-03-01T10:15:35.638Z"
+    },
+    // Session 2: March 4, 2025 (+3 days)
     {
       "weight": 100,
       "reps": 8,
-      "createdAt": "2025-03-08T02:04:35.638Z"
+      "createdAt": "2025-03-04T11:20:35.638Z"
+    },
+    {
+      "weight": 100,
+      "reps": 7,
+      "createdAt": "2025-03-04T11:20:35.638Z"
+    },
+    {
+      "weight": 100,
+      "reps": 7,
+      "createdAt": "2025-03-04T11:20:35.638Z"
+    },
+    // Session 3: March 8, 2025 (+4 days)
+    {
+      "weight": 105,
+      "reps": 7,
+      "createdAt": "2025-03-08T09:30:35.638Z"
     },
     {
       "weight": 105,
-      "reps": 9,
-      "createdAt": "2025-03-11T02:04:35.638Z"
+      "reps": 6,
+      "createdAt": "2025-03-08T09:30:35.638Z"
+    },
+    {
+      "weight": 105,
+      "reps": 6,
+      "createdAt": "2025-03-08T09:30:35.638Z"
+    },
+    // Session 4: March 11, 2025 (+3 days)
+    {
+      "weight": 105,
+      "reps": 8,
+      "createdAt": "2025-03-11T10:45:35.638Z"
     },
     {
       "weight": 105,
       "reps": 8,
-      "createdAt": "2025-03-11T02:04:35.638Z"
+      "createdAt": "2025-03-11T10:45:35.638Z"
     },
     {
       "weight": 105,
-      "reps": 8,
-      "createdAt": "2025-03-11T02:04:35.638Z"
-    },
-    {
-      "weight": 107.5,
-      "reps": 9,
-      "createdAt": "2025-03-14T02:04:35.638Z"
-    },
-    {
-      "weight": 107.5,
-      "reps": 8,
-      "createdAt": "2025-03-14T02:04:35.638Z"
-    },
-    {
-      "weight": 107.5,
       "reps": 7,
-      "createdAt": "2025-03-14T02:04:35.638Z"
+      "createdAt": "2025-03-11T10:45:35.638Z"
     },
-    {
-      "weight": 110,
-      "reps": 9,
-      "createdAt": "2025-03-17T02:04:35.638Z"
-    },
-    {
-      "weight": 110,
-      "reps": 8,
-      "createdAt": "2025-03-17T02:04:35.638Z"
-    },
+    // Session 5: March 15, 2025 (+4 days)
     {
       "weight": 110,
       "reps": 7,
-      "createdAt": "2025-03-17T02:04:35.638Z"
+      "createdAt": "2025-03-15T14:20:35.638Z"
     },
     {
-      "weight": 112.5,
-      "reps": 9,
-      "createdAt": "2025-03-20T02:04:35.638Z"
-    },
-    {
-      "weight": 112.5,
-      "reps": 7,
-      "createdAt": "2025-03-20T02:04:35.638Z"
-    },
-    {
-      "weight": 112.5,
+      "weight": 110,
       "reps": 6,
-      "createdAt": "2025-03-20T02:04:35.638Z"
+      "createdAt": "2025-03-15T14:20:35.638Z"
     },
     {
-      "weight": 115,
-      "reps": 8,
-      "createdAt": "2025-03-23T02:04:35.638Z"
-    },
-    {
-      "weight": 115,
-      "reps": 7,
-      "createdAt": "2025-03-23T02:04:35.638Z"
-    },
-    {
-      "weight": 115,
-      "reps": 7,
-      "createdAt": "2025-03-23T02:04:35.638Z"
-    },
-    {
-      "weight": 117.5,
-      "reps": 8,
-      "createdAt": "2025-03-26T02:04:35.638Z"
-    },
-    {
-      "weight": 117.5,
-      "reps": 7,
-      "createdAt": "2025-03-26T02:04:35.638Z"
-    },
-    {
-      "weight": 117.5,
-      "reps": 6,
-      "createdAt": "2025-03-26T02:04:35.638Z"
-    },
-    {
-      "weight": 120,
-      "reps": 7,
-      "createdAt": "2025-03-29T02:04:35.638Z"
-    },
-    {
-      "weight": 120,
-      "reps": 6,
-      "createdAt": "2025-03-29T02:04:35.638Z"
-    },
-    {
-      "weight": 120,
-      "reps": 6,
-      "createdAt": "2025-03-29T02:04:35.638Z"
-    },
-    {
-      "weight": 122.5,
-      "reps": 7,
-      "createdAt": "2025-04-01T02:04:35.638Z"
-    },
-    {
-      "weight": 122.5,
-      "reps": 6,
-      "createdAt": "2025-04-01T02:04:35.638Z"
-    },
-    {
-      "weight": 122.5,
+      "weight": 110,
       "reps": 5,
-      "createdAt": "2025-04-01T02:04:35.638Z"
+      "createdAt": "2025-03-15T14:20:35.638Z"
+    },
+    // Session 6: March 18, 2025 (+3 days)
+    {
+      "weight": 110,
+      "reps": 8,
+      "createdAt": "2025-03-18T16:10:35.638Z"
+    },
+    {
+      "weight": 110,
+      "reps": 7,
+      "createdAt": "2025-03-18T16:10:35.638Z"
+    },
+    {
+      "weight": 110,
+      "reps": 7,
+      "createdAt": "2025-03-18T16:10:35.638Z"
+    },
+    // Session 7: March 22, 2025 (+4 days)
+    {
+      "weight": 115,
+      "reps": 6,
+      "createdAt": "2025-03-22T11:30:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 6,
+      "createdAt": "2025-03-22T11:30:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 5,
+      "createdAt": "2025-03-22T11:30:35.638Z"
+    },
+    // Session 8: March 29, 2025 (+7 days)
+    {
+      "weight": 115,
+      "reps": 7,
+      "createdAt": "2025-03-29T10:15:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 7,
+      "createdAt": "2025-03-29T10:15:35.638Z"
+    },
+    {
+      "weight": 115,
+      "reps": 6,
+      "createdAt": "2025-03-29T10:15:35.638Z"
+    },
+    // Session 9: April 1, 2025 (+3 days)
+    {
+      "weight": 120,
+      "reps": 6,
+      "createdAt": "2025-04-01T09:45:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 5,
+      "createdAt": "2025-04-01T09:45:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 5,
+      "createdAt": "2025-04-01T09:45:35.638Z"
+    },
+    // Session 10: April 4, 2025 (+3 days)
+    {
+      "weight": 120,
+      "reps": 7,
+      "createdAt": "2025-04-04T15:20:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 6,
+      "createdAt": "2025-04-04T15:20:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 6,
+      "createdAt": "2025-04-04T15:20:35.638Z"
+    },
+    // Session 11: April 8, 2025 (+4 days)
+    {
+      "weight": 125,
+      "reps": 5,
+      "createdAt": "2025-04-08T14:10:35.638Z"
+    },
+    {
+      "weight": 125,
+      "reps": 5,
+      "createdAt": "2025-04-08T14:10:35.638Z"
+    },
+    {
+      "weight": 125,
+      "reps": 4,
+      "createdAt": "2025-04-08T14:10:35.638Z"
+    },
+    // Session 12: April 11, 2025 (+3 days)
+    {
+      "weight": 120,
+      "reps": 8,
+      "createdAt": "2025-04-11T17:30:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 7,
+      "createdAt": "2025-04-11T17:30:35.638Z"
+    },
+    {
+      "weight": 120,
+      "reps": 7,
+      "createdAt": "2025-04-11T17:30:35.638Z"
+    },
+    // Session 13: April 15, 2025 (+4 days)
+    {
+      "weight": 125,
+      "reps": 7,
+      "createdAt": "2025-04-15T16:45:35.638Z"
+    },
+    {
+      "weight": 125,
+      "reps": 6,
+      "createdAt": "2025-04-15T16:45:35.638Z"
+    },
+    {
+      "weight": 125,
+      "reps": 5,
+      "createdAt": "2025-04-15T16:45:35.638Z"
+    },
+    // Session 14: April 22, 2025 (+7 days)
+    {
+      "weight": 125,
+      "reps": 8,
+      "createdAt": "2025-04-22T10:30:35.638Z"
+    },
+    {
+      "weight": 125,
+      "reps": 7,
+      "createdAt": "2025-04-22T10:30:35.638Z"
+    },
+    {
+      "weight": 125,
+      "reps": 6,
+      "createdAt": "2025-04-22T10:30:35.638Z"
+    },
+    // Session 15: April 25, 2025 (+3 days)
+    {
+      "weight": 130,
+      "reps": 6,
+      "createdAt": "2025-04-25T11:15:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 5,
+      "createdAt": "2025-04-25T11:15:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 4,
+      "createdAt": "2025-04-25T11:15:35.638Z"
+    },
+    // Session 16: April 29, 2025 (+4 days)
+    {
+      "weight": 130,
+      "reps": 7,
+      "createdAt": "2025-04-29T14:50:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 6,
+      "createdAt": "2025-04-29T14:50:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 5,
+      "createdAt": "2025-04-29T14:50:35.638Z"
+    },
+    // Session 17: May 2, 2025 (+3 days)
+    {
+      "weight": 135,
+      "reps": 5,
+      "createdAt": "2025-05-02T15:30:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 4,
+      "createdAt": "2025-05-02T15:30:35.638Z"
+    },
+    // Session 18: May 6, 2025 (+4 days)
+    {
+      "weight": 130,
+      "reps": 8,
+      "createdAt": "2025-05-06T16:20:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 7,
+      "createdAt": "2025-05-06T16:20:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 7,
+      "createdAt": "2025-05-06T16:20:35.638Z"
+    },
+    {
+      "weight": 130,
+      "reps": 6,
+      "createdAt": "2025-05-06T16:20:35.638Z"
+    },
+    // Session 19: May 13, 2025 (+7 days)
+    {
+      "weight": 135,
+      "reps": 7,
+      "createdAt": "2025-05-13T10:10:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 6,
+      "createdAt": "2025-05-13T10:10:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 5,
+      "createdAt": "2025-05-13T10:10:35.638Z"
+    },
+    // Session 20: May 16, 2025 (+3 days)
+    {
+      "weight": 135,
+      "reps": 8,
+      "createdAt": "2025-05-16T11:40:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 7,
+      "createdAt": "2025-05-16T11:40:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 6,
+      "createdAt": "2025-05-16T11:40:35.638Z"
+    },
+    // Session 21: May 20, 2025 (+4 days)
+    {
+      "weight": 140,
+      "reps": 6,
+      "createdAt": "2025-05-20T14:25:35.638Z"
+    },
+    {
+      "weight": 140,
+      "reps": 5,
+      "createdAt": "2025-05-20T14:25:35.638Z"
+    },
+    {
+      "weight": 140,
+      "reps": 4,
+      "createdAt": "2025-05-20T14:25:35.638Z"
+    },
+    // Session 22: May 23, 2025 (+3 days)
+    {
+      "weight": 135,
+      "reps": 9,
+      "createdAt": "2025-05-23T16:35:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 8,
+      "createdAt": "2025-05-23T16:35:35.638Z"
+    },
+    {
+      "weight": 135,
+      "reps": 7,
+      "createdAt": "2025-05-23T16:35:35.638Z"
+    },
+    // Session 23: May 27, 2025 (+4 days)
+    {
+      "weight": 140,
+      "reps": 7,
+      "createdAt": "2025-05-27T15:15:35.638Z"
+    },
+    {
+      "weight": 140,
+      "reps": 6,
+      "createdAt": "2025-05-27T15:15:35.638Z"
+    },
+    {
+      "weight": 140,
+      "reps": 5,
+      "createdAt": "2025-05-27T15:15:35.638Z"
+    },
+    // Session 24: May 30, 2025 (+3 days)
+    {
+      "weight": 140,
+      "reps": 8,
+      "createdAt": "2025-05-30T10:50:35.638Z"
+    },
+    {
+      "weight": 140,
+      "reps": 7,
+      "createdAt": "2025-05-30T10:50:35.638Z"
+    },
+    {
+      "weight": 140,
+      "reps": 6,
+      "createdAt": "2025-05-30T10:50:35.638Z"
+    },
+    // Session 25: June 6, 2025 (+7 days)
+    {
+      "weight": 145,
+      "reps": 7,
+      "createdAt": "2025-06-06T11:05:35.638Z"
+    },
+    {
+      "weight": 145,
+      "reps": 6,
+      "createdAt": "2025-06-06T11:05:35.638Z"
+    },
+    {
+      "weight": 145,
+      "reps": 5,
+      "createdAt": "2025-06-06T11:05:35.638Z"
     }
   ]
 };
@@ -217,16 +482,16 @@ export default function TrackScreen() {
           <ThemedText style={styles.viewLogText}>View Complete Log</ThemedText>
         </PopupPressable>
       </View>
-      <Graph exercise={exercise}/>
+      <Graph exercise={exercise} tmpParam={logTest["barbell row"]}/>
     </View>
   );
 
   const checkRender = (exercise) => {
-    if (!(exercise in logCpy)) {
+    if (!(exercise in logTest)) {
       return false;
     }
 
-    if (logCpy[exercise].length === 0) {
+    if (logTest[exercise].length === 0) {
       return false;
     }
 
@@ -247,7 +512,7 @@ export default function TrackScreen() {
       <MainHeader title="Log" subHeaderComponent={renderHeader()} />
       <ScrollView>
         <View style={styles.exerciseList}>
-          {recentsCpy.map(exercise => checkRender(exercise) && renderExerciseItem(exercise))}
+          {recentsTest.map(exercise => checkRender(exercise) && renderExerciseItem(exercise))}
         </View>
       </ScrollView>
     </ThemedView>

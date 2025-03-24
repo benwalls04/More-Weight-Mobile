@@ -14,7 +14,7 @@ import { router } from "expo-router";
 export default function Survey() {
 
   // REMOVE after testing 
-  router.push("/(auth)/SignUpPage");
+  router.replace("/(auth)/SignUpPage");
 
   const { getSplits, checkErrors } = useSurveyContext();
 

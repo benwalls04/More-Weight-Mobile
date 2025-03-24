@@ -10,6 +10,7 @@ import { useUserContext } from "@/hooks/UserContext";
 import SubList from "@/components/main/SubList";
 import PopupPressable from "@/components/PopupPressable";
 import { AntDesign } from '@expo/vector-icons';
+import { MOVEMENTS } from "@/constants/Movements";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -25,6 +26,10 @@ export default function SetScreen() {
 
   const repRange = workoutCpy.sets[index].lowerRep + " - " + workoutCpy.sets[index].upperRep + " reps";
   const setStr = "Set " + setNum + "/" + NUM_SETS;
+  const bias = workoutCpy.sets[index].bias;
+  const biasText = MOVEMENTS[currMovement].variants[bias];
+
+  console.log(biasText)
 
   // Dummy state for inputs
   const [weight, setWeight] = useState(weightExp === 0? "" : weightExp);
@@ -116,7 +121,10 @@ export default function SetScreen() {
         </TouchableOpacity>
       </View>
       
-      {/* Exercise name */}
+      <View style={{width: "65%"}}>
+        <ThemedText style={styles.biasText}>{biasText}</ThemedText>
+      </View>
+
       <ThemedText style={styles.exerciseName} numberOfLines={1} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
         {currMovement}
       </ThemedText>
@@ -187,7 +195,7 @@ export default function SetScreen() {
         </View>
 
         {/* Log set button */}
-        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(false, weight, reps)}>
+        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, weight, reps)}}>
           <ThemedText style={styles.logButtonText}>log set</ThemedText>
         </ThemedPressable>
       </View>
@@ -229,6 +237,13 @@ function createStyles(colors) {
       fontWeight: 'bold',
       textAlign: 'center',
       paddingBottom: 15,
+    },
+    biasText: {
+      fontStyle: "italic",
+      fontSize: 16,
+      lineHeight: 6,
+      marginBottom: 6,
+      textAlign: "center",
     },
     setInfoContainer: {
       flexDirection: 'row',

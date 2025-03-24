@@ -81,10 +81,10 @@ function createStyles(colors) {
     paddingVertical: 15,
   },
   gridContainer: {
-    width: "50%",
+    width: "100%",
   },
   imageContainer: {
-    width: '50%',
+    width: '100%',
   },
   setsGrid: {
     marginBottom: 20,

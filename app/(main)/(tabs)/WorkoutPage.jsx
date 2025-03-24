@@ -15,7 +15,9 @@ export default function WorkoutPage() {
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
-  const { workoutCpy, dayName, workoutFlag, startWorkout } = useWorkoutContext();
+  const { workoutCpy, dayName, workoutFlag, startWorkout, complete } = useWorkoutContext();
+
+  console.log(workoutCpy)
 
   if (!workoutFlag) {
     return (
@@ -30,7 +32,7 @@ export default function WorkoutPage() {
             <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={true}/>
           )}
         /> 
-        {workoutCpy.title !== "rest" && (
+        {workoutCpy.title !== "rest" && !complete && (
           <FooterButton text={"Begin Workout"} clickEvent={() => startWorkout()} marginBottom={12} />
         )}       
       </ThemedView>

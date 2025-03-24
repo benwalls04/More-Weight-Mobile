@@ -7,7 +7,7 @@ import { Dimensions } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function Graph({exercise, tmpParam}) {
+export default function Graph({exercise}) {
   const { logCpy } = useWorkoutContext();
   const { theme } = useThemeContext();
 
@@ -28,8 +28,7 @@ export default function Graph({exercise, tmpParam}) {
     return dayDifference;
   }
 
-  //const exerciseData = logCpy[exercise] || [];
-  const exerciseData = tmpParam
+  const exerciseData = logCpy[exercise] || [];
 
   // FIXME: store movement info (like rep ranges) in the recents table 
   const maxReps = exerciseData.reduce((max, entry) => {

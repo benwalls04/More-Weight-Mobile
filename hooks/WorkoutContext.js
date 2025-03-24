@@ -3,6 +3,7 @@ import { useUserContext } from "./UserContext";
 export const WorkoutContext = React.createContext();
 import { MOVEMENTS } from "@/constants/Movements";
 import getSubList from "@/functions/getSubsList";
+import axios from "axios";
 
 const dayIndex = (new Date().getDay() + 6) % 7;
 const dayName = new Date().toLocaleDateString('en-US', { 
@@ -27,12 +28,13 @@ export function useWorkoutContext() {
 
 export function WorkoutProvider({children}) {
 
-  const { routine, info, logSet, getTargets, log, recents } = useUserContext();
+  const { routine, info, logSet, getTargets, log, recents, username } = useUserContext();
 
   const [time, setTime] = useState(timeRef.current);
   const [timerInterval, setTimerInterval] = useState(null);
   const [weightExp, setWeightExp] = useState(0);
   const [repsExp, setRepsExp] = useState(0);
+  const [complete, setComplete] = useState(false);
 
   const numSets = info.sets;
   const exp = info.exp;
@@ -114,16 +116,32 @@ export function WorkoutProvider({children}) {
   }
 
   const [subList, setSubList] = useState([]);
-  const nextSet = (skippedSet = false, weight, reps) => {
-    if (weight > 0 && reps > 0) {
+  const nextSet = (skippedSet=false, weight, reps) => {
       if (index < workoutCpy.sets.length - 1) {
         if (!skippedSet) {
-          logSet(currMovement, weight, reps);
           setWeightExp(weight);
           setRepsExp(reps);
           setTime(workoutCpy.sets[index].rest);
           startTimer(workoutCpy.sets[index].rest);
+
+          // update local copies 
+          let newLog = {...logCpy};
+          let newRecents = [...recentsCpy];
+
+          if (newLog[currMovement]) {
+            newLog[currMovement].push({weight: weight, reps: reps, createdAt: new Date()});
+          } else {
+            newLog[currMovement] = [{weight: weight, reps: reps, createdAt: new Date()}];
+          }
+          newRecents = newRecents.filter(movement => movement !== currMovement);
+          newRecents.push(currMovement);
+
+          setRecentsCpy(newRecents);
+          setLogCpy(newLog);
+
+          logSet(currMovement, weight, reps);
         } 
+          
         setIndex(index + 1);
         setSetNum(setNum + 1);
         
@@ -140,9 +158,9 @@ export function WorkoutProvider({children}) {
         }
 
       } else {
+        setComplete(true);
         setWorkoutFlag(false);
       }
-    }
   }
 
   const substitute = (oldMovement, newMovement) => {
@@ -182,20 +200,37 @@ export function WorkoutProvider({children}) {
     const title = routine[dayIndex].title;
     const movements = workoutCpy.movements;
     const accessories = info.accessories;
+    const bias = workoutCpy.sets[index].bias;
 
-    return getSubList(title, movements, movement, accessories);
+    return getSubList(title, movements, movement, accessories, byVariants=true, bias=bias);
   }
 
-  const makeLogChanges = (movement) => {
-    const newLog = {...logCpy};
-    
-    Object.entries(logChanges).forEach(([index, value]) => {
-      newLog[movement][index].weight = Number(value.weight);
-      newLog[movement][index].reps = Number(value.reps);
-    });
-    
-    setLogCpy(newLog);
-    setLogChanges({});
+  const makeLogChanges = async (movement) => {
+    try {
+      const newLog = {...logCpy};
+      
+      for (const [index, value] of Object.entries(logChanges)) {
+        newLog[movement][index].weight = Number(value.weight);
+        newLog[movement][index].reps = Number(value.reps);
+        
+        await axios.post('http://localhost:3001/log-set', {
+          username: username,
+          movement: movement,
+          weight: Number(value.weight),
+          reps: Number(value.reps),
+          RPE: 10, 
+          index: index
+        });
+      }
+      
+      setLogCpy(newLog);
+      setLogChanges({});
+      
+      return true; 
+    } catch (error) {
+      console.error("Error updating log:", error);
+      return false; 
+    }
   }
 
   const [workoutCpy, setWorkoutCpy] = useState(routine[dayIndex]);
@@ -216,6 +251,7 @@ export function WorkoutProvider({children}) {
     setNum: setNum,
     weightExp: weightExp,
     repsExp: repsExp,
+    complete: complete,
     doNext: doNext,
     doLast: doLast,
     nextSet: nextSet,

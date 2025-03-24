@@ -29,7 +29,6 @@ export default function LogListRow({ entry, index }) {
     } else {
       newLogChanges[index] = {weight: text, reps: entry.reps.toString()};
     }
-
     setLogChanges(newLogChanges);
   }
 
@@ -43,6 +42,8 @@ export default function LogListRow({ entry, index }) {
     }
     setLogChanges(newLogChanges);
   }
+
+  // FIXME: add a set number field for log entries and render it here.
 
   return (
     <View key={index} style={styles.popupEntry}>

@@ -482,16 +482,16 @@ export default function TrackScreen() {
           <ThemedText style={styles.viewLogText}>View Complete Log</ThemedText>
         </PopupPressable>
       </View>
-      <Graph exercise={exercise} tmpParam={logTest["barbell row"]}/>
+      <Graph exercise={exercise}/>
     </View>
   );
 
   const checkRender = (exercise) => {
-    if (!(exercise in logTest)) {
+    if (!(exercise in logCpy)) {
       return false;
     }
 
-    if (logTest[exercise].length === 0) {
+    if (logCpy[exercise].length === 0) {
       return false;
     }
 
@@ -512,7 +512,7 @@ export default function TrackScreen() {
       <MainHeader title="Log" subHeaderComponent={renderHeader()} />
       <ScrollView>
         <View style={styles.exerciseList}>
-          {recentsTest.map(exercise => checkRender(exercise) && renderExerciseItem(exercise))}
+          {recentsCpy.map(exercise => checkRender(exercise) && renderExerciseItem(exercise))}
         </View>
       </ScrollView>
     </ThemedView>

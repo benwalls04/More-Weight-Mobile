@@ -22,11 +22,13 @@ export function UserProvider({children}) {
   const [split, setSplit] = useState([]);
   const [log, setLog] = useState([]);
   const [recents, setRecents] = useState([]);
+  const [fromSignup, setFromSignup] = useState(false);
 
   useEffect(() => {
-    if (routineCpy.length > 0) {
+    if (routineCpy.length > 0 && fromSignup) {
       router.push("/(main)/EditPage");
     }
+    setFromSignup(false);
   }, [routineCpy]);
 
   const login = async (username, password) => {
@@ -36,6 +38,7 @@ export function UserProvider({children}) {
           params: { username, password }
         });
         setRoutine(response.data.routine.routine);
+        setRoutineCpy(response.data.routine.routine);
         setLog(response.data.log);
         setRecents(response.data.recents);
         setUsername(username);
@@ -77,13 +80,13 @@ export function UserProvider({children}) {
           "knee-flexion": "hack squat",
           "legs": 50,
           "numDays": 7,
-          "schedule": ["rest", "rest", "lift", "lift", "lift", "lift", "rest"],
-          "sets": 3,
+          "schedule": ["lift", "lift", "lift", "lift", "lift", "lift", "rest"],
+          "sets": 4,
           "splits": {
-            "selection": ["rest", "rest", "chest shoulders triceps", "back biceps", "legs", "triceps biceps shoulders", "rest"]
+            "selection": ["back legs", "biceps", "chest shoulders triceps", "back biceps", "legs", "triceps biceps shoulders", "rest"]
           },
           "style": "n",
-          "time": 45,
+          "time": 60,
           "title": "dummy value",
           "vertical-press": "dumbell overhead press",
           "vertical-pull": "lat pulldown"
@@ -97,6 +100,7 @@ export function UserProvider({children}) {
         setRoutine(response.data.routine);
         setRoutineCpy(response.data.routine);
         setUsername(username);
+        setFromSignup(true);
       } catch (error) {
         if (error.response) {
           if (error.response.status === 400) {

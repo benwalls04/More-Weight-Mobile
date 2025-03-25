@@ -29,8 +29,6 @@ export default function SetScreen() {
   const bias = workoutCpy.sets[index].bias;
   const biasText = MOVEMENTS[currMovement].variants[bias];
 
-  console.log(biasText)
-
   // Dummy state for inputs
   const [weight, setWeight] = useState(weightExp === 0? "" : weightExp);
   const [reps, setReps] = useState(repsExp === 0? "" : repsExp);

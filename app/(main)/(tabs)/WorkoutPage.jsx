@@ -17,8 +17,6 @@ export default function WorkoutPage() {
 
   const { workoutCpy, dayName, workoutFlag, startWorkout, complete } = useWorkoutContext();
 
-  console.log(workoutCpy)
-
   if (!workoutFlag) {
     return (
       <ThemedView style={styles.container}>

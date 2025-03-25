@@ -104,6 +104,23 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     setTagsSelect(initTagsSelect());
   }, [tags]);
 
+  // experiment with using a popup for sub list 
+  const subPopupBody = () => {
+    return (
+      <View style={{width: '100%', alignItems: 'center', height: 250}}>
+        <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A Substitute</ThemedText>
+        <SubList 
+          list={subList} 
+          changeMovement={substitute} 
+          workoutIndex={index} 
+          style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
+          height={178}
+          selectInteract={true}
+        />
+      </View>
+    )
+  }
+
 
   const [subOptions, setSubOptions] = useState([]);
   const [showSubs, setShowSubs] = useState(false);
@@ -114,19 +131,19 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     const newText = e.target.value.toLowerCase();
     setSubText(newText);
     if (showSubs) {
-      setSubOptions(getSubOptions(newText));
+      setSubOptions(getSubOptions(movement, bias, movement.includes(newText) ? '' : newText));
     }
   }
 
   useEffect(() => {
     setSubText(movement);
   }, [movement]);
-  useEffect(() => (setSubOptions(getSubOptions(''))), [movement]);
+  useEffect(() => (setSubOptions(getSubOptions(movement, bias, ''))), [movement]);
 
   const handleFocus = () => {
     setShowSubs(true);
     // Load options when dropdown is shown
-    setSubOptions(getSubOptions(subText));
+    setSubOptions(getSubOptions(movement, bias, movement.includes(subText) ? '' : subText));
   };
 
   const handleBlur = () => {
@@ -197,10 +214,10 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
             <ThemedText>-</ThemedText>
           </ThemedPressable>
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(workoutIndex, movement)}>
-            <ThemedText>u</ThemedText>
+            <ThemedText>↑</ThemedText>
           </ThemedPressable>
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
-            <ThemedText>d</ThemedText>
+            <ThemedText>↓</ThemedText>
           </ThemedPressable>
         </View>
 

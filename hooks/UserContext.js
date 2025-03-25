@@ -83,7 +83,7 @@ export function UserProvider({children}) {
           "schedule": ["lift", "lift", "lift", "lift", "lift", "lift", "rest"],
           "sets": 4,
           "splits": {
-            "selection": ["back legs", "biceps", "chest shoulders triceps", "back biceps", "legs", "triceps biceps shoulders", "rest"]
+            "selection": ["biceps", "chest shoulders triceps", "chest back", "back biceps", "legs", "triceps biceps shoulders", "rest"]
           },
           "style": "n",
           "time": 60,

@@ -202,7 +202,7 @@ export function WorkoutProvider({children}) {
     const accessories = info.accessories;
     const bias = workoutCpy.sets[index].bias;
 
-    return getSubList(title, movements, movement, accessories, byVariants=true, bias=bias);
+    return getSubList(title, movements, "", accessories, bias, movement);
   }
 
   const makeLogChanges = async (movement) => {

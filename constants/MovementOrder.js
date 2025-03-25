@@ -1,3 +1,25 @@
-export default function MOVEMENT_ORDER {
-  
+export const MOVEMENT_ORDER = {
+  "horizontal-press-1": ["dumbell bench press", "barbell bench press", "machine bench press"], 
+  "horizontal-press-2": ["dumbell bench press", "machine chest press", "smith machine bench press", "weighted dips", "machine bench press", "cable press"], 
+  "vertical-press-1": ["dumbell overhead press", "smith machine overhead press", "machine overhead press", "military press"], 
+  "horizontal-pull-1": ["t-bar row", "barbell row"],
+  "horizontal-pull-2": ["seated cable row", "machine row", "t-bar row", "dumbell row", "barbell row"],
+  "vertical-pull-1": ["lat pulldown", "pull ups"],
+  "vertical-pull-2": ["lat pulldown", "pull ups", "machine pulldown", "kneeling cable row"],
+  "knee-flexion-1": ["leg press", "hack squat", "front squat","barbell squat",],
+  "knee-flexion-2": ["leg press", "bulgarian split squat", "smith machine squat"],
+  "hip-extension-1": ["deadlift"],
+  "hip-extension-2": ["barbell romanian deadlift", "barbell hip thrust", "dumbell romanian deadlift"],
+  "curl-1": ["dumbell hammer curl", "cable curl", "incline dumbell curl", "preacher curl", "dumbell curl", "barbell curl", "machine curl", "concentration curl"], 
+  "extension-1": ["tricep pushdown", "cable overhead extension", "skullcrusher", "machine tricep extension", "crossbody extension"], 
+  "fly": ["pec-dec fly", "cable fly"], 
+  "back-iso": ["lat pullover", "reverse pec-dec fly", "face pulls"], 
+  "leg-iso": ["leg extension", "leg curl", "adductor machine", "abductor machine"], 
+  "shoulder-iso": ["dumbell lateral raise", "cable lateral raise", "cable front raise", "machine lateral raise", "dumbell front raise"], 
+  "side deltoids": ["dumbell lateral raise", "cable lateral raise", "machine lateral raise"], 
+  "rear deltoids": ["cable rear delt fly", "reverse pec-dec fly", "face pulls", "dumbell rear delt fly"],
+  "traps": ["barbell shrugs", "machine shrugs", "dumbell shrugs", "cable shrugs"],
+  "forearms": ["barbell forearm curl", "cable forearm curl"],
+  "calves": ["machine calf raise", "smith machine calf raise", "dumbell calf raise", "barbell calf raise"],
+  "abs": ["weighted leg raise", "weighted situps", "cable crunch", "dumbell side bend"],
 }

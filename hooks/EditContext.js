@@ -13,7 +13,7 @@ export function useEditContext() {
   return editState;
 }
 
-const dayIndexRef = { current: 0 };
+const dayIndexRef = { current: (new Date().getDay() + 6) % 7 };
 
 export function EditProvider({children}){
   const router = useRouter();
@@ -212,11 +212,11 @@ export function EditProvider({children}){
     updateRoutine(newDay);
   }
 
-  const getSubOptions = (text) => {
+  const getSubOptions = (movement, bias, text) => {
     const title = routineCpy[dayIndexRef.current].title;
     const movements = routineCpy[dayIndexRef.current].movements;
 
-    return getSubList(title, movements, text, ACCESSORIES);
+    return getSubList(title, movements, text, ACCESSORIES, bias, movement);
   }
 
   const getSets = (movement) => {

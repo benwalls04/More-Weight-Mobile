@@ -34,6 +34,8 @@ function EditPageContent() {
   const { dayIndex, setDayIndex, finish } = useEditContext();
   const workoutCpy = routineCpy[dayIndex];
 
+  console.log(workoutCpy)
+
   return (
       <ThemedView>
         <View style={Styles.headerContainer}>
@@ -47,6 +49,7 @@ function EditPageContent() {
               </ThemedPressable>
             )}
           />
+          <ThemedText type="title" style={{marginTop: 10}}>{workoutCpy.title}</ThemedText>
         </View>
 
         <FlatList

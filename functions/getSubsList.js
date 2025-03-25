@@ -3,19 +3,12 @@ import { MOVEMENT_ORDER } from "@/constants/MovementOrder";
 
 export default function getSubList(title, movements, text, accessories, bias=null, prevMovement=null) {
   let options = [];
-
-  console.log(bias)
-  console.log(prevMovement)
-  console.log(movements)
-  console.log(text)
   
   const possibleSubs = Object.entries(MOVEMENTS).filter(([movement, data]) => {
     return !movements.some(entry => entry.movement === movement) && (title.includes(data.primary) || accessories.includes(data.primary)) && movement.includes(text)
   }).map(([movement, data]) => movement)
 
-  console.log(possibleSubs)
-
-  if (prevMovement) {
+  if (prevMovement && prevMovement !== "new movement") {
     const primary = MOVEMENTS[prevMovement].primary
     const secondary = MOVEMENTS[prevMovement].secondary
 
@@ -55,9 +48,6 @@ export default function getSubList(title, movements, text, accessories, bias=nul
       options.push(name)
     }
   }
-
-  console.log(options)
-  console.log("----------------")
 
   return options;
 }

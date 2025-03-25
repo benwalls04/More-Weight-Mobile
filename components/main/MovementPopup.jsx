@@ -1,48 +1,108 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, TextInput } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeContext } from '@/hooks/ThemeContext';
 import { COLORS } from '@/constants/Colors';
 
 const MovementPopup = ({
-  sets,
   movement,
+  setsCpy,
+  setSetsCpy
 }) => {
   const theme = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
-  function validChange(val, field) {
-    if (isNaN(val)) {
-      return false;
-    }
-    if (field === 'RPE') {
-      if (val < 7 || val > 11) {
-        return false;
+  const handleValueChange = (index, field, value) => {
+    // Allow decimal points for rest field
+    if (field === 'rest') {
+      // Allow empty string, decimal point, and numbers
+      if (value === "" || value === "." || validChange(value, field)) {
+        const newSets = [...setsCpy];
+        newSets[index] = {
+          ...newSets[index],
+          [field]: value === "" ? "" : value
+        };
+        setSetsCpy(newSets);
       }
     } else {
-      if (val < 1 || val > 5) {
-        return false;
+      // Handle other fields as before
+      if (value === "" || validChange(value, field)) {
+        const newSets = [...setsCpy];
+        newSets[index] = {
+          ...newSets[index],
+          [field]: value === "" ? "" : Number(value)
+        };
+        setSetsCpy(newSets);
       }
     }
-    return true;
+  };
+
+  function validChange(val, field) {
+    if (field === 'rest') {
+      // Allow numbers with up to two decimal places between 1 and 5
+      const num = parseFloat(val);
+      if (isNaN(num)) return false;
+      return num >= 1 && num <= 5 && val.split('.')[1]?.length <= 2;
+    }
+
+    const num = Number(val);
+    if (isNaN(num)) return false;
+    
+    switch(field) {
+      case 'RPE':
+        return num >= 7 && num <= 11;
+      case 'lowerRep':
+      case 'upperRep':
+        return Number.isInteger(num) && num > 0;
+      default:
+        return false;
+    }
   }
 
   const renderSetRow = ({ item: set, index }) => (
     <View style={styles.setRow}>
       <ThemedText style={styles.cellText}>{index + 1}</ThemedText>
-      <TouchableOpacity 
-        style={styles.editableCell}
-        onPress={() => {/* Add your edit logic here */}}
-      >
-        <ThemedText style={styles.cellText}>{set.RPE}</ThemedText>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        style={styles.editableCell}
-        onPress={() => {/* Add your edit logic here */}}
-      >
-        <ThemedText style={styles.cellText}>{set.rest}</ThemedText>
-      </TouchableOpacity>
+      <View style={styles.editableCell}>
+        <TextInput
+          style={styles.input}
+          value={setsCpy[index].lowerRep.toString()}
+          onChangeText={(value) => handleValueChange(index, 'lowerRep', value)}
+          keyboardType="numeric"
+          placeholder="Min"
+          placeholderTextColor={colors.text}
+        />
+      </View>
+      <View style={styles.editableCell}>
+        <TextInput
+          style={styles.input}
+          value={setsCpy[index].upperRep.toString()}
+          onChangeText={(value) => handleValueChange(index, 'upperRep', value)}
+          keyboardType="numeric"
+          placeholder="Max"
+          placeholderTextColor={colors.text}
+        />
+      </View>
+      <View style={styles.editableCell}>
+        <TextInput
+          style={styles.input}
+          value={setsCpy[index].RPE.toString()}
+          onChangeText={(value) => handleValueChange(index, 'RPE', value)}
+          keyboardType="numeric"
+          placeholder="RPE"
+          placeholderTextColor={colors.text}
+        />
+      </View>
+      <View style={styles.editableCell}>
+        <TextInput
+          style={styles.input}
+          value={setsCpy[index].rest.toString()}
+          onChangeText={(value) => handleValueChange(index, 'rest', value)}
+          keyboardType="numeric"
+          placeholder="Rest"
+          placeholderTextColor={colors.text}
+        />
+      </View>
     </View>
   );
 
@@ -53,14 +113,16 @@ const MovementPopup = ({
         <View style={styles.setsGrid}>
           <View style={styles.headerRow}>
             <ThemedText style={styles.headerText}>Set</ThemedText>
+            <ThemedText style={styles.headerText}>Min Reps</ThemedText>
+            <ThemedText style={styles.headerText}>Max Reps</ThemedText>
             <ThemedText style={styles.headerText}>RPE</ThemedText>
             <ThemedText style={styles.headerText}>Rest</ThemedText>
           </View>
           <FlatList
-            data={sets}
+            data={setsCpy}
             renderItem={renderSetRow}
             keyExtractor={(_, index) => index.toString()}
-            scrollEnabled={sets.length > 6}
+            scrollEnabled={setsCpy.length > 6}
             showsVerticalScrollIndicator={false}
           />
         </View>
@@ -107,10 +169,17 @@ function createStyles(colors) {
   },
   editableCell: {
     flex: 1,
-    backgroundColor: "transparent",
+    backgroundColor: colors.accentLight,
     borderRadius: 4,
     marginHorizontal: 4,
-    backgroundColor: colors.accentLight,
+    height: 35,
+    justifyContent: 'center',
+  },
+  input: {
+    color: colors.text,
+    textAlign: 'center',
+    height: '100%',
+    fontSize: 14,
   },
   cellText: {
     flex: 1,

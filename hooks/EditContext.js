@@ -222,7 +222,23 @@ export function EditProvider({children}){
   const getSets = (movement) => {
     const sets = routineCpy[dayIndexRef.current].sets;
     const setsForMovement = sets.filter(set => set.movement === movement);
+    
     return setsForMovement;
+  }
+
+  const editSets = (movement, editedSets) => {
+    const newDay = [...routineCpy][dayIndexRef.current];
+    let sets = newDay.sets;
+
+    const firstIndex = findFirstIndex(sets, "movement", movement);
+    for (let i = firstIndex; i < sets.length; i++){
+      if (sets[i].movement === movement){
+        sets[i] = editedSets[i - firstIndex];
+      }
+    }
+    newDay.sets = sets;
+
+    updateRoutine(newDay);
   }
 
   const editState = {
@@ -236,6 +252,7 @@ export function EditProvider({children}){
     moveDown,
     getSubOptions,
     getSets,
+    editSets,
     dayIndex,
     setDayIndex: setDayIndexWithRef,
   }

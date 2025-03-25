@@ -20,17 +20,27 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, workoutFlag);
 
-  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets } = useEditContext();
+  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets } = useEditContext();
 
   const lowerRep = workoutCpy.movements[workoutIndex].lowerRep;
   const upperRep = workoutCpy.movements[workoutIndex].upperRep;
-  const bias = movement === "new movement"? 'neutral': workoutCpy.movements[workoutIndex].bias;
-    
+  const bias = movement === "new movement"? 'neutral': workoutCpy.movements[workoutIndex].bias;    
   const sets = getSets(movement);
+  const [setsCpy, setSetsCpy] = useState(sets.map(set => ({ ...set })));
+
+  useEffect(() => {
+    setSetsCpy(sets.map(set => ({ ...set })));
+  }, [movement])
+
+  console.log(workoutCpy.movements[workoutIndex].movement)
+  console.log(sets)
+  console.log(setsCpy)
+  console.log("--------")
+
   const [popupVisible, setPopupVisible] = useState(false);
   const popupBody = () => {
     return (
-      <MovementPopup sets={sets} movement={movement} />
+      <MovementPopup movement={movement} setsCpy={setsCpy} setSetsCpy={setSetsCpy}/>
     )
   }
 
@@ -104,15 +114,34 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     setTagsSelect(initTagsSelect());
   }, [tags]);
 
-  // experiment with using a popup for sub list 
+  const [subOptions, setSubOptions] = useState(getSubOptions(movement, bias, ''));
+  const [subPopupVisible, setSubPopupVisible] = useState(false);
+  const [subChoice, setSubChoice] = useState("new movement");
+
+  const changeSubOption = (workoutIndex, choice) => {
+    setSubChoice(choice);
+  }
+
+  const handleSubClose = () => {
+    changeMovement(workoutIndex, subChoice === "new movement" ? movement : subChoice);
+    setSubPopupVisible(false);
+  }
+
+  useEffect(() => {
+    setSubOptions(getSubOptions(movement, bias, ''));
+    if (movement === "new movement"){
+      setSubPopupVisible(true);
+    }
+  }, [movement]);
+
   const subPopupBody = () => {
     return (
       <View style={{width: '100%', alignItems: 'center', height: 250}}>
         <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A Substitute</ThemedText>
         <SubList 
-          list={subList} 
-          changeMovement={substitute} 
-          workoutIndex={index} 
+          list={subOptions} 
+          changeMovement={changeSubOption} 
+          workoutIndex={workoutIndex} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
           height={178}
           selectInteract={true}
@@ -121,64 +150,31 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     )
   }
 
-
-  const [subOptions, setSubOptions] = useState([]);
-  const [showSubs, setShowSubs] = useState(false);
-  const [subText, setSubText] = useState(movement);
-
-  const handleChange = (e) => {
-    setSubText(e.target.value.toLowerCase());
-    const newText = e.target.value.toLowerCase();
-    setSubText(newText);
-    if (showSubs) {
-      setSubOptions(getSubOptions(movement, bias, movement.includes(newText) ? '' : newText));
-    }
-  }
-
-  useEffect(() => {
-    setSubText(movement);
-  }, [movement]);
-  useEffect(() => (setSubOptions(getSubOptions(movement, bias, ''))), [movement]);
-
-  const handleFocus = () => {
-    setShowSubs(true);
-    // Load options when dropdown is shown
-    setSubOptions(getSubOptions(movement, bias, movement.includes(subText) ? '' : subText));
-  };
-
-  const handleBlur = () => {
-    setTimeout(() => {
-      setShowSubs(false);
-    }, 100);
-  }
-  useEffect(() => {
-    if (movement === "new movement"){
-      setShowSubs(true);
-    }
-  }, [movement])
-
   return (
     <View style={styles.container}>
+      <Popup body={subPopupBody} visible={subPopupVisible} onClose={() => handleSubClose()}/>
       <Popup body={popupBody} visible={popupVisible} onClose={() => setPopupVisible(false)}/>
       <View style={[styles.flexboxRow]}>
-        <PopupPressable popupBody={popupBody} style={styles.closeButton}>
+        <PopupPressable 
+          popupBody={popupBody} 
+          style={styles.closeButton} 
+          onClose={() => {
+            if (setsCpy && setsCpy.length > 0) {
+              editSets(movement, setsCpy);
+            } else {
+              console.warn("setsCpy is empty, not saving changes");
+            }
+          }}>
             <ThemedText style={{fontSize: 20}}>+</ThemedText>
         </PopupPressable>
         
-        <View style={[styles.flexboxRow, {flex: 9}, {marginTop: biasText === '' ? 0 : 10}]}>
+        <View style={[styles.flexboxRow, {flex: 9}, {marginTop: biasText === '' ? 16 : 10}]}>
           <View style={{width: "65%"}}>
             <ThemedText style={styles.biasText}>{biasText}</ThemedText>
           </View>
 
           <View style={{width: "70%", zIndex: 1}}>
-            <TextInput
-              style={styles.movementTitle}
-              value={subText}
-              onChange={(e) => handleChange(e)}
-              onFocus={!workoutFlag ? handleFocus : () => {}}
-              onBlur={!workoutFlag ? handleBlur : () => {}}
-              editable={!workoutFlag}
-            />
+            <ThemedText style={styles.movementTitle}>{movement}</ThemedText>
           </View>
           <ThemedText style={styles.repsText}>
             {lowerRep} - {upperRep} reps
@@ -201,11 +197,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
         </View>
       </View>
 
-      {showSubs && (
-        <SubList list={subOptions} changeMovement={changeMovement} workoutIndex={workoutIndex} style={{top: biasText === '' ? 40: 55}}/>
-      )}
-
-      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: showSubs ? 85 : 15}}>
+      <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         <View style={styles.editBtnGrid}>
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
             <ThemedText>+</ThemedText>
@@ -219,6 +211,9 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
             <ThemedText>↓</ThemedText>
           </ThemedPressable>
+          <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} onClose={() => handleSubClose()}>
+            <ThemedText>⇄</ThemedText>
+          </PopupPressable>
         </View>
 
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -282,6 +277,7 @@ function createStyles(colors, workoutFlag) {
     marginTop: 5,
     alignItems: 'flex-start',
     width: '100%',
+    marginBottom: 10,
   },
   tagText: {
     fontSize: 12,
@@ -303,10 +299,22 @@ function createStyles(colors, workoutFlag) {
     justifyContent: 'space-around',
     width: '50%',
     zIndex: 2,
+    height: 30,
   },
   editBtn: {
     flex: 1,
     height: workoutFlag ? 0 : 30,
+  },
+  slantedBtn: {
+    backgroundColor: colors.background,
+    alignItems: "center",
+    transform: [{ skewX: '-10deg' }],
+    borderRadius: 0,
+    borderColor: colors.tint,
+    margin: 0,
+    justifyContent: 'center',
+    borderWidth: 1,
+    width: 35,
   },
   iconImage: {
     width: 20,

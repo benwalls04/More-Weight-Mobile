@@ -34,8 +34,6 @@ function EditPageContent() {
   const { dayIndex, setDayIndex, finish } = useEditContext();
   const workoutCpy = routineCpy[dayIndex];
 
-  console.log(workoutCpy)
-
   return (
       <ThemedView>
         <View style={Styles.headerContainer}>

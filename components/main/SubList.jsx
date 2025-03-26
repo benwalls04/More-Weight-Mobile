@@ -5,7 +5,7 @@ import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { useState } from "react";
 
-export default function SubList({list, changeMovement, workoutIndex, style, height, selectInteract=false}) {
+export default function SubList({list, changeMovement, workoutIndex, style, height, oldMovementObj, selectInteract=false}) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, height);
@@ -14,9 +14,14 @@ export default function SubList({list, changeMovement, workoutIndex, style, heig
 
   const handlePress = (index) => {
     if (choiceIndex !== index) {
-      changeMovement(workoutIndex, list[index]);
+      changeMovement(workoutIndex, list[index].baseMovement, list[index].bias, oldMovementObj);
       if (selectInteract) {
         setChoiceIndex(index);
+      }
+    } else {
+      changeMovement(workoutIndex, oldMovementObj.movement, oldMovementObj.bias, oldMovementObj);
+      if (selectInteract) {
+        setChoiceIndex(-1);
       }
     }
   }
@@ -42,7 +47,7 @@ export default function SubList({list, changeMovement, workoutIndex, style, heig
               style={[styles.subOption, choiceIndex === index ? styles.subOptionSelected : null]} 
               onPress={() => handlePress(index)}
             >
-              <ThemedText>{item}</ThemedText>
+              <ThemedText>{item.variant}</ThemedText>
             </ThemedPressable>
           ))}
         </ScrollView>

@@ -73,6 +73,7 @@ export function EditProvider({children}){
   };
 
   const addMovement = (workoutIndex, movement) => {
+
     const newRoutine = [...routineCpy];
     let movements = newRoutine[dayIndexRef.current].movements;
     let sets = newRoutine[dayIndexRef.current].sets;
@@ -97,12 +98,12 @@ export function EditProvider({children}){
     updateRoutine(newRoutine[dayIndexRef.current]);
   }
 
-  const removeMovement = (movement) => {
+  const removeMovement = (movement, bias) => {
     const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
 
-    movements = movements.filter(mov => mov.movement !== movement);
+    movements = movements.filter(mov => mov.movement !== movement || mov.bias !== bias);
     sets = sets.filter(set => set.movement !== movement);
     newDay.sets = sets;
     newDay.movements = movements;
@@ -154,7 +155,7 @@ export function EditProvider({children}){
     updateRoutine(newDay);
   }
 
-  const changeMovement = (workoutIndex, newMovement) => {
+  const changeMovement = (workoutIndex, newMovement, newBias) => {
     const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
@@ -164,7 +165,6 @@ export function EditProvider({children}){
     const RPESeq = MOVEMENTS[newMovement].sequences[EXP_ICON];
     const lowerRep = oldMovementObj.movement === "new movement"? 8 : oldMovementObj.lowerRep;
     const upperRep = oldMovementObj.movement === "new movement"? 12: oldMovementObj.upperRep;
-    const newBias = MOVEMENTS[newMovement].biasOrder.includes(oldMovementObj.bias)? oldMovementObj.bias : MOVEMENTS[newMovement].biasOrder.includes('neutral')? 'neutral': MOVEMENTS[newMovement].biasOrder[0];
 
     movements[workoutIndex] = {
       movement: newMovement, 

@@ -32,16 +32,48 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     setSetsCpy(sets.map(set => ({ ...set })));
   }, [movement])
 
-  console.log(workoutCpy.movements[workoutIndex].movement)
-  console.log(sets)
-  console.log(setsCpy)
-  console.log("--------")
-
   const [popupVisible, setPopupVisible] = useState(false);
   const popupBody = () => {
     return (
       <MovementPopup movement={movement} setsCpy={setsCpy} setSetsCpy={setSetsCpy}/>
     )
+  }
+
+  const handleSetsClose = () => {
+    // Create a new copy to avoid directly modifying setsCpy during validation
+    const validatedSetsCpy = setsCpy.map((setCpy, index) => {
+      // Get the original set at the same index
+      const originalSet = sets[index];
+      
+      // Create a new set object with validated fields
+      const validatedSet = { ...setCpy };
+      
+      // Check and fix lowerRep
+      if (!validatedSet.lowerRep || validatedSet.lowerRep <= 0 || validatedSet.lowerRep === '') {
+        validatedSet.lowerRep = originalSet.lowerRep;
+      }
+      
+      // Check and fix upperRep
+      if (!validatedSet.upperRep || validatedSet.upperRep <= 0 || validatedSet.upperRep === '') {
+        validatedSet.upperRep = originalSet.upperRep;
+      }
+      
+      // Check and fix RPE
+      if (!validatedSet.RPE || validatedSet.RPE <= 0 || validatedSet.RPE === '') {
+        validatedSet.RPE = originalSet.RPE;
+      }
+      
+      // Check and fix rest (must be > 0 and < 10)
+      if (!validatedSet.rest || validatedSet.rest <= 0 || validatedSet.rest >= 10 || validatedSet.rest === '') {
+        validatedSet.rest = originalSet.rest;
+      }
+      
+      return validatedSet;
+    });
+    
+    setSetsCpy(validatedSetsCpy);
+    
+    editSets(movement, validatedSetsCpy);
   }
 
   const handleBias = (index) => {
@@ -116,15 +148,21 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
 
   const [subOptions, setSubOptions] = useState(getSubOptions(movement, bias, ''));
   const [subPopupVisible, setSubPopupVisible] = useState(false);
-  const [subChoice, setSubChoice] = useState("new movement");
+  const [subChoice, setSubChoice] = useState({baseMovement: "new movement", bias: "neutral"});
 
-  const changeSubOption = (workoutIndex, choice) => {
-    setSubChoice(choice);
+  const changeSubOption = (workoutIndex, baseMovement, bias) => {
+    setSubChoice({baseMovement: baseMovement, bias: bias});
   }
 
   const handleSubClose = () => {
-    changeMovement(workoutIndex, subChoice === "new movement" ? movement : subChoice);
-    setSubPopupVisible(false);
+    if (subChoice.baseMovement !== "new movement"){
+      changeMovement(workoutIndex, subChoice.baseMovement, subChoice.bias);
+      setSubPopupVisible(false);
+    } 
+
+    // else {
+    //   changeMovement(workoutIndex, movement, bias);
+    // }
   }
 
   useEffect(() => {
@@ -137,7 +175,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   const subPopupBody = () => {
     return (
       <View style={{width: '100%', alignItems: 'center', height: 250}}>
-        <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A Substitute</ThemedText>
+        <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A {movement === "new movement"? "Movement": "Substitute"}</ThemedText>
         <SubList 
           list={subOptions} 
           changeMovement={changeSubOption} 
@@ -145,6 +183,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
           height={178}
           selectInteract={true}
+          oldMovementObj={workoutCpy.movements[workoutIndex]}
         />
       </View>
     )
@@ -158,13 +197,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
         <PopupPressable 
           popupBody={popupBody} 
           style={styles.closeButton} 
-          onClose={() => {
-            if (setsCpy && setsCpy.length > 0) {
-              editSets(movement, setsCpy);
-            } else {
-              console.warn("setsCpy is empty, not saving changes");
-            }
-          }}>
+          onClose={() => handleSetsClose()}>
             <ThemedText style={{fontSize: 20}}>+</ThemedText>
         </PopupPressable>
         
@@ -202,7 +235,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
             <ThemedText>+</ThemedText>
           </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(movement)}>
+          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(movement, bias)}>
             <ThemedText>-</ThemedText>
           </ThemedPressable>
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(workoutIndex, movement)}>

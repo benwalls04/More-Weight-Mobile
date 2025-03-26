@@ -1,53 +1,85 @@
 import { MOVEMENTS } from "@/constants/Movements";
-import { MOVEMENT_ORDER } from "@/constants/MovementOrder";
 
 export default function getSubList(title, movements, text, accessories, bias=null, prevMovement=null) {
   let options = [];
   
   const possibleSubs = Object.entries(MOVEMENTS).filter(([movement, data]) => {
-    return !movements.some(entry => entry.movement === movement) && (title.includes(data.primary) || accessories.includes(data.primary)) && movement.includes(text)
-  }).map(([movement, data]) => movement)
+    return (title.includes(data.primary) || accessories.includes(data.primary)) && movement.includes(text)
+  })
 
   if (prevMovement && prevMovement !== "new movement") {
     const primary = MOVEMENTS[prevMovement].primary
     const secondary = MOVEMENTS[prevMovement].secondary
 
-    for (let name of possibleSubs) {
-      if (!options.includes(name) && primary === MOVEMENTS[name].primary && bias in MOVEMENTS[name].variants) {
-        options.push(name)
+    for (let obj of possibleSubs) {
+      if (obj[1].primary == primary) {
+        for (let [varBias, biasText] of Object.entries(obj[1]["variants"])) {
+          const name = (biasText + " " + obj[0]).trim();
+          if (!options.some(option => option.variant === name) && varBias == bias) {
+            options.push({
+              bias: varBias,
+              variant: name,
+              baseMovement: obj[0]
+            })
+          }
+        }
       }
     }
 
-    for (let name of possibleSubs) {
-      if (!options.includes(name) && MOVEMENTS[prevMovement].primary === MOVEMENTS[name].primary) {
-        options.push(name)
+    for (let obj of possibleSubs) {
+      if (obj[1].primary == primary) {
+        for (let [varBias, biasText] of Object.entries(obj[1]["variants"])) {
+          const name = (biasText + " " + obj[0]).trim();
+          if (!options.some(option => option.variant === name)) {
+            options.push({
+              bias: varBias,
+              variant: name,
+              baseMovement: obj[0]
+            })
+          }
+        }
       }
     }
 
-    for (let name of possibleSubs) {
-      if (!options.includes(name) && ((secondary && MOVEMENTS[name].primary in secondary) || (MOVEMENTS[name].secondary && primary in MOVEMENTS[name].secondary)) && bias in MOVEMENTS[name].variants) {
-        options.push(name)
-      }
-    }
-
-    for (let name of possibleSubs) {
-      if (!options.includes(name) && ((secondary && MOVEMENTS[name].primary in secondary) || (MOVEMENTS[name].secondary && primary in MOVEMENTS[name].secondary))) {
-        options.push(name)
+    // primary = secondary at some point 
+    for (let obj of possibleSubs) {
+      if (obj[1].secondary.includes(primary) || secondary.includes(obj[1].primary)) {
+        for (let [varBias, biasText] of Object.entries(obj[1]["variants"])) {
+          const name = (biasText + " " + obj[0]).trim();
+          if (!options.some(option => option.variant === name)) {
+            options.push({
+              bias: varBias,
+              variant: name,
+              baseMovement: obj[0]
+            })
+          }
+        }
       }
     }
   }
 
-  for (let name of possibleSubs) {
-    if (!options.includes(name) && bias in MOVEMENTS[name].variants) {
-      options.push(name)
+  for (let obj of possibleSubs) {
+    for (let [varBias, biasText] of Object.entries(obj[1]["variants"])) {
+      const name = (biasText + " " + obj[0]).trim();
+      if (!options.some(option => option.variant === name)) {
+        options.push({
+          bias: varBias,
+          variant: name,
+          baseMovement: obj[0]
+        })
+      }
     }
   }
 
-  for (let name of possibleSubs) {
-    if (!options.includes(name)) {
-      options.push(name)
+  // FIXME: include the variant information in the movements list to avoid excessive search
+  options = options.filter(option => !movements.some(movement => {
+    if (movement.movement === "new movement") {
+      return false;
     }
-  }
+    
+    const movBiasText = MOVEMENTS[movement.movement].variants[movement.bias]
+    return option.variant === (movBiasText + " " + movement.movement).trim()
+  }))
 
   return options;
 }

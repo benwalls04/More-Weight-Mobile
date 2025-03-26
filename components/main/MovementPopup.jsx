@@ -16,17 +16,17 @@ const MovementPopup = ({
   const handleValueChange = (index, field, value) => {
     // Allow decimal points for rest field
     if (field === 'rest') {
-      // Allow empty string, decimal point, and numbers
+      // Allow empty string temporarily (for typing), decimal point, and numbers
       if (value === "" || value === "." || validChange(value, field)) {
         const newSets = [...setsCpy];
         newSets[index] = {
           ...newSets[index],
-          [field]: value === "" ? "" : value
+          [field]: value
         };
         setSetsCpy(newSets);
       }
     } else {
-      // Handle other fields as before
+      // Handle other fields - allow empty string temporarily for typing
       if (value === "" || validChange(value, field)) {
         const newSets = [...setsCpy];
         newSets[index] = {
@@ -43,7 +43,7 @@ const MovementPopup = ({
       // Allow numbers with up to two decimal places between 1 and 5
       const num = parseFloat(val);
       if (isNaN(num)) return false;
-      return num >= 1 && num <= 5 && val.split('.')[1]?.length <= 2;
+      return num >= 1 && num <= 5 && (val.split('.')[1]?.length <= 2 || Number.isInteger(num));
     }
 
     const num = Number(val);
@@ -51,7 +51,7 @@ const MovementPopup = ({
     
     switch(field) {
       case 'RPE':
-        return num >= 7 && num <= 11;
+        return num >= 1 && num <= 11;
       case 'lowerRep':
       case 'upperRep':
         return Number.isInteger(num) && num > 0;

@@ -28,7 +28,8 @@ export default function SetScreen() {
   const setStr = "Set " + setNum + "/" + NUM_SETS;
   const bias = workoutCpy.sets[index].bias;
   const biasText = MOVEMENTS[currMovement].variants[bias];
-
+  const variant = (biasText + " " + currMovement).trim();
+  
   // Dummy state for inputs
   const [weight, setWeight] = useState(weightExp === 0? "" : weightExp);
   const [reps, setReps] = useState(repsExp === 0? "" : repsExp);
@@ -57,6 +58,7 @@ export default function SetScreen() {
           workoutIndex={index} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
           height={178}
+          oldMovementObj={workoutCpy.movements[index]}
           selectInteract={true}
         />
       </View>
@@ -193,7 +195,7 @@ export default function SetScreen() {
         </View>
 
         {/* Log set button */}
-        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, weight, reps)}}>
+        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, weight, reps, variant)}}>
           <ThemedText style={styles.logButtonText}>log set</ThemedText>
         </ThemedPressable>
       </View>

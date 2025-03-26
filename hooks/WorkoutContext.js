@@ -82,7 +82,12 @@ export function WorkoutProvider({children}) {
   const startWorkout = () => {
     setWorkoutFlag(true);
     setTime(0)
-    setSubList(getSubOptions(routine[dayIndex].movements[0].movement));
+    const firstMovement = routine[dayIndex].movements[0].movement;
+    setSubList(getSubOptions(firstMovement));
+    getTargets(firstMovement).then(([targetWeight, targetReps]) => {
+      setWeightExp(targetWeight);
+      setRepsExp(targetReps);
+    })
   }
 
   const doNext = () => {
@@ -116,7 +121,7 @@ export function WorkoutProvider({children}) {
   }
 
   const [subList, setSubList] = useState([]);
-  const nextSet = (skippedSet=false, weight, reps) => {
+  const nextSet = (skippedSet=false, weight, reps, variant) => {
       if (index < workoutCpy.sets.length - 1) {
         if (!skippedSet) {
           setWeightExp(weight);
@@ -128,18 +133,18 @@ export function WorkoutProvider({children}) {
           let newLog = {...logCpy};
           let newRecents = [...recentsCpy];
 
-          if (newLog[currMovement]) {
-            newLog[currMovement].push({weight: weight, reps: reps, createdAt: new Date()});
+          if (newLog[variant]) {
+            newLog[variant].push({weight: weight, reps: reps, baseMovement: currMovement, createdAt: new Date()});
           } else {
-            newLog[currMovement] = [{weight: weight, reps: reps, createdAt: new Date()}];
+            newLog[variant] = [{weight: weight, reps: reps, baseMovement: currMovement, createdAt: new Date()}];
           }
-          newRecents = newRecents.filter(movement => movement !== currMovement);
-          newRecents.push(currMovement);
+          newRecents = newRecents.filter(movement => movement !== variant);
+          newRecents.unshift(variant);
 
           setRecentsCpy(newRecents);
           setLogCpy(newLog);
 
-          logSet(currMovement, weight, reps);
+          logSet(currMovement, weight, reps, variant);
         } 
           
         setIndex(index + 1);
@@ -149,7 +154,10 @@ export function WorkoutProvider({children}) {
         if (newMovement !== currMovement) {
           setCurrMovement(newMovement);
           setMovementIndex(movementIndex + 1);
+          // FIXME: make sure subList updates for accessories, as well as on doNext and doLast clicks
+          console.log(newMovement)
           setSubList(getSubOptions(newMovement));
+          console.log(subList)
           setSetNum(1);
           getTargets(newMovement).then(([targetWeight, targetReps]) => {
             setWeightExp(targetWeight);
@@ -163,15 +171,14 @@ export function WorkoutProvider({children}) {
       }
   }
 
-  const substitute = (oldMovement, newMovement) => {
+  const substitute = (dummy, newMovement, newBias) => {
     let { ...newWorkout } = workoutCpy;
     
     const RPESeq = MOVEMENTS[newMovement].sequences[exp].slice(4 - numSets, 4);
-    const bias = MOVEMENTS[newMovement].biasOrder.includes(oldMovement.bias)? oldMovement.bias : MOVEMENTS[newMovement].biasOrder.includes('n')? 'n': MOVEMENTS[newMovement].biasOrder[0]; 
 
     for (let i = 0; i < numSets; i++){
       let set = newWorkout.sets[index + i];
-      set.bias = bias;
+      set.bias = newBias;
       set.movement = newMovement;
       set.RPE = RPESeq[i];
       set.rest = workoutCpy.sets[index + i].rest <= 1? 1 : set.rest;
@@ -183,7 +190,7 @@ export function WorkoutProvider({children}) {
 
     const newMovementObj = {
       movement: newMovement,
-      bias: bias,
+      bias: newBias,
       RPE: RPESeq,
       lowerRep: workoutCpy.sets[index].lowerRep,
       upperRep: workoutCpy.sets[index].upperRep,
@@ -205,7 +212,7 @@ export function WorkoutProvider({children}) {
     return getSubList(title, movements, "", accessories, bias, movement);
   }
 
-  const makeLogChanges = async (movement) => {
+  const makeLogChanges = async (movement, baseMovement) => {
     try {
       const newLog = {...logCpy};
       
@@ -215,9 +222,10 @@ export function WorkoutProvider({children}) {
         
         await axios.post('http://localhost:3001/log-set', {
           username: username,
-          movement: movement,
+          movement: baseMovement,
           weight: Number(value.weight),
           reps: Number(value.reps),
+          variant: movement,
           RPE: 10, 
           index: index
         });

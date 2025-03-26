@@ -131,12 +131,13 @@ export function UserProvider({children}) {
     }
   }
 
-  const logSet = async (movement, weight, reps) => {
+  const logSet = async (movement, weight, reps, variant) => {
     await axios.post('http://localhost:3001/log-set', {
       username: username,
       movement: movement,
       weight: weight,
       reps: reps,
+      variant: variant,
       RPE: 10
     });
   }

@@ -1,25 +1,36 @@
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, TextInput } from "react-native";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useWorkoutContext } from "@/hooks/WorkoutContext";
+import { useEditContext } from "@/hooks/EditContext";
 
-export default function SubList({list, changeMovement, workoutIndex, style, height, oldMovementObj, selectInteract=false}) {
+export default function SubList({list, style, height, oldMovementObj, selectInteract=false, source}) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, height);
 
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
+  let setSubChoice;
+  if (source === "workout") {
+    const workoutContext = useWorkoutContext();
+    setSubChoice = workoutContext.setSubChoice;
+  } else if (source === "edit") {
+    const editContext = useEditContext();
+    setSubChoice = editContext.setSubChoice;
+  }
+
   const handlePress = (index) => {
     if (choiceIndex !== index) {
-      changeMovement(workoutIndex, list[index].baseMovement, list[index].bias, oldMovementObj);
+      setSubChoice({movement: list[index].baseMovement, bias: list[index].bias});
       if (selectInteract) {
         setChoiceIndex(index);
       }
     } else {
-      changeMovement(workoutIndex, oldMovementObj.movement, oldMovementObj.bias, oldMovementObj);
+      setSubChoice({movement: oldMovementObj.movement, bias: oldMovementObj.bias});
       if (selectInteract) {
         setChoiceIndex(-1);
       }

@@ -100,7 +100,9 @@ export function WorkoutProvider({children}) {
     newWorkout.movements.splice(movementIndex, 1);
     newWorkout.movements.splice(movementIndex + 1, 0, ...oldMovement);
 
-    setCurrMovement(newWorkout.movements[movementIndex].movement);
+    const newMovement = newWorkout.movements[movementIndex].movement;
+    setCurrMovement(newMovement);
+    setSubList(getSubOptions(newMovement));
 
     setWorkoutCpy(newWorkout);
   }
@@ -115,13 +117,16 @@ export function WorkoutProvider({children}) {
 
     newWorkout.movements.splice(movementIndex, 1);
     newWorkout.movements.splice(workoutCpy.movements.length, 0, ...oldMovement);
-    setCurrMovement(newWorkout.movements[movementIndex].movement);
+
+    const newMovement = newWorkout.movements[movementIndex].movement;
+    setCurrMovement(newMovement);
+    setSubList(getSubOptions(newMovement));
 
     setWorkoutCpy(newWorkout);
   }
 
   const [subList, setSubList] = useState([]);
-  const nextSet = (skippedSet=false, weight, reps, variant) => {
+  const nextSet = (skippedSet=false, weight, reps, variant, bias) => {
       if (index < workoutCpy.sets.length - 1) {
         if (!skippedSet) {
           setWeightExp(weight);
@@ -151,13 +156,12 @@ export function WorkoutProvider({children}) {
         setSetNum(setNum + 1);
         
         const newMovement = workoutCpy.sets[index + 1].movement;
-        if (newMovement !== currMovement) {
+        const newBias = workoutCpy.sets[index + 1].bias;
+        if (newMovement !== currMovement || newBias !== bias) {
           setCurrMovement(newMovement);
           setMovementIndex(movementIndex + 1);
           // FIXME: make sure subList updates for accessories, as well as on doNext and doLast clicks
-          console.log(newMovement)
           setSubList(getSubOptions(newMovement));
-          console.log(subList)
           setSetNum(1);
           getTargets(newMovement).then(([targetWeight, targetReps]) => {
             setWeightExp(targetWeight);
@@ -171,6 +175,7 @@ export function WorkoutProvider({children}) {
       }
   }
 
+  const [subChoice, setSubChoice] = useState({movement: "new movement", bias: "neutral"});
   const substitute = (dummy, newMovement, newBias) => {
     let { ...newWorkout } = workoutCpy;
     
@@ -198,8 +203,8 @@ export function WorkoutProvider({children}) {
     
     newWorkout.movements[movementIndex] = newMovementObj;
 
-    setCurrMovement(newWorkout.movements[movementIndex].movement);
-
+    setCurrMovement(newMovement);
+    setSubList(getSubOptions(newMovement));
     setWorkoutCpy(newWorkout);
   }
 
@@ -266,6 +271,8 @@ export function WorkoutProvider({children}) {
     subList: subList,
     startWorkout: startWorkout,
     substitute: substitute,
+    subChoice: subChoice,
+    setSubChoice: setSubChoice,
     numSets: numSets,
     recentsCpy: recentsCpy,
     logCpy: logCpy,

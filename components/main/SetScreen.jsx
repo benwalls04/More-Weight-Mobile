@@ -19,7 +19,7 @@ export default function SetScreen() {
   const { info } = useUserContext();
   const NUM_SETS = info.sets;
 
-  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, subList, weightExp, repsExp} = useWorkoutContext();
+  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, subList, weightExp, repsExp, subChoice} = useWorkoutContext();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);  // Create styles with colors
@@ -54,12 +54,11 @@ export default function SetScreen() {
         <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A Substitute</ThemedText>
         <SubList 
           list={subList} 
-          changeMovement={substitute} 
-          workoutIndex={index} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
           height={178}
           oldMovementObj={workoutCpy.movements[index]}
           selectInteract={true}
+          source="workout"
         />
       </View>
     )
@@ -107,7 +106,7 @@ export default function SetScreen() {
     <ThemedView style={{justifyContent: 'flex-start'}}>
       {/* Top action buttons */}
       <View style={styles.actionButtons}>
-        <PopupPressable visible={setNum === 1} popupBody={subPopupBody} style={[styles.actionButton, styles.popupBtn]}>
+        <PopupPressable visible={setNum === 1} popupBody={subPopupBody} onClose={() => substitute(0, subChoice.movement, subChoice.bias)} style={[styles.actionButton, styles.popupBtn]}>
           <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Substitute</ThemedText>
         </PopupPressable>
         <TouchableOpacity style={styles.actionButton} onPress={setNum === 1? () => doNext() : () => {}}>
@@ -195,7 +194,7 @@ export default function SetScreen() {
         </View>
 
         {/* Log set button */}
-        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, weight, reps, variant)}}>
+        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, weight, reps, variant, bias)}}>
           <ThemedText style={styles.logButtonText}>log set</ThemedText>
         </ThemedPressable>
       </View>

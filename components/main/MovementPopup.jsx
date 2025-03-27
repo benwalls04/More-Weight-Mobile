@@ -25,7 +25,14 @@ const MovementPopup = ({
         };
         setSetsCpy(newSets);
       }
-    } else {
+    } else if (field === "lowerRep" || field === "upperRep") {
+      const newSets = [...setsCpy];
+      newSets.forEach(set => {
+        set[field] = value === "" ? "" : Number(value);
+      })
+      setSetsCpy(newSets);
+    }
+      else {
       // Handle other fields - allow empty string temporarily for typing
       if (value === "" || validChange(value, field)) {
         const newSets = [...setsCpy];
@@ -52,9 +59,6 @@ const MovementPopup = ({
     switch(field) {
       case 'RPE':
         return num >= 1 && num <= 11;
-      case 'lowerRep':
-      case 'upperRep':
-        return Number.isInteger(num) && num > 0;
       default:
         return false;
     }
@@ -63,26 +67,6 @@ const MovementPopup = ({
   const renderSetRow = ({ item: set, index }) => (
     <View style={styles.setRow}>
       <ThemedText style={styles.cellText}>{index + 1}</ThemedText>
-      <View style={styles.editableCell}>
-        <TextInput
-          style={styles.input}
-          value={setsCpy[index].lowerRep.toString()}
-          onChangeText={(value) => handleValueChange(index, 'lowerRep', value)}
-          keyboardType="numeric"
-          placeholder="Min"
-          placeholderTextColor={colors.text}
-        />
-      </View>
-      <View style={styles.editableCell}>
-        <TextInput
-          style={styles.input}
-          value={setsCpy[index].upperRep.toString()}
-          onChangeText={(value) => handleValueChange(index, 'upperRep', value)}
-          keyboardType="numeric"
-          placeholder="Max"
-          placeholderTextColor={colors.text}
-        />
-      </View>
       <View style={styles.editableCell}>
         <TextInput
           style={styles.input}
@@ -109,12 +93,34 @@ const MovementPopup = ({
   return (
     <View style={styles.container}>
       <ThemedText type="header" style={{marginVertical: 15, alignSelf: "center"}}>{movement}</ThemedText>
+      <View style={styles.repRangeContainer}>
+        <ThemedText>Rep Range: </ThemedText>
+        <View style={styles.editableCell}>
+          <TextInput
+            style={styles.input}
+            value={setsCpy[0].lowerRep.toString()}
+            onChangeText={(value) => handleValueChange(0, 'lowerRep', value)}
+            keyboardType="numeric"
+            placeholder="Min"
+            placeholderTextColor={colors.text}
+          />
+        </View>
+        <ThemedText> - </ThemedText>
+        <View style={styles.editableCell}>
+          <TextInput
+            style={styles.input}
+            value={setsCpy[0].upperRep.toString()}
+            onChangeText={(value) => handleValueChange(0, 'upperRep', value)}
+            keyboardType="numeric"
+            placeholder="Max"
+            placeholderTextColor={colors.text}
+          />
+        </View>
+      </View>
       <View style={styles.gridContainer}>
         <View style={styles.setsGrid}>
           <View style={styles.headerRow}>
             <ThemedText style={styles.headerText}>Set</ThemedText>
-            <ThemedText style={styles.headerText}>Min Reps</ThemedText>
-            <ThemedText style={styles.headerText}>Max Reps</ThemedText>
             <ThemedText style={styles.headerText}>RPE</ThemedText>
             <ThemedText style={styles.headerText}>Rest</ThemedText>
           </View>
@@ -148,8 +154,12 @@ function createStyles(colors) {
   imageContainer: {
     width: '100%',
   },
-  setsGrid: {
-    marginBottom: 20,
+  repRangeContainer: {
+    width: "70%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
+    alignSelf: "center",
   },
   headerRow: {
     flexDirection: 'row',
@@ -165,14 +175,14 @@ function createStyles(colors) {
   setRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    paddingBottom: 10,
   },
   editableCell: {
     flex: 1,
     backgroundColor: colors.accentLight,
     borderRadius: 4,
     marginHorizontal: 4,
-    height: 35,
+    height: 30,
     justifyContent: 'center',
   },
   input: {

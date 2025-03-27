@@ -95,6 +95,7 @@ export function EditProvider({children}){
     }
 
     newRoutine[dayIndexRef.current].sets = sets;    
+
     updateRoutine(newRoutine[dayIndexRef.current]);
   }
 
@@ -155,6 +156,8 @@ export function EditProvider({children}){
     updateRoutine(newDay);
   }
 
+  const [subChoice, setSubChoice] = useState({movement: "new movement", bias: "neutral"});
+  
   const changeMovement = (workoutIndex, newMovement, newBias) => {
     const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
@@ -241,6 +244,13 @@ export function EditProvider({children}){
     updateRoutine(newDay);
   }
 
+  const changeRepRange = (workoutIndex, lowerRep, upperRep) => {
+    const newDay = [...routineCpy][dayIndexRef.current];
+    newDay.movements[workoutIndex].lowerRep = lowerRep;
+    newDay.movements[workoutIndex].upperRep = upperRep;
+    updateRoutine(newDay);
+  }
+
   const editState = {
     finish,
     updateRoutine,
@@ -251,8 +261,11 @@ export function EditProvider({children}){
     moveUp,
     moveDown,
     getSubOptions,
+    subChoice,
+    setSubChoice,
     getSets,
     editSets,
+    changeRepRange,
     dayIndex,
     setDayIndex: setDayIndexWithRef,
   }

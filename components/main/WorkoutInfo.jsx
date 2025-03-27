@@ -20,10 +20,10 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, workoutFlag);
 
-  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets } = useEditContext();
+  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets, subChoice, changeRepRange } = useEditContext();
 
-  const lowerRep = workoutCpy.movements[workoutIndex].lowerRep;
-  const upperRep = workoutCpy.movements[workoutIndex].upperRep;
+  const [lowerRep, setLowerRep] = useState(workoutCpy.movements[workoutIndex].lowerRep);
+  const [upperRep, setUpperRep] = useState(workoutCpy.movements[workoutIndex].upperRep);
   const bias = movement === "new movement"? 'neutral': workoutCpy.movements[workoutIndex].bias;    
   const sets = getSets(movement);
   const [setsCpy, setSetsCpy] = useState(sets.map(set => ({ ...set })));
@@ -31,6 +31,14 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   useEffect(() => {
     setSetsCpy(sets.map(set => ({ ...set })));
   }, [movement])
+
+  useEffect(() => {
+    if (lowerRep !== sets[0].lowerRep || upperRep !== sets[0].upperRep){
+      setLowerRep(sets[0].lowerRep);
+      setUpperRep(sets[0].upperRep);
+      changeRepRange(workoutIndex, sets[0].lowerRep, sets[0].upperRep);
+    }
+  }, [setsCpy])
 
   const [popupVisible, setPopupVisible] = useState(false);
   const popupBody = () => {
@@ -40,7 +48,6 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   }
 
   const handleSetsClose = () => {
-    // Create a new copy to avoid directly modifying setsCpy during validation
     const validatedSetsCpy = setsCpy.map((setCpy, index) => {
       // Get the original set at the same index
       const originalSet = sets[index];
@@ -148,21 +155,12 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
 
   const [subOptions, setSubOptions] = useState(getSubOptions(movement, bias, ''));
   const [subPopupVisible, setSubPopupVisible] = useState(false);
-  const [subChoice, setSubChoice] = useState({baseMovement: "new movement", bias: "neutral"});
-
-  const changeSubOption = (workoutIndex, baseMovement, bias) => {
-    setSubChoice({baseMovement: baseMovement, bias: bias});
-  }
 
   const handleSubClose = () => {
-    if (subChoice.baseMovement !== "new movement"){
-      changeMovement(workoutIndex, subChoice.baseMovement, subChoice.bias);
+    if (subChoice.movement !== "new movement"){
+      changeMovement(workoutIndex, subChoice.movement, subChoice.bias);
       setSubPopupVisible(false);
     } 
-
-    // else {
-    //   changeMovement(workoutIndex, movement, bias);
-    // }
   }
 
   useEffect(() => {
@@ -178,12 +176,11 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
         <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A {movement === "new movement"? "Movement": "Substitute"}</ThemedText>
         <SubList 
           list={subOptions} 
-          changeMovement={changeSubOption} 
-          workoutIndex={workoutIndex} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
           height={178}
           selectInteract={true}
           oldMovementObj={workoutCpy.movements[workoutIndex]}
+          source="edit"
         />
       </View>
     )

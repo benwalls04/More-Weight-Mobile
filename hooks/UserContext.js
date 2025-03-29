@@ -1,6 +1,7 @@
 import React, { useState, useEffect,useContext } from "react";
 import axios from "axios";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const UserContext = React.createContext();
 
@@ -48,8 +49,7 @@ export function UserProvider({children}) {
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
       try {
-        console.log("hi")
-        const response = await axios.get('http://192.168.1.253:3000/login', {
+        const response = await axios.get('https://more-weight.com/login', {
           params: { username, password }
         });
         setRoutine(response.data.routine.routine);
@@ -60,14 +60,16 @@ export function UserProvider({children}) {
         setSplitTitle(response.data.routine.title);
         setInfo(response.data.inputs);
         setAllRoutines(response.data.allRoutines.array);
+        AsyncStorage.setItem("username", username);
+        AsyncStorage.setItem("password", password);
+        AsyncStorage.setItem("isLoggedIn", JSON.stringify(true));
         router.replace("/(main)/(tabs)/WorkoutPage");
         return "success";
       } catch (error) {
-        console.log(error)
         if (error.response?.status === 400) {
           return "incorrect username and password";
         }
-        return "error";
+        return "incorrect username or password";
       }
     } else {
       return "please enter a valid username and password";
@@ -84,7 +86,7 @@ export function UserProvider({children}) {
         const params = formatParams(info);
         setInfo(params);
       
-        const response = await axios.post('http://192.168.1.253:3000/new-user', {
+        const response = await axios.post('https://more-weight.com/new-user', {
           inputs: params, username: username.toLowerCase(), password: password.toLowerCase(), numSets: info.sets
         });
         setRoutine(response.data.routine);
@@ -92,6 +94,9 @@ export function UserProvider({children}) {
         setAllRoutines([{routine: response.data.routine, title: splitTitle, numSets: info.sets}])
         setUsername(username);
         setFromSignup(true);
+        AsyncStorage.setItem("username", username);
+        AsyncStorage.setItem("password", password);
+        AsyncStorage.setItem("isLoggedIn", JSON.stringify(true));
       } catch (error) {
         if (error.response) {
           if (error.response.status === 400) {
@@ -112,11 +117,29 @@ export function UserProvider({children}) {
     }
   }
 
+  const signOut = () => {
+    setUsername("");
+    setRoutine([]);
+    setRoutineCpy([]);
+    setAllRoutines([]);
+    setInfo({sets: 3, exp: "i"});
+    setSplitTitle("");
+    setSplit([]);
+    setLog([]);
+    setRecents([]);
+    setNewUser(false);
+    AsyncStorage.setItem("username", "");
+    AsyncStorage.setItem("password", "");
+    AsyncStorage.setItem("isLoggedIn", JSON.stringify(false));
+
+    router.replace("/");
+  }
+
   const addRoutine = async (username, split) => {
     const params = formatParams(info);
     setInfo(params);
   
-    const response = await axios.post('http://192.168.1.253:3000/add-routine', {
+    const response = await axios.post('https://more-weight.com/add-routine', {
       inputs: params, username: username.toLowerCase(), split: split
     });
 
@@ -128,7 +151,7 @@ export function UserProvider({children}) {
   }
 
   const logSet = async (movement, weight, reps, variant) => {
-    await axios.post('http://192.168.1.253:3000/log-set', {
+    await axios.post('https://more-weight.com/log-set', {
       username: username,
       movement: movement,
       weight: weight,
@@ -139,7 +162,7 @@ export function UserProvider({children}) {
   }
 
   const getTargets = async (movement) => {
-    const response = await axios.get('http://192.168.1.253:3000/get-last', {
+    const response = await axios.get('https://more-weight.com/get-last', {
       params: { username: username, movement: movement, numberOfSets: info.sets }
     });
     return [response.data.weight, response.data.reps];
@@ -169,7 +192,8 @@ export function UserProvider({children}) {
     recents: recents,
     setRecents: setRecents,
     newUser: newUser,
-    setNewUser: setNewUser
+    setNewUser: setNewUser,
+    signOut: signOut
   }
 
   return (

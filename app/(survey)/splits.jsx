@@ -39,7 +39,7 @@ export default function Split() {
   const partition = async () => {
     if (choiceIndex > -1 && canPartition) {
       setIsLoading(true);
-      const response = await axios.post('http://192.168.1.253:3000/partition', { splits: leaf[choiceIndex]});
+      const response = await axios.post('https://more-weight.com/partition', { splits: leaf[choiceIndex]});
       setLeaf(response.data);
       setDecisions(prev => [...prev, leaf]);
       setChoiceIndex(-1);
@@ -161,10 +161,6 @@ export default function Split() {
                 <ThemedText>Select</ThemedText>
               </ThemedPressable>
             </View>
-
-            <PopupPressable popupBody={popupBody} style={{marginTop: BUTTON_MARGIN, width: windowWidth, marginLeft: 10}}>
-              <ThemedText>More Info</ThemedText>
-            </PopupPressable>
           </View>
         }
       />

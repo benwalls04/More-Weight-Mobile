@@ -12,8 +12,6 @@ export default function LogList({ exercise }) {
 
   const { logCpy } = useWorkoutContext();
   const exerciseData = [...(logCpy[exercise] || [])].reverse();
-
-  console.log(exerciseData);
       
   return (
     <View style={styles.popupContent}>

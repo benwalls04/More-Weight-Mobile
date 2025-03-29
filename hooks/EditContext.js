@@ -39,7 +39,7 @@ export function EditProvider({children}){
 
   const finish = async () => {
     if (routineCpy.every(day => !day.movements.some(entry => entry.movement.includes("new movement")))){    
-      await axios.post('http://192.168.1.253:3000/set-routine', {routine: {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}, username: username}).then(response => {
+      await axios.post('https://more-weight.com/set-routine', {routine: {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}, username: username}).then(response => {
         if (newUser) {
           setLog(response.data.movements);
           setRecents(response.data.recents);

@@ -568,7 +568,7 @@ export function WorkoutProvider({children}) {
         newLog[movement][index].weight = Number(value.weight);
         newLog[movement][index].reps = Number(value.reps);
         
-        await axios.post('http://192.168.1.253:3000/log-set', {
+        await axios.post('https://more-weight.com/log-set', {
           username: username,
           movement: baseMovement,
           weight: Number(value.weight),

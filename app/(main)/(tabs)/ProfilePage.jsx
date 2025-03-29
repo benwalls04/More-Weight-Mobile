@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const theme = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
-  const {username, allRoutines, splitTitle} = useUserContext();
+  const {username, allRoutines, splitTitle, signOut} = useUserContext();
   const [activeTab, setActiveTab] = useState(0);
 
   const renderRoutine = () => {
@@ -60,6 +60,9 @@ export default function ProfilePage() {
   return (
     <ThemedView style={styles.container}>
       <MainHeader title={username} subHeaderComponent={renderSubHeader()}></MainHeader>
+      <ThemedPressable style={styles.signOutButton} onPress={() => signOut()}>
+        <ThemedText style={{textAlign: 'center', fontSize: 10}}>Sign Out</ThemedText>
+      </ThemedPressable>
       
       <View style={styles.content}>
         <View style={styles.tabContent}>
@@ -109,6 +112,15 @@ function createStyles(colors) {
       justifyContent: 'flex-start',
       alignItems: 'center',
       marginTop: 10,
+    },
+    signOutButton: {
+      width: 70,
+      height: 35,
+      paddingHorizontal: 5,
+      marginTop: 10,
+      position: 'absolute',
+      top: 0,
+      right: 0,
     }
   });
 }

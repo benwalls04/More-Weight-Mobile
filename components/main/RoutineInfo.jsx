@@ -46,7 +46,7 @@ export default function RoutineInfo({routine, selected, last}) {
     updatedInfo.sets = routine.numSets;
     setInfo(updatedInfo);
     
-    await axios.post('http://192.168.1.253:3000/change-routine', {
+    await axios.post('https://more-weight.com/change-routine', {
       username: username,
       title: routine.title,
     })
@@ -70,7 +70,7 @@ export default function RoutineInfo({routine, selected, last}) {
       <View style={styles.columnGrid}>
         <View style={{flex: 1}}>
           <TouchableOpacity style={[styles.checkButton, selected && {backgroundColor: colors.tint}]} onPress={() => !selected && setPopupVisible(true)}>
-            .
+            {selected && <ThemedText style={{textAlign: 'center', color: colors.tint}}>✓</ThemedText>}
           </TouchableOpacity>
         </View>
         <View style={{flex: 6}}>

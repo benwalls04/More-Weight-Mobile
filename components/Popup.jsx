@@ -3,21 +3,24 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useThemeContext } from '@/hooks/ThemeContext';
 import { ThemedPressable } from '@/components/ThemedPressable';
 import { COLORS } from '../constants/Colors';
+import { useEditContext } from '@/hooks/EditContext';
 
-const Popup = ({ visible, onClose, extraClose, body }) => {
+const Popup = ({ visible, onClose, extraClose, body, canClose=true}) => {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
   const handleClose = () => {
-    onClose();
+    if (canClose) {
+      onClose();
 
-    if (extraClose) {
-      extraClose();
+      if (extraClose) {
+        extraClose();
+      }
     }
   }
-
-  return (
+  
+  return (visible &&
     <Modal
       visible={visible}
       transparent={true}

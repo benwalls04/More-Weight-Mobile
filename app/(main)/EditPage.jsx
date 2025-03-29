@@ -34,6 +34,13 @@ function EditPageContent() {
   const { dayIndex, setDayIndex, finish } = useEditContext();
   const workoutCpy = routineCpy[dayIndex];
 
+  const restIndex = [];
+  routineCpy.forEach((day, index) => {
+    if (day.title === "rest"){
+      restIndex.push(index);
+    }
+  })
+
   return (
       <ThemedView>
         <View style={Styles.headerContainer}>
@@ -42,7 +49,7 @@ function EditPageContent() {
               keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={Styles.weekdayBtnContainer}
               renderItem={({ item, index}) => (
-              <ThemedPressable onPress={() => setDayIndex(index)} style={Styles.weekdayBtn} type={index === dayIndex ? "selected" : "default"}>
+              <ThemedPressable onPress={restIndex.includes(index) ? () => {} : () => setDayIndex(index)} style={[Styles.weekdayBtn, {backgroundColor: restIndex.includes(index) ? colors.accentLight : index === dayIndex ? colors.tint : "transparent"}]}>
                 <ThemedText>{item}</ThemedText>
               </ThemedPressable>
             )}
@@ -60,7 +67,7 @@ function EditPageContent() {
           )}
         />        
 
-        <FooterButton clickEvent={finish} text={"Done Editing"}/>
+        <FooterButton clickEvent={() => finish(0)} text={"Done Editing"}/>
       </ThemedView>
   )
 }

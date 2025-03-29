@@ -9,6 +9,7 @@ export default function PopupPressable({
   children,
   popupBody,
   onClose,
+  canClose=true,
   visible=true,
   ...otherProps
 }) {
@@ -53,7 +54,9 @@ export default function PopupPressable({
   };
 
   const closePopup = () => {
-    setPopupVisible(false);
+    if (canClose) {
+      setPopupVisible(false);
+    }
   };
 
   const shiftStyle = {
@@ -77,7 +80,7 @@ export default function PopupPressable({
           {children}
         </View>
       </Pressable>
-      <Popup visible={popupVisible} onClose={closePopup} body={popupBody} extraClose={onClose} />
+      <Popup visible={popupVisible} onClose={closePopup} body={popupBody} extraClose={onClose} canClose={canClose} />
     </Animated.View>
   );
 }

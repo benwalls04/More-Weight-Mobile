@@ -109,14 +109,9 @@ export function SurveyProvider({children}) {
     router.push('/base')
   }
 
-  const finish = () => {
-    //const userState = useUserContext();
-  }
-
   const [surveyData, setSurveyData] = useState(Array(SURVEY_DATA.length).fill([]));
 
   const surveyState = {
-    finish: finish, 
     surveyData: surveyData,
     updateSurveyData: updateSurveyData,
     getSplits: getSplits,

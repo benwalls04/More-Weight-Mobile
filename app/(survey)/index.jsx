@@ -12,10 +12,6 @@ import { useSurveyContext } from "@/hooks/SurveyContext";
 import { router } from "expo-router";
 
 export default function Survey() {
-
-  // REMOVE after testing 
-  router.replace("/(auth)/SignUpPage");
-
   const { getSplits, checkErrors } = useSurveyContext();
 
   const entry = (item, index, ref) => {

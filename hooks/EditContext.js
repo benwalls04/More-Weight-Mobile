@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useRouter, usePathname } from "expo-router";
+import { useRouter } from "expo-router";
+import { Alert } from "react-native";
 import { useUserContext } from "@/hooks/UserContext";
 import { MOVEMENTS } from "@/constants/Movements";
 import { REST_TIMES } from "@/constants/RestTimes";
 import axios from "axios";
 import getSubList from "@/functions/getSubsList";
-
+import updateRestTime from "@/functions/updateRestTime";
 export const EditContext = React.createContext();
 
 export function useEditContext() {
@@ -17,10 +18,10 @@ const dayIndexRef = { current: (new Date().getDay() + 6) % 7 };
 
 export function EditProvider({children}){
   const router = useRouter();
-  const { routineCpy, setRoutineCpy, setRoutine, info, username, setLog, setRecents } = useUserContext();
+  const { routineCpy, setRoutineCpy, setRoutine, info, username, setLog, setRecents, splitTitle, allRoutines, setAllRoutines, newUser, setNewUser } = useUserContext();
   
   const [dayIndex, setDayIndex] = useState(dayIndexRef.current);
-  
+
   useEffect(() => {
     dayIndexRef.current = dayIndex;
   }, [dayIndex]);
@@ -37,15 +38,21 @@ export function EditProvider({children}){
   }
 
   const finish = async () => {
-    if (routineCpy.every(day => !day.movements.some(entry => entry.movement === "new movement"))){
-      await axios.post('http://localhost:3001/set-routine', {routine: {title: "Routine 1", routine: routineCpy}, username: username}).then(response => {
-        setLog(response.data.movements);
-        setRecents(response.data.recents);
-        setRoutine(routineCpy);
+    if (routineCpy.every(day => !day.movements.some(entry => entry.movement.includes("new movement")))){    
+      await axios.post('http://localhost:3001/set-routine', {routine: {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}, username: username}).then(response => {
+        if (newUser) {
+          setLog(response.data.movements);
+          setRecents(response.data.recents);
+          setRoutine(routineCpy);
+          let newAllRoutines = allRoutines.filter(routine => routine.title !== splitTitle);
+          setAllRoutines([...newAllRoutines, {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}]);
+          setNewUser(false);
+        } 
         router.replace("/(main)/(tabs)/WorkoutPage");
       }).catch(error => {
-        console.log("error setting routine");
       })
+    } else {
+      Alert.alert("Incomplete Routine", "Please substitute all fields titled 'new movement' for a valid movement");
     }
   }
 
@@ -73,15 +80,21 @@ export function EditProvider({children}){
   };
 
   const addMovement = (workoutIndex, movement) => {
-
     const newRoutine = [...routineCpy];
     let movements = newRoutine[dayIndexRef.current].movements;
     let sets = newRoutine[dayIndexRef.current].sets;
 
+    const title = !movements.some(item => item.movement.includes("new movement"))? "new movement" : "new movement " + movements.reduce((acc, item) => {
+      if (item.movement.includes("new movement")){
+        acc += 1
+      }
+      return acc;
+    }, 0);
+
     movements.splice(workoutIndex + 1, 0, {
-      movement: "new movement", 
+      movement: title, 
       bias: 'neutral',
-      RPE: [0, 0, 0],
+      RPE: Array(NUM_SETS).fill(0),
       lowerRep: 0, 
       upperRep: 0,
       stimulus: 0, 
@@ -91,7 +104,7 @@ export function EditProvider({children}){
     const lastIndex = findLastIndex(sets, "movement", movement);
 
     for (let i = 0; i < NUM_SETS; i++){
-      sets.splice(lastIndex + 1, 0, { movement: "new movement", lowerRep: 0, upperRep: 0, RPE: 0, rest: 0, num: i + 1});
+      sets.splice(lastIndex + 1, 0, { movement: title, lowerRep: 0, upperRep: 0, RPE: 0, rest: 0, num: i + 1});
     }
 
     newRoutine[dayIndexRef.current].sets = sets;    
@@ -104,10 +117,16 @@ export function EditProvider({children}){
     let movements = newDay.movements;
     let sets = newDay.sets;
 
+    const firstIndex = findFirstIndex(sets, "movement", movement);
     movements = movements.filter(mov => mov.movement !== movement || mov.bias !== bias);
     sets = sets.filter(set => set.movement !== movement);
     newDay.sets = sets;
     newDay.movements = movements;
+
+    if (firstIndex > 0) {
+      newDay.sets[firstIndex - 1].rest = updateRestTime(firstIndex - 1, sets);
+    }  
+
     updateRoutine(newDay);
   }
 
@@ -126,6 +145,16 @@ export function EditProvider({children}){
       removed.forEach((set, indx) => {
         sets.splice(allSetsIndex - NUM_SETS + indx, 0, set)
       })
+
+      if (allSetsIndex > 0) {
+        sets[allSetsIndex - 1].rest = updateRestTime(allSetsIndex - 1, sets);
+      }
+      if (allSetsIndex + NUM_SETS - 1 < sets.length) {
+        sets[allSetsIndex + NUM_SETS - 1].rest = updateRestTime(allSetsIndex + NUM_SETS - 1, sets);
+      }
+      if (allSetsIndex - (NUM_SETS + 1) > 0){
+        sets[allSetsIndex - (NUM_SETS + 1)].rest = updateRestTime(allSetsIndex - (NUM_SETS + 1), sets);
+      }
     }
     newDay.movements = movements;
     newDay.sets = sets;
@@ -148,6 +177,17 @@ export function EditProvider({children}){
       removed.forEach((set, indx) => {
         sets.splice(allSetsIndex + NUM_SETS + indx, 0, set)
       })
+
+      if (allSetsIndex > 0) {
+        sets[allSetsIndex - 1].rest = updateRestTime(allSetsIndex - 1, sets);
+      }
+      if (allSetsIndex + NUM_SETS - 1 < sets.length) {
+        sets[allSetsIndex + NUM_SETS - 1].rest = updateRestTime(allSetsIndex + NUM_SETS - 1, sets);
+      }
+      if (allSetsIndex - (NUM_SETS + 1) > 0) {
+        sets[allSetsIndex - (NUM_SETS + 1)].rest = updateRestTime(allSetsIndex - (NUM_SETS + 1), sets);
+      }
+
     }
 
     newDay.movements = movements;
@@ -156,7 +196,7 @@ export function EditProvider({children}){
     updateRoutine(newDay);
   }
 
-  const [subChoice, setSubChoice] = useState({movement: "new movement", bias: "neutral"});
+  const [subChoice, setSubChoice] = useState(null);
   
   const changeMovement = (workoutIndex, newMovement, newBias) => {
     const newDay = [...routineCpy][dayIndexRef.current];
@@ -165,9 +205,9 @@ export function EditProvider({children}){
     
     const oldMovementObj = newDay.movements[workoutIndex]
 
-    const RPESeq = MOVEMENTS[newMovement].sequences[EXP_ICON];
-    const lowerRep = oldMovementObj.movement === "new movement"? 8 : oldMovementObj.lowerRep;
-    const upperRep = oldMovementObj.movement === "new movement"? 12: oldMovementObj.upperRep;
+    const RPESeq = MOVEMENTS[newMovement] ? MOVEMENTS[newMovement].sequences[EXP_ICON] : MOVEMENTS["default"].sequences[EXP_ICON];
+    const lowerRep = oldMovementObj.movement.includes("new movement") ? 8 : oldMovementObj.lowerRep;
+    const upperRep = oldMovementObj.movement.includes("new movement") ? 12: oldMovementObj.upperRep;
 
     movements[workoutIndex] = {
       movement: newMovement, 
@@ -183,14 +223,21 @@ export function EditProvider({children}){
     const firstIndex = findFirstIndex(sets, "movement", oldMovementObj.movement);
 
     let count = 0;
-    for (let i = firstIndex; i < sets.length; i++){
+    for (let i = firstIndex; i < firstIndex + NUM_SETS; i++){
       if (sets[i].movement === oldMovementObj.movement){
+        let restIndexer = lowerRep <= 10? lowerRep / 2 - 1 : 4;
         sets[i] = {
-          movement: newMovement, RPE: RPESeq[count], rest: REST_TIMES[lowerRep / 2 - 1][RPESeq[count] - 7], num: count + 1, bias: newBias, lowerRep: lowerRep, upperRep: upperRep
+          movement: newMovement, RPE: RPESeq[count], rest: REST_TIMES[restIndexer][RPESeq[count] - 7], num: count + 1, bias: newBias, lowerRep: lowerRep, upperRep: upperRep
         }
         count++;
       }
     }
+
+    sets[firstIndex + NUM_SETS - 1].rest = updateRestTime(firstIndex + NUM_SETS - 1, sets);
+    if (firstIndex > 0) {
+      sets[firstIndex - 1].rest = updateRestTime(firstIndex - 1, sets);
+    }
+
     newDay.sets = sets;
 
     updateRoutine(newDay);
@@ -218,7 +265,6 @@ export function EditProvider({children}){
   const getSubOptions = (movement, bias, text) => {
     const title = routineCpy[dayIndexRef.current].title;
     const movements = routineCpy[dayIndexRef.current].movements;
-
     return getSubList(title, movements, text, ACCESSORIES, bias, movement);
   }
 

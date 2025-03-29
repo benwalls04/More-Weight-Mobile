@@ -978,4 +978,17 @@ export const MOVEMENTS = {
     },
     biasOrder: ['neutral', 'neutral', 'neutral']
   }, 
+  "default": {
+    "primary": "unknown group",
+    "secondary": [],
+    "sequences": {
+      "b": [7, 8, 9, 9],
+      "i": [8, 9, 9, 10],
+      "a": [9, 9, 10, 11]
+    },
+    variants: {
+      neutral: ''
+    },
+    biasOrder: ['neutral', 'neutral', 'neutral']
+  }
 }

@@ -21,15 +21,20 @@ export default function WorkoutPage() {
     return (
       <ThemedView style={styles.container}>
         <MainHeader title={workoutCpy.title} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
-        <FlatList
-          data={workoutCpy.movements}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom: 70}}
-          renderItem={({ item, index}) => (
-            <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={true}/>
-          )}
-        /> 
+        {workoutCpy.title !== "rest" && (
+          <FlatList
+            data={workoutCpy.movements}
+            keyExtractor={(item, index) => index.toString()}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 70}}
+            renderItem={({ item, index}) => (
+              <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={true}/>
+            )}
+          /> 
+        )}
+        {workoutCpy.title === "rest" && (
+          <ThemedText type="header" style={{textAlign: 'center', marginTop: 20}}>Maybe it's time you hit some cardio?</ThemedText>
+        )}
         {workoutCpy.title !== "rest" && !complete && (
           <FooterButton text={"Begin Workout"} clickEvent={() => startWorkout()} marginBottom={12} />
         )}       
@@ -44,6 +49,7 @@ function createStyles(colors) {
   return StyleSheet.create({
     container: {
       flex: 1,
+      justifyContent: 'flex-start',
       paddingHorizontal: 20,
       paddingTop: 25
     },

@@ -18,18 +18,32 @@ export function UserProvider({children}) {
   const [username, setUsername] = useState("");
   const [routine, setRoutine] = useState([]);
   const [routineCpy, setRoutineCpy] = useState([]);
+  const [allRoutines, setAllRoutines] = useState([]);
   const [info, setInfo] = useState({sets: 3, exp: "i"});
+  const [splitTitle, setSplitTitle] = useState("");
   const [split, setSplit] = useState([]);
   const [log, setLog] = useState([]);
   const [recents, setRecents] = useState([]);
   const [fromSignup, setFromSignup] = useState(false);
+  const [newUser, setNewUser] = useState(false);
 
   useEffect(() => {
     if (routineCpy.length > 0 && fromSignup) {
       router.push("/(main)/EditPage");
+      setFromSignup(false);
+      setNewUser(true);
     }
-    setFromSignup(false);
   }, [routineCpy]);
+
+  function formatParams() {
+    const res = {...info};
+    res.base = splitTitle;
+    res.splits = {};
+    res.splits.selection = split;
+    res.numDays = 7;
+    res.title = splitTitle;
+    return res;
+  }
 
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
@@ -42,7 +56,9 @@ export function UserProvider({children}) {
         setLog(response.data.log);
         setRecents(response.data.recents);
         setUsername(username);
+        setSplitTitle(response.data.routine.title);
         setInfo(response.data.inputs);
+        setAllRoutines(response.data.allRoutines.array);
         router.replace("/(main)/(tabs)/WorkoutPage");
         return "success";
       } catch (error) {
@@ -63,42 +79,15 @@ export function UserProvider({children}) {
       }
 
       try {
-        //const params = formatParams(info);
-
-        const tmpParams = {
-          "accessories": ["abs", "rear deltoids"],
-          "back": 50,
-          "base": "dummy value",
-          "bias": [0.5, 0.75, 0.5, 0.5, 0.75, 0.5],
-          "chest": 50,
-          "curl": "cable curl",
-          "exp": "i",
-          "extension": "cable overhead extension",
-          "hip-extension": "barbell romanian deadlift",
-          "horizontal-press": "dumbell bench press",
-          "horizontal-pull": "barbell row",
-          "knee-flexion": "hack squat",
-          "legs": 50,
-          "numDays": 7,
-          "schedule": ["lift", "lift", "lift", "lift", "lift", "lift", "rest"],
-          "sets": 4,
-          "splits": {
-            "selection": ["biceps", "chest shoulders triceps", "chest back", "back biceps", "legs", "triceps biceps shoulders", "rest"]
-          },
-          "style": "n",
-          "time": 60,
-          "title": "dummy value",
-          "vertical-press": "dumbell overhead press",
-          "vertical-pull": "lat pulldown"
-        }
-
-        setInfo(tmpParams);
+        const params = formatParams(info);
+        setInfo(params);
       
         const response = await axios.post('http://localhost:3001/new-user', {
-          inputs: tmpParams, username: username.toLowerCase(), password: password.toLowerCase()
+          inputs: params, username: username.toLowerCase(), password: password.toLowerCase(), numSets: info.sets
         });
         setRoutine(response.data.routine);
         setRoutineCpy(response.data.routine);
+        setAllRoutines([{routine: response.data.routine, title: splitTitle, numSets: info.sets}])
         setUsername(username);
         setFromSignup(true);
       } catch (error) {
@@ -119,16 +108,21 @@ export function UserProvider({children}) {
     } else {
       return "Please enter a valid username and password";
     }
+  }
 
-    function formatParams() {
-      const res = {...info};
-      res.base = "dummy value";
-      res.splits = {};
-      res.splits.selection = split;
-      res.numDays = 7;
-      res.title = "dummy value";
-      return res;
-    }
+  const addRoutine = async (username, split) => {
+    const params = formatParams(info);
+    setInfo(params);
+  
+    const response = await axios.post('http://localhost:3001/add-routine', {
+      inputs: params, username: username.toLowerCase(), split: split
+    });
+
+    setRoutine(response.data.routine);
+    setRoutineCpy(response.data.routine);
+    setAllRoutines(prev => [...prev, {title: splitTitle, routine: response.data.routine}]);
+
+    router.push("/(main)/EditPage");
   }
 
   const logSet = async (movement, weight, reps, variant) => {
@@ -149,24 +143,33 @@ export function UserProvider({children}) {
     return [response.data.weight, response.data.reps];
   }
 
+  console.log(info)
+
   const userState = {
     username: username, 
     setRoutine: setRoutine,
     routine: routine, 
+    allRoutines: allRoutines,
+    setAllRoutines: setAllRoutines,
     split: split,
     setSplit: setSplit,
     routineCpy: routineCpy,
     setRoutineCpy: setRoutineCpy,
     info: info,
     setInfo: setInfo,
+    splitTitle: splitTitle,
+    setSplitTitle: setSplitTitle,
     login: login,
     signup: signup,
+    addRoutine: addRoutine,
     logSet: logSet,
     getTargets: getTargets,
     log: log,
     setLog: setLog,
     recents: recents,
     setRecents: setRecents,
+    newUser: newUser,
+    setNewUser: setNewUser
   }
 
   return (

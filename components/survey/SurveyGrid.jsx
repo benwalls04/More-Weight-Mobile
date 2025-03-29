@@ -16,7 +16,7 @@ export default function SurveyGrid({
   surveyIndex,
   numColumns = 2,
   btnGrow = false,
-  headerLines = 2,
+  headerLines = 3,
   btnHeight,
   listRef, 
   errorMsg,

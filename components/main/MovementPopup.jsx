@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TextInput } from 'react-native';
+import { View, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeContext } from '@/hooks/ThemeContext';
+
 import { COLORS } from '@/constants/Colors';
 
 const MovementPopup = ({
@@ -44,6 +45,15 @@ const MovementPopup = ({
       }
     }
   };
+
+  const handleMaxIntensity = () => {
+    const newSets = [...setsCpy];
+    newSets.forEach(set => {
+      set.rest = 3.5;
+      set.RPE = 10;
+    })
+    setSetsCpy(newSets);
+  }
 
   function validChange(val, field) {
     if (field === 'rest') {
@@ -133,6 +143,9 @@ const MovementPopup = ({
           />
         </View>
       </View>
+      <TouchableOpacity style={[styles.maxBtn, {backgroundColor: setsCpy.every(set => set.RPE === 10 && set.rest === 3.5) ? colors.tint : colors.accentLight}]} onPress={() => handleMaxIntensity()}>
+        <ThemedText style={{fontSize: 14, textAlign: "center"}}>Max Intensity</ThemedText>
+      </TouchableOpacity>
       <View style={styles.imageContainer}>
         {/* Placeholder for image */}
       </View>
@@ -195,6 +208,15 @@ function createStyles(colors) {
     flex: 1,
     textAlign: 'center',
   },
+  maxBtn: {
+    height: 30,
+    width: "85%",
+    alignSelf: "center",
+    marginTop: 10,
+    backgroundColor: colors.accentLight,
+    borderRadius: 0,
+    borderWidth: 0,
+  }
   });
 }
 

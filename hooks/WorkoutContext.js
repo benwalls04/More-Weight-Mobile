@@ -3,6 +3,7 @@ import { useUserContext } from "./UserContext";
 export const WorkoutContext = React.createContext();
 import { MOVEMENTS } from "@/constants/Movements";
 import getSubList from "@/functions/getSubsList";
+import updateRestTime from "@/functions/updateRestTime";
 import axios from "axios";
 
 const dayIndex = (new Date().getDay() + 6) % 7;
@@ -90,11 +91,25 @@ export function WorkoutProvider({children}) {
     })
   }
 
+  useEffect(() => {
+    setWorkoutCpy(routine[dayIndex]);
+    setTime(0);
+    setIndex(0);
+    setWorkoutFlag(false);
+  }, [routine])
+
   const doNext = () => {
     let { ...newWorkout } = workoutCpy;
     const movedSets = newWorkout.sets.slice(index, index + numSets);
     newWorkout.sets.splice(index, numSets);
     newWorkout.sets.splice(index + numSets, 0, ...movedSets);
+
+    if (index + numSets - 1 < newWorkout.sets.length){
+      newWorkout.sets[index + numSets - 1].rest = updateRestTime(index + numSets - 1, newWorkout.sets);
+    }
+    if (index + 2 * numSets - 1 < newWorkout.sets.length){
+      newWorkout.sets[index + 2 * numSets - 1].rest = updateRestTime(index + 2 * numSets - 1, newWorkout.sets);
+    }
     
     const oldMovement = newWorkout.movements.slice(movementIndex, movementIndex + 1);
     newWorkout.movements.splice(movementIndex, 1);
@@ -113,6 +128,10 @@ export function WorkoutProvider({children}) {
     newWorkout.sets.splice(index, numSets);
     newWorkout.sets.splice(workoutCpy.sets.length, 0, ...movedSets);
 
+    if (newWorkout.sets.length - (numSets + 1) > 0){
+      newWorkout.sets[newWorkout.sets.length - (numSets + 1)].rest = updateRestTime(newWorkout.sets.length - (numSets + 1), newWorkout.sets);
+    }
+
     const oldMovement = newWorkout.movements.slice(movementIndex, movementIndex + 1);
 
     newWorkout.movements.splice(movementIndex, 1);
@@ -126,7 +145,7 @@ export function WorkoutProvider({children}) {
   }
 
   const [subList, setSubList] = useState([]);
-  const nextSet = (skippedSet=false, weight, reps, variant, bias) => {
+  const nextSet = (skippedSet=false, bias, weight, reps, variant) => {
       if (index < workoutCpy.sets.length - 1) {
         if (!skippedSet) {
           setWeightExp(weight);
@@ -175,11 +194,42 @@ export function WorkoutProvider({children}) {
       }
   }
 
+  const [addFlag, setAddFlag] = useState(false);
+  const addMovement = () => {
+    setAddFlag(true);
+    let { ...newWorkout } = workoutCpy;
+
+    // Create a new movement with default values
+    const newMovement = {movement: "new movement", bias: "neutral", lowerRep: 8, upperRep: 12, stimulus: 0};
+    
+    newWorkout.movements.splice(movementIndex, 0, newMovement);
+
+    // Create new sets for the new movement
+    const newSets = [];
+    for (let i = 0; i < numSets; i++){
+      newSets.push({
+        movement: "new movement", 
+        bias: "neutral", 
+        num: i + 1,
+        lowerRep: 8, 
+        upperRep: 12, 
+        RPE: 10,
+        rest: 2.5
+      });
+    }
+
+    newWorkout.sets.splice(index, 0, ...newSets);
+
+    setCurrMovement("new movement");
+    setSubList(getSubList(routine[dayIndex].title, workoutCpy.movements, "", info.accessories, "neutral", "new movement"));
+    setWorkoutCpy(newWorkout);
+  }
+
   const [subChoice, setSubChoice] = useState({movement: "new movement", bias: "neutral"});
   const substitute = (dummy, newMovement, newBias) => {
     let { ...newWorkout } = workoutCpy;
     
-    const RPESeq = MOVEMENTS[newMovement].sequences[exp].slice(4 - numSets, 4);
+    const RPESeq = MOVEMENTS[newMovement] ? MOVEMENTS[newMovement].sequences[exp].slice(4 - numSets, 4) : MOVEMENTS["default"].sequences[exp].slice(4 - numSets, 4);
 
     for (let i = 0; i < numSets; i++){
       let set = newWorkout.sets[index + i];
@@ -214,7 +264,13 @@ export function WorkoutProvider({children}) {
     const accessories = info.accessories;
     const bias = workoutCpy.sets[index].bias;
 
-    return getSubList(title, movements, "", accessories, bias, movement);
+    const biasText = MOVEMENTS[movement] ? MOVEMENTS[movement].variants[bias] : "";
+    const variant = (movement + " " + biasText).trim();
+
+    let newSubs = getSubList(title, movements, "", accessories, bias, movement);
+    newSubs.unshift({baseMovement: movement, variant: variant, bias: bias});
+
+    return newSubs;
   }
 
   const makeLogChanges = async (movement, baseMovement) => {
@@ -268,6 +324,9 @@ export function WorkoutProvider({children}) {
     doNext: doNext,
     doLast: doLast,
     nextSet: nextSet,
+    addMovement: addMovement,
+    addFlag: addFlag,
+    setAddFlag: setAddFlag,
     subList: subList,
     startWorkout: startWorkout,
     substitute: substitute,

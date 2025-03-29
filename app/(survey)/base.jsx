@@ -5,6 +5,7 @@ import PopupPressable from "@/components/PopupPressable";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useSplitsContext } from "@/hooks/SplitsContext";
+import { useUserContext } from "@/hooks/UserContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList } from "react-native";
@@ -22,8 +23,8 @@ export default function Base() {
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
   const [loading, setLoading] = useState(false);
-
   const { setBase, setSplits, splits, setLeaf } = useSplitsContext();
+  const { setSplitTitle, allRoutines} = useUserContext();
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
 
@@ -44,6 +45,14 @@ export default function Base() {
           setLeaf(response.data)
           setSplits(newSplits);
           setBase(SPLIT_TITLES[key])
+
+          if (allRoutines && allRoutines.length > 0){
+            const count = allRoutines.filter(routine => routine.title.includes(SPLIT_TITLES[key])).length;
+            setSplitTitle(SPLIT_TITLES[key] + " " + (count + 1));
+          } else {
+            setSplitTitle(SPLIT_TITLES[key] + " 1");
+          }
+
           setLoading(false);
           router.push("/splits");
         } 

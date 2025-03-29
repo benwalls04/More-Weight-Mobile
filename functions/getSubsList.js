@@ -7,7 +7,7 @@ export default function getSubList(title, movements, text, accessories, bias=nul
     return (title.includes(data.primary) || accessories.includes(data.primary)) && movement.includes(text)
   })
 
-  if (prevMovement && prevMovement !== "new movement") {
+  if (prevMovement && MOVEMENTS[prevMovement]) {
     const primary = MOVEMENTS[prevMovement].primary
     const secondary = MOVEMENTS[prevMovement].secondary
 
@@ -73,7 +73,7 @@ export default function getSubList(title, movements, text, accessories, bias=nul
 
   // FIXME: include the variant information in the movements list to avoid excessive search
   options = options.filter(option => !movements.some(movement => {
-    if (movement.movement === "new movement") {
+    if (!MOVEMENTS[movement.movement]) {
       return false;
     }
     

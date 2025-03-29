@@ -7,12 +7,13 @@ import { useEffect, useState } from "react";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
 import { useEditContext } from "@/hooks/EditContext";
 
-export default function SubList({list, style, height, oldMovementObj, selectInteract=false, source}) {
+export default function SubList({list, style, height, selectInteract=false, source}) {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, height);
 
-  const [choiceIndex, setChoiceIndex] = useState(-1);
+  const [choiceIndex, setChoiceIndex] = useState(0);
+  const [addText, setAddText] = useState("");
 
   let setSubChoice;
   if (source === "workout") {
@@ -23,6 +24,10 @@ export default function SubList({list, style, height, oldMovementObj, selectInte
     setSubChoice = editContext.setSubChoice;
   }
 
+  useEffect(() => {
+    setSubChoice({movement: list[0].baseMovement, bias: list[0].bias})
+  }, [])
+
   const handlePress = (index) => {
     if (choiceIndex !== index) {
       setSubChoice({movement: list[index].baseMovement, bias: list[index].bias});
@@ -30,11 +35,16 @@ export default function SubList({list, style, height, oldMovementObj, selectInte
         setChoiceIndex(index);
       }
     } else {
-      setSubChoice({movement: oldMovementObj.movement, bias: oldMovementObj.bias});
+      setSubChoice(null);
       if (selectInteract) {
         setChoiceIndex(-1);
       }
     }
+  }
+
+  const handleAddText = (text) => {
+    setAddText(text);
+    setSubChoice({movement: text, bias: "neutral"});
   }
 
   return (
@@ -61,6 +71,16 @@ export default function SubList({list, style, height, oldMovementObj, selectInte
               <ThemedText>{item.variant}</ThemedText>
             </ThemedPressable>
           ))}
+          <View style={styles.addContainer}>
+            <ThemedText style={styles.addLabel}>Or Add Your Own Movement</ThemedText>
+            <TextInput
+              placeholder="Enter movement here"
+              style={[styles.addInput, choiceIndex === list.length ? styles.addInputFocus : null]}
+              value={addText}
+              onFocus={() => setChoiceIndex(list.length)}
+              onChangeText={e => handleAddText(e)}
+            ></TextInput>
+          </View>
         </ScrollView>
       </View>
   );
@@ -73,7 +93,7 @@ function createStyles(colors, height) {
       position: 'absolute',
       left: 27,
       width: 240,
-      maxHeight: height ? height : 105,
+      maxHeight: 180,
       backgroundColor: colors.background,
       overflow: 'hidden',
       zIndex: 10,
@@ -91,6 +111,28 @@ function createStyles(colors, height) {
       zIndex: 11,
     },    
     subOptionSelected: {
+      backgroundColor: colors.tint,
+    },
+    addContainer: {
+      borderRadius: 5,
+      backgroundColor: colors.accentLight,
+      borderWidth: 1,
+      borderColor: colors.accent,
+    },
+    addLabel: {
+      fontSize: 14,
+      textAlign: "center"
+    },
+    addInput: {
+      fontSize: 14,
+      paddingLeft: 10,
+      borderWidth: 1,
+      borderColor: colors.accent,
+      borderRadius: 5,
+      padding: 5,
+      color: colors.text,
+    }, 
+    addInputFocus: {
       backgroundColor: colors.tint,
     }
   })

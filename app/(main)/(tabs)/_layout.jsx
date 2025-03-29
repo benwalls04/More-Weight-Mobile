@@ -37,7 +37,7 @@ export default function TabsLayout() {
           flex: 1, 
           backgroundColor: colors.background,
         }}>
-          {/* Main content area */}
+          {/* Main conten1t area */}
           <View style={{ flex: 1 }}>
             <Slot />
           </View>
@@ -80,6 +80,22 @@ export default function TabsLayout() {
                   name="stats-chart-outline" 
                   size={24} 
                   color={pathname.includes('TrackPage') ? colors.tint : colors.text} 
+                />
+              </ThemedPressable>
+            </Link>
+
+            <Link href="/(tabs)/ProfilePage" asChild style={{ flex: 1 }}>
+              <ThemedPressable
+                type="transparent"
+                style={{ 
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Ionicons 
+                  name="person-outline" 
+                  size={24} 
+                  color={pathname.includes('ProfilePage') ? colors.tint : colors.text} 
                 />
               </ThemedPressable>
             </Link>

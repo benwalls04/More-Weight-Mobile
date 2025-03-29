@@ -9,6 +9,7 @@ import { ThemedPressable } from "@/components/ThemedPressable";
 import { useUserContext } from "@/hooks/UserContext";
 import SubList from "@/components/main/SubList";
 import PopupPressable from "@/components/PopupPressable";
+import Popup from "@/components/Popup"
 import { AntDesign } from '@expo/vector-icons';
 import { MOVEMENTS } from "@/constants/Movements";
 
@@ -19,15 +20,18 @@ export default function SetScreen() {
   const { info } = useUserContext();
   const NUM_SETS = info.sets;
 
-  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, subList, weightExp, repsExp, subChoice} = useWorkoutContext();
+  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, addMovement, subList, weightExp, repsExp, subChoice, addFlag, setAddFlag} = useWorkoutContext();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);  // Create styles with colors
 
+  console.log(workoutCpy)
+
   const repRange = workoutCpy.sets[index].lowerRep + " - " + workoutCpy.sets[index].upperRep + " reps";
   const setStr = "Set " + setNum + "/" + NUM_SETS;
   const bias = workoutCpy.sets[index].bias;
-  const biasText = MOVEMENTS[currMovement].variants[bias];
+  const RPE = workoutCpy.sets[index].RPE;
+  const biasText = MOVEMENTS[currMovement] ? MOVEMENTS[currMovement].variants[bias] : "";
   const variant = (biasText + " " + currMovement).trim();
   
   // Dummy state for inputs
@@ -56,12 +60,15 @@ export default function SetScreen() {
           list={subList} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
           height={178}
-          oldMovementObj={workoutCpy.movements[index]}
           selectInteract={true}
           source="workout"
         />
       </View>
     )
+  }
+
+  const handleSubClose = () => {
+    substitute(0, subChoice.movement, subChoice.bias);
   }
 
   const handleWeightChange = (text) => {
@@ -105,8 +112,9 @@ export default function SetScreen() {
   return (
     <ThemedView style={{justifyContent: 'flex-start'}}>
       {/* Top action buttons */}
+      <Popup visible={addFlag} body={subPopupBody} onClose={() => setAddFlag(false)} canClose={subChoice !== null} extraClose={handleSubClose}></Popup>
       <View style={styles.actionButtons}>
-        <PopupPressable visible={setNum === 1} popupBody={subPopupBody} onClose={() => substitute(0, subChoice.movement, subChoice.bias)} style={[styles.actionButton, styles.popupBtn]}>
+        <PopupPressable visible={setNum === 1} popupBody={subPopupBody} canClose={subChoice !== null} onClose={handleSubClose} style={[styles.actionButton, styles.popupBtn]}>
           <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Substitute</ThemedText>
         </PopupPressable>
         <TouchableOpacity style={styles.actionButton} onPress={setNum === 1? () => doNext() : () => {}}>
@@ -115,8 +123,8 @@ export default function SetScreen() {
         <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => doLast() : () => {}}>
           <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do last</ThemedText>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={() => nextSet(true)}>
-          <ThemedText style={styles.actionButtonText}>Skip Set</ThemedText>
+        <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => addMovement() : () => {}}>
+          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Add Move</ThemedText>
         </TouchableOpacity>
       </View>
       
@@ -137,7 +145,7 @@ export default function SetScreen() {
           <ThemedText style={styles.infoPillText}>{repRange}</ThemedText>
         </View>
         <View style={styles.infoPill}>
-          <ThemedText style={styles.infoPillText}>RPE 9</ThemedText>
+          <ThemedText style={styles.infoPillText}>RPE {RPE}</ThemedText>
         </View>
       </View>
       
@@ -194,9 +202,14 @@ export default function SetScreen() {
         </View>
 
         {/* Log set button */}
-        <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, weight, reps, variant, bias)}}>
-          <ThemedText style={styles.logButtonText}>log set</ThemedText>
-        </ThemedPressable>
+        <View style={styles.logButtons}>
+          <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, bias, weight, reps, variant)}}>
+            <ThemedText style={styles.logButtonText}>log set</ThemedText>
+          </ThemedPressable>
+          <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(true, bias)}>
+            <ThemedText style={styles.logButtonText}>skip set</ThemedText>
+          </ThemedPressable>
+        </View>
       </View>
     
     </ThemedView>
@@ -322,12 +335,16 @@ function createStyles(colors) {
       textAlign: 'center',
       fontSize: 14,
     },
+    logButtons: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      position: 'absolute',
+      bottom: -40,
+    }, 
     logButton: {
       alignSelf: 'center',
       height: 45,
-      width: "40%",
-      position: 'absolute',
-      bottom: -40,
+      width: "55%",
     },
     logButtonText: {
       color: 'white',

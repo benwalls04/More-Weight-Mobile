@@ -89,7 +89,7 @@ export default function TrackScreen() {
     }
 
     const baseMovement = logCpy[exercise][0].baseMovement;
-    const muscleGroup = MOVEMENTS[baseMovement].primary;
+    const muscleGroup = MOVEMENTS[baseMovement] ? MOVEMENTS[baseMovement].primary : "unknown group";
 
     if (!muscleGroups.includes(muscleGroup)) {
       return selectGroups.includes(muscleGroups.length - 1);

@@ -64,6 +64,18 @@ function createStyles(colors) {
       transform: [{ skewX: '-10deg' }],
       borderRadius: 0,
       borderColor: colors.tint
+    }, 
+    pill: {
+      backgroundColor: colors.buttonColor,
+      borderColor: colors.accentLight,
+      color: colors.text,
+      borderRadius: 20,
+      paddingHorizontal: 20,
+      paddingVertical: 5,
+      height: 35,
+      width: "auto",
+      justifyContent: "center",
+      alignItems: "center",
     }
   })
 }

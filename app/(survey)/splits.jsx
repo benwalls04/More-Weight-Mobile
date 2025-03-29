@@ -24,7 +24,7 @@ const BTN_WIDTH =  (windowWidth - (3) * BUTTON_MARGIN * 2) / 2;
 export default function Split() {
 
   const { setSplits, setLeaf, leaf, setDecisions, decisions, root } = useSplitsContext();
-  const { setSplit } = useUserContext();
+  const { setSplit, username, addRoutine } = useUserContext();
   const [ isLoading, setIsLoading ] = useState(false);
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
@@ -69,7 +69,13 @@ export default function Split() {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);
 
-      router.push("/(auth)/SignUpPage");
+      console.log(leaf[choiceIndex][0])
+
+      if (username === "") {
+        router.push("/(auth)/SignUpPage");
+      } else {
+        addRoutine(username, leaf[choiceIndex][0]);
+      }
     } else {
       Alert.alert("Error");
     }

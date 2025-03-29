@@ -18,7 +18,7 @@ export default function SurveyRange({
   title,
   data,
   surveyIndex,
-  headerLines = 2,
+  headerLines = 3,
   ...otherProps
 }) {
   const { theme } = useThemeContext();

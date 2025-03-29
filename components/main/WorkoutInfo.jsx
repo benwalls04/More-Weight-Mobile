@@ -20,23 +20,26 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, workoutFlag);
 
-  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets, subChoice, changeRepRange } = useEditContext();
+  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets, subChoice, setSubChoice, changeRepRange } = useEditContext();
 
+  const dataKey = movement.includes("new movement") || !MOVEMENTS[movement] ? "default" : movement;
   const [lowerRep, setLowerRep] = useState(workoutCpy.movements[workoutIndex].lowerRep);
   const [upperRep, setUpperRep] = useState(workoutCpy.movements[workoutIndex].upperRep);
-  const bias = movement === "new movement"? 'neutral': workoutCpy.movements[workoutIndex].bias;    
+  const bias = movement.includes("new movement")? 'neutral': workoutCpy.movements[workoutIndex].bias; 
+  
+  const [editSetFlag, setEditSetFlag] = useState(false);
   const sets = getSets(movement);
   const [setsCpy, setSetsCpy] = useState(sets.map(set => ({ ...set })));
-
   useEffect(() => {
     setSetsCpy(sets.map(set => ({ ...set })));
   }, [movement])
 
   useEffect(() => {
-    if (lowerRep !== sets[0].lowerRep || upperRep !== sets[0].upperRep){
+    if (editSetFlag && (sets && lowerRep !== sets[0].lowerRep || upperRep !== sets[0].upperRep)){
       setLowerRep(sets[0].lowerRep);
       setUpperRep(sets[0].upperRep);
       changeRepRange(workoutIndex, sets[0].lowerRep, sets[0].upperRep);
+      setEditSetFlag(false);
     }
   }, [setsCpy])
 
@@ -48,6 +51,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   }
 
   const handleSetsClose = () => {
+    setEditSetFlag(true);
     const validatedSetsCpy = setsCpy.map((setCpy, index) => {
       // Get the original set at the same index
       const originalSet = sets[index];
@@ -90,15 +94,15 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
       newTagsSelect[index] = true;
       setTagsSelect(newTagsSelect);
       changeBias(workoutIndex, movement, newBias);
-      setBiasText(MOVEMENTS[movement].variants[newBias]);
+      setBiasText(MOVEMENTS[dataKey].variants[newBias]);
     }
   }
 
-  const initBiasText = () => {
-    if (movement === "new movement"){
+  const initBiasText = () => {  
+    if (movement.includes("new movement")){
       return '';
     } else {
-      return MOVEMENTS[movement].variants[bias];
+      return MOVEMENTS[dataKey].variants[bias];
     }
   }
   
@@ -111,18 +115,18 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     let tags = [];
 
     if (!workoutFlag){
-      if (movement !== "new movement"){
-        MOVEMENTS[movement].biasOrder.forEach(icon => {
+      if (!movement.includes("new movement")){
+        MOVEMENTS[dataKey].biasOrder.forEach(icon => {
           if (!tags.includes(icon)){
             tags.push(icon)
           }
         })
         if (tags.length === 1 && tags[0] === 'neutral'){
-            tags = [MOVEMENTS[movement].primary];
+            tags = [MOVEMENTS[dataKey].primary];
         }
       }
     } else {
-      tags = [MOVEMENTS[movement].primary];
+      tags = [MOVEMENTS[dataKey].primary];
       if (bias !== 'neutral'){
         tags.push(bias);
       }
@@ -153,33 +157,34 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
     setTagsSelect(initTagsSelect());
   }, [tags]);
 
-  const [subOptions, setSubOptions] = useState(getSubOptions(movement, bias, ''));
-  const [subPopupVisible, setSubPopupVisible] = useState(false);
+  const getNewSubs = () => {
+    let newSubs = getSubOptions(movement, bias, '');
+    const variant = (movement + " " + biasText).trim();
+    newSubs.unshift({baseMovement: movement, variant: variant, bias: bias});
+    return newSubs;
+  }
+  const [subOptions, setSubOptions] = useState(getNewSubs());
 
   const handleSubClose = () => {
-    if (subChoice.movement !== "new movement"){
+    if (subChoice && !subChoice.movement.includes("new movement")){
       changeMovement(workoutIndex, subChoice.movement, subChoice.bias);
-      setSubPopupVisible(false);
+      setSubChoice(null);
     } 
   }
 
   useEffect(() => {
-    setSubOptions(getSubOptions(movement, bias, ''));
-    if (movement === "new movement"){
-      setSubPopupVisible(true);
-    }
+    setSubOptions(getNewSubs());
   }, [movement]);
 
   const subPopupBody = () => {
     return (
       <View style={{width: '100%', alignItems: 'center', height: 250}}>
-        <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A {movement === "new movement"? "Movement": "Substitute"}</ThemedText>
+        <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A {movement.includes("new movement")? "Movement": "Substitute"}</ThemedText>
         <SubList 
           list={subOptions} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
-          height={178}
+          height={250}
           selectInteract={true}
-          oldMovementObj={workoutCpy.movements[workoutIndex]}
           source="edit"
         />
       </View>
@@ -188,8 +193,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
 
   return (
     <View style={styles.container}>
-      <Popup body={subPopupBody} visible={subPopupVisible} onClose={() => handleSubClose()}/>
-      <Popup body={popupBody} visible={popupVisible} onClose={() => setPopupVisible(false)}/>
+      <Popup body={popupBody} visible={popupVisible} avoidSubCheck={true} onClose={() => setPopupVisible(false)}/>
       <View style={[styles.flexboxRow]}>
         <PopupPressable 
           popupBody={popupBody} 
@@ -204,7 +208,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           </View>
 
           <View style={{width: "70%", zIndex: 1}}>
-            <ThemedText style={styles.movementTitle}>{movement}</ThemedText>
+            <ThemedText numberOfLines={1} style={styles.movementTitle}>{movement}</ThemedText>
           </View>
           <ThemedText style={styles.repsText}>
             {lowerRep} - {upperRep} reps
@@ -241,7 +245,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
             <ThemedText>↓</ThemedText>
           </ThemedPressable>
-          <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} onClose={() => handleSubClose()}>
+          <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} avoidSubCheck={false} onClose={() => handleSubClose()} canClose={subChoice && !subChoice.movement.includes("new movement")}>
             <ThemedText>⇄</ThemedText>
           </PopupPressable>
         </View>

@@ -88,7 +88,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   }
 
   const handleBias = (index) => {
-    if (tagsSelect[index] === false){
+    if (tagsSelect[index] === false && !workoutFlag){
       const newBias = tags[index];
       let newTagsSelect = new Array(tagsSelect.length).fill(false);
       newTagsSelect[index] = true;
@@ -199,10 +199,10 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           popupBody={popupBody} 
           style={styles.closeButton} 
           onClose={() => handleSetsClose()}>
-            <ThemedText style={{fontSize: 20}}>+</ThemedText>
+            <ThemedText style={{fontSize: 20, marginTop: 20}}>+</ThemedText>
         </PopupPressable>
         
-        <View style={[styles.flexboxRow, {flex: 9}, {marginTop: biasText === '' ? 16 : 10}]}>
+        <View style={[styles.flexboxRow, {flex: 9, marginTop: 16}]}>
           <View style={{width: "65%"}}>
             <ThemedText style={styles.biasText}>{biasText}</ThemedText>
           </View>
@@ -213,42 +213,46 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
           <ThemedText style={styles.repsText}>
             {lowerRep} - {upperRep} reps
           </ThemedText>
-
-          <FlatList 
-            data={tags}
-            renderItem={({ item, index }) => (
-              <View style={{marginLeft: 10}}>
-                <ThemedPressable key={index} style={[styles.tag, { backgroundColor: tagsSelect[index] ? colors.tint : "gray"}]} onPress={() => handleBias(index)}>
-                  <ThemedText style={styles.tagText}>{item}</ThemedText>
-                </ThemedPressable>
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tagContainer}
-          />
         </View>
+      </View>
+        
+      <View style={{width: '100%', alignItems: 'flex-start', paddingLeft: 20, marginBottom: 10, marginTop: 0}}>
+        <FlatList 
+          data={tags}
+          renderItem={({ item, index }) => (
+            <View style={{marginLeft: 10}}>
+              <ThemedPressable key={index} style={[styles.tag, { backgroundColor: tagsSelect[index] ? colors.tint : "gray"}]} onPress={() => handleBias(index)}>
+                <ThemedText style={styles.tagText}>{item}</ThemedText>
+              </ThemedPressable>
+            </View>
+          )}
+          keyExtractor={(item, index) => index.toString()}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.tagContainer, {paddingLeft: 10}]}
+        />
       </View>
 
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
-        <View style={styles.editBtnGrid}>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
-            <ThemedText>+</ThemedText>
-          </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(movement, bias)}>
-            <ThemedText>-</ThemedText>
-          </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(workoutIndex, movement)}>
-            <ThemedText>↑</ThemedText>
-          </ThemedPressable>
-          <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
-            <ThemedText>↓</ThemedText>
-          </ThemedPressable>
-          <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} avoidSubCheck={false} onClose={() => handleSubClose()} canClose={subChoice && !subChoice.movement.includes("new movement")}>
-            <ThemedText>⇄</ThemedText>
-          </PopupPressable>
-        </View>
+        {!workoutFlag && (
+          <View style={styles.editBtnGrid}>
+            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
+              <ThemedText style={styles.btnText}>+</ThemedText>
+            </ThemedPressable>
+            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(movement, bias)}>
+              <ThemedText style={styles.btnText}>-</ThemedText>
+            </ThemedPressable>
+            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(workoutIndex, movement)}>
+              <ThemedText style={styles.btnText}>↑</ThemedText>
+            </ThemedPressable>
+            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
+              <ThemedText style={styles.btnText}>↓</ThemedText>
+            </ThemedPressable>
+            <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} avoidSubCheck={false} onClose={() => handleSubClose()} canClose={subChoice && !subChoice.movement.includes("new movement")}>
+              <ThemedText style={[styles.btnText, {marginTop: 0}]}>⇄</ThemedText>
+            </PopupPressable>
+          </View>
+        )}
 
         <View style={{justifyContent: 'center', alignItems: 'center'}}>
           <View style={styles.editLine}>
@@ -303,15 +307,16 @@ function createStyles(colors, workoutFlag) {
   biasText: {
     fontStyle: "italic",
     fontSize: 12,
-    lineHeight: 6,
+    lineHeight: 16,
     textAlign: "left",
     paddingLeft: 14,
+    marginTop: 5,
   },
   tagContainer: {
-    marginTop: 5,
+    marginTop: 0,
     alignItems: 'flex-start',
     width: '100%',
-    marginBottom: 10,
+    marginBottom: workoutFlag ? 10 : 0,
   },
   tagText: {
     fontSize: 12,
@@ -328,7 +333,6 @@ function createStyles(colors, workoutFlag) {
     borderWidth: 0,
   },
   editBtnGrid: {
-    visibility: workoutFlag ? 'hidden' : 'visible',
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '50%',
@@ -337,16 +341,23 @@ function createStyles(colors, workoutFlag) {
   },
   editBtn: {
     flex: 1,
-    height: workoutFlag ? 0 : 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 0,
+  },
+  btnText: {
+    textAlign: 'center',
+    lineHeight: 20,
+    includeFontPadding: false,
+    marginTop: -10,
   },
   slantedBtn: {
     backgroundColor: colors.background,
-    alignItems: "center",
     transform: [{ skewX: '-10deg' }],
     borderRadius: 0,
     borderColor: colors.tint,
     margin: 0,
-    justifyContent: 'center',
     borderWidth: 1,
     width: 35,
   },

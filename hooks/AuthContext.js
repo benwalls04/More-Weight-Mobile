@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
       try {
-        const response = await axios.get('https://more-weight.com/login', {
+        const response = await axios.get('http://192.168.1.253:3000/login', {
           params: { username, password }
         });
         setRoutine(response.data.routine);

@@ -98,7 +98,7 @@ export function SurveyProvider({children}) {
     const userData = formatData();
     const params = {schedule: userData.schedule, bias: userData.bias}
 
-    await axios.get('https://more-weight.com/splits', { params: params }).then((response) => {
+    await axios.get('http://192.168.1.253:3000/splits', { params: params }).then((response) => {
       setSplits(response.data);
       setLeaf(response.data.selection);
       setRoot(response.data);

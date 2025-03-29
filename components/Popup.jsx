@@ -20,7 +20,7 @@ const Popup = ({ visible, onClose, extraClose, body, canClose=true}) => {
     }
   }
   
-  return (visible &&
+  return (
     <Modal
       visible={visible}
       transparent={true}
@@ -32,11 +32,11 @@ const Popup = ({ visible, onClose, extraClose, body, canClose=true}) => {
           <View style={styles.contentWrapper}>
             {body()}
           </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <ThemedPressable type="selected" onPress={handleClose} style={styles.closeButton}>
-              <Text style={styles.closeText}>Close</Text>
-          </ThemedPressable>
+          <View style={styles.buttonContainer}>
+            <ThemedPressable type="selected" onPress={handleClose} style={styles.closeButton}>
+                <Text style={styles.closeText}>Close</Text>
+            </ThemedPressable>
+          </View>
         </View>
       </View>
     </Modal>
@@ -54,29 +54,33 @@ function createStyles (colors) {
     popupContainer: {
       backgroundColor: colors.popupColor,
       borderRadius: 10,
-      maxHeight: "75%",
       width: '90%',
-      alignItems: 'center',
+      padding: 15,
+      overflow: 'hidden',
+      maxHeight: "80%",
     },
     contentWrapper: {
-      flex: 1,
       width: '100%',
       backgroundColor: colors.popupColor,
+      marginBottom: 15,
+      paddingVertical: 10,
     }, 
     buttonContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
       width: '100%',
+      marginTop: 5,
     },
     closeButton: {
       borderRadius: 0,
-      width: "90%", 
-      height: 30,
+      width: "100%", 
+      height: 45,
     },
     closeText: {
       textAlign: 'center',
       color: 'white',
       fontSize: 16,
+      fontWeight: '500',
     },
   });
 }

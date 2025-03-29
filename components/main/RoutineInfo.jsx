@@ -45,8 +45,8 @@ export default function RoutineInfo({routine, selected, last}) {
     let updatedInfo = info ? {...info} : {};
     updatedInfo.sets = routine.numSets;
     setInfo(updatedInfo);
-
-    await axios.post('http://localhost:3001/change-routine', {
+    
+    await axios.post('http://192.168.1.253:3000/change-routine', {
       username: username,
       title: routine.title,
     })
@@ -91,7 +91,7 @@ export default function RoutineInfo({routine, selected, last}) {
         </View>
       </View>
       {last && <ThemedPressable type="slanted" style={styles.addButton} onPress={handleAddRoutine}>
-        <ThemedText>+</ThemedText>
+        <ThemedText style={{marginTop: -12, fontSize: 20}}>+</ThemedText>
       </ThemedPressable>}
     </View>
   )

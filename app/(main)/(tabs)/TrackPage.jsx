@@ -43,7 +43,7 @@ export default function TrackScreen() {
               style={[styles.muscleButton1, selectGroups.includes(index) ? styles.muscleButtonSelected : {}]}
               onPress={() => handleGroupPress(index)}
             >
-              <ThemedText>{group}</ThemedText>
+              <ThemedText style={styles.buttonText}>{group}</ThemedText>
             </ThemedPressable>
           ))}
         </View>
@@ -55,7 +55,7 @@ export default function TrackScreen() {
               style={[styles.muscleButton2, selectGroups.includes(index + 4) ? styles.muscleButtonSelected : {}]}
               onPress={() => handleGroupPress(index + 4)}
             >
-              <ThemedText>{group}</ThemedText>
+              <ThemedText style={styles.buttonText}>{group}</ThemedText>
             </ThemedPressable>
           ))}
         </View>
@@ -104,10 +104,15 @@ export default function TrackScreen() {
   return (
     <ThemedView style={styles.container}>
       <MainHeader title="Log" subHeaderComponent={renderHeader()} />
-      <ScrollView>
-        <View style={styles.exerciseList}>
-          {recentsCpy.map(exercise => checkRender(exercise) && renderExerciseItem(exercise))}
-        </View>
+      <ScrollView
+        style={styles.scrollView}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      >
+        {recentsCpy
+          .filter(exercise => checkRender(exercise))
+          .map((exercise) => renderExerciseItem(exercise))
+        }
       </ScrollView>
     </ThemedView>
   );
@@ -117,7 +122,6 @@ function createStyles(colors) {
   return StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 20,
       paddingTop: 25
     },
     muscleGroups: {
@@ -136,20 +140,27 @@ function createStyles(colors) {
     muscleButtonSelected: {
       borderColor: colors.background,
       backgroundColor: colors.tint,
+      padding: 0,
     },
     muscleButton1: {
       width: "25%",
       height: 35,
       borderWidth: 1,
+      padding: 0,
       borderColor: colors.tint,
       backgroundColor: colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     muscleButton2: {
       width: "33%",
-      height: 30,
+      height: 35,
       borderWidth: 1,
+      padding: 0,
       borderColor: colors.tint,
       backgroundColor: colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     muscleButton: {
       paddingHorizontal: 15,
@@ -196,6 +207,14 @@ function createStyles(colors) {
     },
     viewLogText: {
       textDecorationLine: 'underline',
+    },
+    scrollView: {
+      width: '100%',
+      paddingTop: 20,
+    },
+    buttonText: {
+      textAlign: 'center',
+      lineHeight: 0,
     },
   });
 }

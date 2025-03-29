@@ -4,7 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { ThemedText } from "@/components/ThemedText";
 import FooterButton from "@/components/main/FooterButton";
-import { FlatList, StyleSheet, View, Dimensions } from "react-native";
+import { FlatList, StyleSheet, View, Dimensions, ScrollView } from "react-native";
 import { useEditContext } from "@/hooks/EditContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
@@ -42,14 +42,27 @@ function EditPageContent() {
   })
 
   return (
-      <ThemedView>
+      <ThemedView style={Styles.container}>
         <View style={Styles.headerContainer}>
           <FlatList 
               data={WEEKDAYS}
               keyExtractor={(item, index) => index.toString()}
               contentContainerStyle={Styles.weekdayBtnContainer}
               renderItem={({ item, index}) => (
-              <ThemedPressable onPress={restIndex.includes(index) ? () => {} : () => setDayIndex(index)} style={[Styles.weekdayBtn, {backgroundColor: restIndex.includes(index) ? colors.accentLight : index === dayIndex ? colors.tint : "transparent"}]}>
+              <ThemedPressable 
+                onPress={restIndex.includes(index) ? () => {} : () => setDayIndex(index)} 
+                style={[
+                  Styles.weekdayBtn, 
+                  {
+                    backgroundColor: restIndex.includes(index) 
+                      ? colors.accentLight 
+                      : index === dayIndex 
+                        ? colors.tint 
+                        : "transparent",
+                    marginRight: index < WEEKDAYS.length - 1 ? 1 : 0, // Add small gap between buttons
+                  }
+                ]}
+              >
                 <ThemedText>{item}</ThemedText>
               </ThemedPressable>
             )}
@@ -57,15 +70,21 @@ function EditPageContent() {
           <ThemedText type="title" style={{marginTop: 10}}>{workoutCpy.title}</ThemedText>
         </View>
 
-        <FlatList
-          data={routineCpy[dayIndex].movements}
-          keyExtractor={(item, index) => index.toString()}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{paddingBottom: 120}}
-          renderItem={({ item, index}) => (
-            <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={false} />
-          )}
-        />        
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{paddingBottom: 120, paddingHorizontal: 15}}
+          >
+            {workoutCpy.movements.map((item, index) => (
+              <WorkoutInfo 
+                key={index.toString()}
+                workoutCpy={workoutCpy} 
+                workoutIndex={index} 
+                movement={item.movement} 
+                workoutFlag={false}
+              />
+            ))}
+          </ScrollView>       
 
         <FooterButton clickEvent={() => finish(0)} text={"Done Editing"}/>
       </ThemedView>
@@ -78,22 +97,33 @@ function createStyles (colors) {
       width: "100%",
       alignItems: "center",
       justifyContent: "center",
-      paddingTop: 30,
+      backgroundColor: colors.background,
+      zIndex: 10,
+      position: 'absolute',
+      top: 25,
+      paddingBottom: 10,
+    },
+    container: {
+      justifyContent: 'center',
+      paddingTop: 100,
+      width: '100%',
+      overflow: 'hidden', // Prevent content from overflowing
     },
     weekdayBtnContainer: {
-      paddingLeft: 5,
-      paddingRight: 5,
       width: "100%",
       flexDirection: "row",
-      justifyContent: "space-between",
+      justifyContent: "center",
+      paddingHorizontal: 15,
     }, 
     weekdayBtn: {
-      width: HEADER_WIDTH / 7,
+      width: (HEADER_WIDTH / 7) - 1, // Subtract 1 to account for the gap
       alignItems: "center",
       transform: [{ skewX: '-10deg' }],
       borderRadius: 0,
       height: 40,
-      zIndex: 100
+      marginHorizontal: 0,
+      zIndex: 100,
+      overflow: 'hidden', // Prevent content from overflowing
     },
   })
 }

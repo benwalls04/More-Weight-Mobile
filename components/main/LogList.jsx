@@ -12,36 +12,40 @@ export default function LogList({ exercise }) {
 
   const { logCpy } = useWorkoutContext();
   const exerciseData = [...(logCpy[exercise] || [])].reverse();
+
+  console.log(exerciseData);
       
   return (
     <View style={styles.popupContent}>
       <ThemedText style={styles.popupTitle}>{exercise}</ThemedText>
-      <View style={styles.scrollContainer}>
+      
+      <View style={styles.headerContainer}>
         <View style={styles.logListHeader}>
-            <ThemedText style={styles.logListHeaderText}>Date</ThemedText>
-            <ThemedText style={styles.logListHeaderText}>Weight</ThemedText>
-            <ThemedText style={styles.logListHeaderText}>Reps</ThemedText>
+          <ThemedText style={styles.logListHeaderText}>Date</ThemedText>
+          <ThemedText style={styles.logListHeaderText}>Weight</ThemedText>
+          <ThemedText style={styles.logListHeaderText}>Reps</ThemedText>
         </View>
-        <ScrollView style={styles.popupScroll}>
-            {exerciseData.map((entry, index) => (
-              <LogListRow key={index} entry={entry} index={exerciseData.length - (index + 1)} />
-            ))}
-        </ScrollView>
       </View>
+      
+      <ScrollView 
+        style={styles.popupScroll}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {exerciseData.map((entry, index) => (
+          <LogListRow key={index} entry={entry} index={exerciseData.length - (index + 1)} />
+        ))}
+      </ScrollView>
     </View>
   );
 }
 
 function createStyles(colors) {
   return StyleSheet.create({
-    scrollContainer: {
-      flex: 1,
-      overflow: "hidden",
-    },
     popupContent: {
       width: '100%',
-      maxHeight: '100%',
-      paddingTop: 15,
+      height: 300, // Set a fixed height or adjust as needed
+      display: 'flex',
+      flexDirection: 'column',
     },
     popupTitle: {
       fontSize: 18,
@@ -49,27 +53,32 @@ function createStyles(colors) {
       textAlign: 'center',
       marginBottom: 15,
     },
-    popupScroll: {
+    headerContainer: {
+      height: 30,
       width: '100%',
-      maxHeight: '100%',
-      marginTop: 38,
+      backgroundColor: colors.popupColor,
+      zIndex: 2,
     },
     logListHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       paddingHorizontal: 15,
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
+      height: '100%',
+      alignItems: 'center',
     },
     logListHeaderText: {
       width: "33%",
       fontSize: 14,
       fontWeight: 'bold',
       textAlign: 'center',
-      zIndex: 2,
     },
+    popupScroll: {
+      flex: 1,
+      width: '100%',
+    },
+    scrollContent: {
+      paddingBottom: 10,
+    }
   });
 }
 

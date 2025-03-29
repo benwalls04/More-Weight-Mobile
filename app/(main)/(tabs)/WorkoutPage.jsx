@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import WorkoutInfo from "@/components/main/WorkoutInfo";
@@ -22,15 +22,20 @@ export default function WorkoutPage() {
       <ThemedView style={styles.container}>
         <MainHeader title={workoutCpy.title} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
         {workoutCpy.title !== "rest" && (
-          <FlatList
-            data={workoutCpy.movements}
-            keyExtractor={(item, index) => index.toString()}
+          <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingBottom: 70}}
-            renderItem={({ item, index}) => (
-              <WorkoutInfo workoutCpy={workoutCpy} workoutIndex={index} movement={item.movement} workoutFlag={true}/>
-            )}
-          /> 
+            contentContainerStyle={{paddingBottom: 70, paddingHorizontal: 15}}
+          >
+            {workoutCpy.movements.map((item, index) => (
+              <WorkoutInfo 
+                key={index.toString()}
+                workoutCpy={workoutCpy} 
+                workoutIndex={index} 
+                movement={item.movement} 
+                workoutFlag={true}
+              />
+            ))}
+          </ScrollView>
         )}
         {workoutCpy.title === "rest" && (
           <ThemedText type="header" style={{textAlign: 'center', marginTop: 20}}>Maybe it's time you hit some cardio?</ThemedText>
@@ -50,8 +55,8 @@ function createStyles(colors) {
     container: {
       flex: 1,
       justifyContent: 'flex-start',
-      paddingHorizontal: 20,
-      paddingTop: 25
+      paddingTop: 25,
+      width: '100%'
     },
     title: {
       fontSize: 24,

@@ -18,7 +18,7 @@ export default function ProfilePage() {
 
   const renderRoutine = () => {
     return (
-      <ScrollView style={{width: '100%'}}>
+      <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>
         {allRoutines.map((routine, index) => (
           <RoutineInfo routine={routine} last={index === allRoutines.length - 1} selected={routine.title.includes(splitTitle)}/>
         ))}
@@ -102,6 +102,7 @@ function createStyles(colors) {
     },
     tabText: {
       fontSize: 12,
+      lineHeight: 16,
     },
     tabContent: {
       flex: 1,

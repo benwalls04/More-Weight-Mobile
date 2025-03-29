@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions} from "react-native";
+import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
@@ -24,8 +24,6 @@ export default function SetScreen() {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);  // Create styles with colors
-
-  console.log(workoutCpy)
 
   const repRange = workoutCpy.sets[index].lowerRep + " - " + workoutCpy.sets[index].upperRep + " reps";
   const setStr = "Set " + setNum + "/" + NUM_SETS;
@@ -85,6 +83,20 @@ export default function SetScreen() {
     }
   };
 
+  // Add focus handlers to clear the fields
+  const handleWeightFocus = () => {
+    setWeight("");
+  };
+
+  const handleRepsFocus = () => {
+    setReps("");
+  };
+
+  // Add this function to dismiss the keyboard
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   const incrementWeight = () => {
     const currentWeight = parseInt(weight) || 0;
     setWeight((currentWeight + 5).toString());
@@ -110,109 +122,118 @@ export default function SetScreen() {
   };
 
   return (
-    <ThemedView style={{justifyContent: 'flex-start'}}>
-      {/* Top action buttons */}
-      <Popup visible={addFlag} body={subPopupBody} onClose={() => setAddFlag(false)} canClose={subChoice !== null} extraClose={handleSubClose}></Popup>
-      <View style={styles.actionButtons}>
-        <PopupPressable visible={setNum === 1} popupBody={subPopupBody} canClose={subChoice !== null} onClose={handleSubClose} style={[styles.actionButton, styles.popupBtn]}>
-          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Substitute</ThemedText>
-        </PopupPressable>
-        <TouchableOpacity style={styles.actionButton} onPress={setNum === 1? () => doNext() : () => {}}>
-          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do next</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => doLast() : () => {}}>
-          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do last</ThemedText>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => addMovement() : () => {}}>
-          <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Add Move</ThemedText>
-        </TouchableOpacity>
-      </View>
-      
-      <View style={{width: "65%"}}>
-        <ThemedText style={styles.biasText}>{biasText}</ThemedText>
-      </View>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <ThemedView style={{justifyContent: 'flex-start'}}>
+        {/* Top action buttons */}
+        <Popup visible={addFlag} body={subPopupBody} onClose={() => setAddFlag(false)} canClose={subChoice !== null} extraClose={handleSubClose}></Popup>
+        <View style={styles.actionButtons}>
+          <PopupPressable visible={setNum === 1} popupBody={subPopupBody} canClose={subChoice !== null} onClose={handleSubClose} style={[styles.actionButton, styles.popupBtn]}>
+            <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Substitute</ThemedText>
+          </PopupPressable>
+          <TouchableOpacity style={styles.actionButton} onPress={setNum === 1? () => doNext() : () => {}}>
+            <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do next</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => doLast() : () => {}}>
+            <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Do last</ThemedText>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.actionButton} onPress={setNum === 1 ? () => addMovement() : () => {}}>
+            <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Add Move</ThemedText>
+          </TouchableOpacity>
+        </View>
+        
+        <View style={{width: "65%"}}>
+          <ThemedText style={styles.biasText}>{biasText}</ThemedText>
+        </View>
 
-      <ThemedText style={styles.exerciseName} numberOfLines={1} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
-        {currMovement}
-      </ThemedText>
-      
-      {/* Set info pills */}
-      <View style={styles.setInfoContainer}>
-        <View style={styles.infoPill}>
-          <ThemedText style={styles.infoPillText}>{setStr}</ThemedText>
-        </View>
-        <View style={styles.infoPill}>
-          <ThemedText style={styles.infoPillText}>{repRange}</ThemedText>
-        </View>
-        <View style={styles.infoPill}>
-          <ThemedText style={styles.infoPillText}>RPE {RPE}</ThemedText>
-        </View>
-      </View>
-      
-      {/* Timer */}
-      <View style={[styles.timerContainer, {borderColor: time > 0 ? colors.tint : colors.text}]}>
-        <ThemedText style={styles.timerText}>
-          {formatTime(time || 0)}
+        <ThemedText style={styles.exerciseName} numberOfLines={1} adjustsFontSizeToFit={true} minimumFontScale={0.5}>
+          {currMovement}
         </ThemedText>
-      </View>
-      
-      {/* Input fields */}
-      <View style={styles.inputContainer}>
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.inputLabel}>Weight:</ThemedText>
-          <View style={styles.inputWithArrows}>
-            <TextInput
-              style={styles.input}
-              value={weight}
-              onChangeText={handleWeightChange}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.text}
-            />
-            <View style={styles.arrowContainer}>
-              <TouchableOpacity onPress={incrementWeight} style={styles.arrow}>
-                <AntDesign name="caretup" size={12} color={colors.text} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={decrementWeight} style={styles.arrow}>
-                <AntDesign name="caretdown" size={12} color={colors.text} />
-              </TouchableOpacity>
-            </View>
+        
+        {/* Set info pills */}
+        <View style={styles.setInfoContainer}>
+          <View style={styles.infoPill}>
+            <ThemedText style={styles.infoPillText}>{setStr}</ThemedText>
+          </View>
+          <View style={styles.infoPill}>
+            <ThemedText style={styles.infoPillText}>{repRange}</ThemedText>
+          </View>
+          <View style={styles.infoPill}>
+            <ThemedText style={styles.infoPillText}>RPE {RPE}</ThemedText>
           </View>
         </View>
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.inputLabel}>Reps:</ThemedText>
-          <View style={styles.inputWithArrows}>
-            <TextInput
-              style={styles.input}
-              value={reps}
-              onChangeText={handleRepsChange}
-              keyboardType="numeric"
-              placeholder="0"
-              placeholderTextColor={colors.text}
-            />
-            <View style={styles.arrowContainer}>
-              <TouchableOpacity onPress={incrementReps} style={styles.arrow}>
-                <AntDesign name="caretup" size={12} color={colors.text} />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={decrementReps} style={styles.arrow}>
-                <AntDesign name="caretdown" size={12} color={colors.text} />
-              </TouchableOpacity>
+        
+        {/* Timer */}
+        <View style={[styles.timerContainer, {borderColor: time > 0 ? colors.tint : colors.text}]}>
+          <ThemedText style={styles.timerText}>
+            {formatTime(time || 0)}
+          </ThemedText>
+        </View>
+        
+        {/* Input fields */}
+        <View style={styles.inputContainer}>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.inputLabel}>Weight:</ThemedText>
+            <View style={styles.inputWithArrows}>
+              <TextInput
+                style={styles.input}
+                value={weight}
+                onChangeText={handleWeightChange}
+                onFocus={handleWeightFocus}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.text}
+                onSubmitEditing={dismissKeyboard}
+                onBlur={dismissKeyboard}
+                blurOnSubmit={true}
+              />
+              <View style={styles.arrowContainer}>
+                <TouchableOpacity onPress={incrementWeight} style={styles.arrow}>
+                  <AntDesign name="caretup" size={12} color={colors.text} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={decrementWeight} style={styles.arrow}>
+                  <AntDesign name="caretdown" size={12} color={colors.text} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.inputLabel}>Reps:</ThemedText>
+            <View style={styles.inputWithArrows}>
+              <TextInput
+                style={styles.input}
+                value={reps}
+                onChangeText={handleRepsChange}
+                onFocus={handleRepsFocus}
+                keyboardType="numeric"
+                placeholder="0"
+                placeholderTextColor={colors.text}
+                onSubmitEditing={dismissKeyboard}
+                blurOnSubmit={true}
+              />
+              <View style={styles.arrowContainer}>
+                <TouchableOpacity onPress={incrementReps} style={styles.arrow}>
+                  <AntDesign name="caretup" size={12} color={colors.text} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={decrementReps} style={styles.arrow}>
+                  <AntDesign name="caretdown" size={12} color={colors.text} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
 
-        {/* Log set button */}
-        <View style={styles.logButtons}>
-          <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, bias, weight, reps, variant)}}>
-            <ThemedText style={styles.logButtonText}>log set</ThemedText>
-          </ThemedPressable>
-          <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(true, bias)}>
-            <ThemedText style={styles.logButtonText}>skip set</ThemedText>
-          </ThemedPressable>
+          {/* Log set button */}
+          <View style={styles.logButtons}>
+            <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, bias, weight, reps, variant)}}>
+              <ThemedText style={styles.logButtonText}>log set</ThemedText>
+            </ThemedPressable>
+            <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(true, bias)}>
+              <ThemedText style={styles.logButtonText}>skip set</ThemedText>
+            </ThemedPressable>
+          </View>
         </View>
-      </View>
-    
-    </ThemedView>
+      
+      </ThemedView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -223,7 +244,7 @@ function createStyles(colors) {
       width: windowWidth * .9,
       justifyContent: 'space-around',
       flexDirection: 'row',
-      marginBottom: 40,
+      marginBottom: 34,
       gap: 0,
     },
     actionButton: {
@@ -253,7 +274,7 @@ function createStyles(colors) {
     biasText: {
       fontStyle: "italic",
       fontSize: 16,
-      lineHeight: 6,
+      lineHeight: 16,
       marginBottom: 6,
       textAlign: "center",
     },
@@ -348,6 +369,7 @@ function createStyles(colors) {
     },
     logButtonText: {
       color: 'white',
+      lineHeight: 0,
       fontSize: 16,
       fontWeight: '500',
     },

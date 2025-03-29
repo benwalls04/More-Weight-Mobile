@@ -23,7 +23,7 @@ function createStyles(colors) {
     stickyButtonContainer: {
       position: 'absolute',
       bottom: 0,
-      width: '100%',
+      width: '90%',
       alignItems: 'center',
       padding: 0,
       backgroundColor: colors.background,

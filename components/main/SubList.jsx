@@ -44,7 +44,7 @@ export default function SubList({list, style, height, selectInteract=false, sour
 
   const handleAddText = (text) => {
     setAddText(text);
-    setSubChoice({movement: text, bias: "neutral"});
+    setSubChoice({movement: text.toLowerCase(), bias: "neutral"});
   }
 
   return (

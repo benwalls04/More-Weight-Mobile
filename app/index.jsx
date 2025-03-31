@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "expo-router";
-import { View, Text, Dimensions, StyleSheet } from "react-native";
+import { View, Dimensions, StyleSheet } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import { ThemedPressable } from "@/components/ThemedPressable";
@@ -18,7 +18,7 @@ const WelcomePage = () => {
   const router = useRouter();
 
   const [loading, setLoading] = useState(true);
-  const {login} = useUserContext();
+  const {login, setNewUser} = useUserContext();
 
   async function getData() {
     const loggedInStr = await AsyncStorage.getItem("isLoggedIn");
@@ -47,7 +47,10 @@ const WelcomePage = () => {
               <ThemedPressable onPress={() => router.push("/LogInPage")} style={Styles.button}>
                 <ThemedText style={Styles.buttonText}>Returning User</ThemedText>
               </ThemedPressable>
-              <ThemedPressable onPress={() => router.push("/(survey)")} style={Styles.button}>
+              <ThemedPressable onPress={() => {
+                setNewUser(true);
+                router.push("/(survey)")
+              }} style={Styles.button}>
                 <ThemedText style={Styles.buttonText}>New User</ThemedText>
               </ThemedPressable>  
             </View>

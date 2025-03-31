@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeContext } from '@/hooks/ThemeContext';
+import { useEditContext } from '@/hooks/EditContext';
+import { REST_TIMES } from '@/constants/RestTimes';
 
 import { COLORS } from '@/constants/Colors';
 
@@ -13,6 +15,13 @@ const MovementPopup = ({
   const theme = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
+
+  const { maxIntensity } = useEditContext();
+
+  const handleMaxIntensity = () => {
+    const newSets = maxIntensity(setsCpy);
+    setSetsCpy([...newSets]);
+  }
 
   const handleValueChange = (index, field, value) => {
     // Allow decimal points for rest field
@@ -45,15 +54,6 @@ const MovementPopup = ({
       }
     }
   };
-
-  const handleMaxIntensity = () => {
-    const newSets = [...setsCpy];
-    newSets.forEach(set => {
-      set.rest = 3.5;
-      set.RPE = 10;
-    })
-    setSetsCpy(newSets);
-  }
 
   function validChange(val, field) {
     if (field === 'rest') {
@@ -143,7 +143,7 @@ const MovementPopup = ({
           />
         </View>
       </View>
-      <TouchableOpacity style={[styles.maxBtn, {backgroundColor: setsCpy.every(set => set.RPE === 10 && set.rest === 3.5) ? colors.tint : colors.accentLight}]} onPress={() => handleMaxIntensity()}>
+      <TouchableOpacity style={[styles.maxBtn, {backgroundColor: setsCpy.every(set => set.RPE === 10) ? colors.tint : colors.accentLight}]} onPress={handleMaxIntensity}>
         <ThemedText style={{fontSize: 14, textAlign: "center"}}>Max Intensity</ThemedText>
       </TouchableOpacity>
       <View style={styles.imageContainer}>

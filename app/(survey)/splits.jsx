@@ -65,6 +65,7 @@ export default function Split() {
   }
 
   const handleNext = () => {
+    console.log(choiceIndex);
     if (choiceIndex > -1) {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);

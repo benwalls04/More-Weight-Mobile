@@ -318,9 +318,21 @@ export const SURVEY_DATA = [
     required: true
   },
   {
+    key: 'split-make', 
+    type: 'one',
+    title: 'How would you like to make your split?',
+    options: [
+      {title: 'Make your own split', res: 'custom'},
+      {title: 'Choose from a sample', res: 'sample'},
+    ],
+    cols: 2,
+    headerLines: 1,
+    required: true
+  },
+  {
     key: 'split',
     type: 'submit',
-  }
+  }, 
 ]
 
 export const SPLIT_SAMPLES = {

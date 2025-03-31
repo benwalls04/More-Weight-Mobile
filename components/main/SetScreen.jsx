@@ -184,7 +184,6 @@ export default function SetScreen() {
                 placeholderTextColor={colors.text}
                 onSubmitEditing={dismissKeyboard}
                 onBlur={dismissKeyboard}
-                blurOnSubmit={true}
               />
               <View style={styles.arrowContainer}>
                 <TouchableOpacity onPress={incrementWeight} style={styles.arrow}>
@@ -208,7 +207,6 @@ export default function SetScreen() {
                 placeholder="0"
                 placeholderTextColor={colors.text}
                 onSubmitEditing={dismissKeyboard}
-                blurOnSubmit={true}
               />
               <View style={styles.arrowContainer}>
                 <TouchableOpacity onPress={incrementReps} style={styles.arrow}>

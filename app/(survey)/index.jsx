@@ -9,7 +9,6 @@ import { ThemedView } from "@/components/ThemedView"
 import { ThemedText } from "@/components/ThemedText"
 import { ThemedPressable } from "@/components/ThemedPressable"
 import { useSurveyContext } from "@/hooks/SurveyContext";
-import { router } from "expo-router";
 
 export default function Survey() {
   const { getSplits, checkErrors } = useSurveyContext();
@@ -39,7 +38,7 @@ export default function Survey() {
               width: "100%",
               alignSelf: "center",
               height: "50%", 
-              border: "none"
+              borderWidth: 0,
             }}
             onPress={() => handleNext()}>
               <ThemedText style={{fontSize: 20, textAlign: "center"}}>

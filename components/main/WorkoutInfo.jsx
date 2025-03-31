@@ -20,7 +20,7 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors, workoutFlag);
 
-  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets, subChoice, setSubChoice, changeRepRange } = useEditContext();
+  const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets, subChoice, setSubChoice, changeRepRange, maxed } = useEditContext();
 
   const dataKey = movement.includes("new movement") || !MOVEMENTS[movement] ? "default" : movement;
   const [lowerRep, setLowerRep] = useState(workoutCpy.movements[workoutIndex].lowerRep);
@@ -30,9 +30,10 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
   const [editSetFlag, setEditSetFlag] = useState(false);
   const sets = getSets(movement);
   const [setsCpy, setSetsCpy] = useState(sets.map(set => ({ ...set })));
+  
   useEffect(() => {
     setSetsCpy(sets.map(set => ({ ...set })));
-  }, [movement])
+  }, [movement, maxed])
 
   useEffect(() => {
     if (editSetFlag && (sets && lowerRep !== sets[0].lowerRep || upperRep !== sets[0].upperRep)){

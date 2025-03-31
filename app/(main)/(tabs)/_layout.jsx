@@ -1,13 +1,32 @@
 import { View, Animated } from "react-native";
-// ... existing code ...
+import { useState, useEffect } from "react";
+import { ThemedPressable } from "@/components/ThemedPressable";
+import  LoadingScreen from "@/components/LoadingScreen";
+import { Ionicons } from "@expo/vector-icons";
+import { usePathname } from "expo-router";
+import { EditProvider } from "@/hooks/EditContext";
+import { WorkoutProvider } from "@/hooks/WorkoutContext";
+import { useThemeContext } from "@/hooks/ThemeContext";
+import { Slot, Link } from "expo-router";
+import { COLORS } from "@/constants/Colors";
 
 export default function TabsLayout() {
-  // ... existing code ...
-
   const [fadeAnim] = useState(new Animated.Value(0)); 
+  const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+
+  const theme = useThemeContext();
+  const colors = theme === "dark" ? COLORS.dark : COLORS.light;
 
   useEffect(() => {
-    console.log("hi")
+    const timer = setTimeout(() => {
+      setLoading(false); 
+    }, 2000);
+  
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (!loading) {
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -15,7 +34,11 @@ export default function TabsLayout() {
         useNativeDriver: true,
       }).start();
     }
-  }, [loading, pathname]); // Trigger animation on pathname change
+  }, [loading, pathname]);
+
+  const getIconColor = (page) => {
+    return pathname.includes(page) ? colors.tint : colors.text;
+  };
 
   if (loading) {
     return (
@@ -56,7 +79,7 @@ export default function TabsLayout() {
                 <Ionicons 
                   name="barbell-outline" 
                   size={24} 
-                  color={pathname.includes('WorkoutPage') ? colors.tint : colors.text} 
+                  color={getIconColor('WorkoutPage')} 
                 />
               </ThemedPressable>
             </Link>
@@ -72,7 +95,7 @@ export default function TabsLayout() {
                 <Ionicons 
                   name="stats-chart-outline" 
                   size={24} 
-                  color={pathname.includes('TrackPage') ? colors.tint : colors.text} 
+                  color={getIconColor('TrackPage')} 
                 />
               </ThemedPressable>
             </Link>
@@ -88,7 +111,7 @@ export default function TabsLayout() {
                 <Ionicons 
                   name="person-outline" 
                   size={24} 
-                  color={pathname.includes('ProfilePage') ? colors.tint : colors.text} 
+                  color={getIconColor('ProfilePage')} 
                 />
               </ThemedPressable>
             </Link>

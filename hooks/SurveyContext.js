@@ -17,6 +17,7 @@ export function SurveyProvider({children}) {
   // FIXME: set up this context call
   const { setInfo } = useUserContext();
   const { setRoot, setSplits, setLeaf } = useSplitsContext();
+  const [schedule, setSchedule] = useState([]);
   const router = useRouter();
 
   const checkErrors = () => {
@@ -97,16 +98,20 @@ export function SurveyProvider({children}) {
 
     const userData = formatData();
     const params = {schedule: userData.schedule, bias: userData.bias}
+    setSchedule(userData.schedule);
 
-    await axios.get('https://more-weight.com/splits', { params: params }).then((response) => {
-      setSplits(response.data);
-      setLeaf(response.data.selection);
-      setRoot(response.data);
-    });
+    if (userData['split-make'] === 'sample') {
+      await axios.get('https://more-weight.com/splits', { params: params }).then((response) => {
+        setSplits(response.data);
+        setLeaf(response.data.selection);
+        setRoot(response.data);
+      });
+      router.push('/base')
+    } else {
+      router.push('/custom')
+    }
 
     setInfo(userData);
-
-    router.push('/base')
   }
 
   const [surveyData, setSurveyData] = useState(Array(SURVEY_DATA.length).fill([]));
@@ -115,7 +120,8 @@ export function SurveyProvider({children}) {
     surveyData: surveyData,
     updateSurveyData: updateSurveyData,
     getSplits: getSplits,
-    checkErrors: checkErrors
+    checkErrors: checkErrors,
+    schedule: schedule
   }
 
 

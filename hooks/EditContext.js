@@ -297,6 +297,46 @@ export function EditProvider({children}){
     updateRoutine(newDay);
   }
 
+  const maxIntensity = (sets) => {
+    let lowerRep = sets[0].lowerRep;
+    if (lowerRep > 12) {
+      lowerRep = 12;
+    }
+
+    if (lowerRep < 4) {
+      lowerRep = 4
+    }
+
+    const restTime = REST_TIMES[Math.floor((lowerRep) / 2) - 2][4]
+
+    sets.forEach((set, index) => {
+      if (!(index === sets.length - 1 || set.rest === 1)) {
+        set.rest = restTime;
+      }
+      set.RPE = 10;
+    })
+
+    return sets;
+  }
+
+  const [maxed, setMaxed] = useState(Array(7).fill(false));
+  const maxDay = () => {
+    let newDay = [...routineCpy][dayIndexRef.current];
+    newDay.movements.forEach(movement => {
+      let firstSet = findFirstIndex(newDay.sets, "movement", movement.movement);
+      let newSetChunk = maxIntensity(newDay.sets.slice(firstSet, firstSet + NUM_SETS));
+      newSetChunk.forEach((set, index) => {
+        newDay.sets[firstSet + index] = set;
+      })
+    })
+
+    let newMaxed = [...maxed];
+    newMaxed[dayIndexRef.current] = true;
+    setMaxed(newMaxed);
+
+    updateRoutine(newDay);
+  }
+
   const editState = {
     finish,
     updateRoutine,
@@ -313,6 +353,9 @@ export function EditProvider({children}){
     editSets,
     changeRepRange,
     dayIndex,
+    maxIntensity,
+    maxDay,
+    maxed,
     setDayIndex: setDayIndexWithRef,
   }
 

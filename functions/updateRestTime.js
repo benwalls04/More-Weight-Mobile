@@ -5,8 +5,13 @@ export default function updateRestTime(index, sets) {
   let restTime = 0;
 
   let lowerRep = sets[index].lowerRep
-  if (lowerRep > 10) {
-    lowerRep = 10;
+
+  if (lowerRep > 12) {
+    lowerRep = 12;
+  }
+
+  if (lowerRep < 4) {
+    lowerRep = 4
   }
 
   let RPE = sets[index].RPE;
@@ -21,7 +26,7 @@ export default function updateRestTime(index, sets) {
   }
 
   if (currGroup === nextGroup) {
-    restTime = REST_TIMES[RPE - 7][lowerRep / 2 - 1];
+    restTime = REST_TIMES[Math.floor((lowerRep) / 2) - 2][RPE - 7];
   } else {
     restTime = 1;
   }

@@ -3,7 +3,6 @@ import { View, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-n
 import { ThemedText } from '@/components/ThemedText';
 import { useThemeContext } from '@/hooks/ThemeContext';
 import { useEditContext } from '@/hooks/EditContext';
-import { REST_TIMES } from '@/constants/RestTimes';
 
 import { COLORS } from '@/constants/Colors';
 

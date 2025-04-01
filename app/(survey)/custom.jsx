@@ -47,7 +47,15 @@ export default function Custom() {
       return;
     }
 
+    if (!muscleGroups.every(group => selectedMuscleGroups.some(day => day.includes(group)))) {
+      Alert.alert("Please select a muscle group for each day.");
+      return;
+    }
+
     const split = selectedMuscleGroups.map((entry) => {
+      if (entry.length === 0) {
+        return "rest";
+      }
       return entry.map(group => group.toLowerCase()).join(" ");
     });
 

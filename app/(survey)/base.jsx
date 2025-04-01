@@ -40,7 +40,7 @@ export default function Base() {
         setSplits(newSplits);
       if (Array.isArray(newSplits.selection[0])){
           setLoading(true);
-          const response = await axios.post('https://more-weight.com/partition', { splits: newSplits.selection });
+          const response = await axios.post('http://localhost:3000/partition', { splits: newSplits.selection });
           newSplits.selection = response.data;
           setLeaf(response.data)
           setSplits(newSplits);

@@ -11,6 +11,7 @@ import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { EditProvider } from "@/hooks/EditContext";
 import { useState } from "react";
+import getWorkoutTitle from "@/functions/getWorkoutTitle";
 const windowWidth = Dimensions.get("window").width;
 const HEADER_WIDTH = windowWidth * .9;
 
@@ -80,7 +81,7 @@ function EditPageContent() {
                       : index === dayIndex 
                         ? colors.tint 
                         : "transparent",
-                    marginRight: index < WEEKDAYS.length - 1 ? 1 : 0, // Add small gap between buttons
+                    marginRight: index < WEEKDAYS.length - 1 ? 1 : 0,
                   }
                 ]}
               >
@@ -88,7 +89,7 @@ function EditPageContent() {
               </ThemedPressable>
             )}
           />
-          <ThemedText type="title" style={{marginTop: 10}}>{workoutCpy.title}</ThemedText>
+          <ThemedText type="title" style={{marginTop: 10}}>{getWorkoutTitle(workoutCpy.title)}</ThemedText>
         </View>
 
         <ThemedPressable style={[Styles.maxBtn, maxed[dayIndex] && {backgroundColor: colors.tint}]} onPress={maxed[dayIndex] ? () => {} : () => setMaxPopupVisible(true)}>
@@ -111,7 +112,7 @@ function EditPageContent() {
             ))}
           </ScrollView>
 
-        <FooterButton clickEvent={() => finish(0)} text={"Done Editing"}/>
+        <FooterButton clickEvent={() => finish()} text={"Done Editing"}/>
       </ThemedView>
   )
 }

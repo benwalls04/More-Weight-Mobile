@@ -101,7 +101,7 @@ export function SurveyProvider({children}) {
     setSchedule(userData.schedule);
 
     if (userData['split-make'] === 'sample') {
-      await axios.get('https://more-weight.com/splits', { params: params }).then((response) => {
+      await axios.get('http://localhost:3000/splits', { params: params }).then((response) => {
         setSplits(response.data);
         setLeaf(response.data.selection);
         setRoot(response.data);

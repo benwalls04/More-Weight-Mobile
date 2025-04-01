@@ -8,6 +8,7 @@ import FooterButton from "@/components/main/FooterButton";
 import MainHeader from "@/components/main/MainHeader";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
+import getWorkoutTitle from "@/functions/getWorkoutTitle";
 import { COLORS } from "@/constants/Colors";
 
 export default function WorkoutPage() {
@@ -20,7 +21,7 @@ export default function WorkoutPage() {
   if (!workoutFlag) {
     return (
       <ThemedView style={styles.container}>
-        <MainHeader title={workoutCpy.title} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
+        <MainHeader title={getWorkoutTitle(workoutCpy.title)} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
         {workoutCpy.title !== "rest" && (
           <ScrollView
             showsVerticalScrollIndicator={false}

@@ -36,20 +36,20 @@ export function UserProvider({children}) {
     }
   }, [routineCpy]);
 
-  function formatParams() {
+  function formatParams(title=null, splitArg=null) {
     const res = {...info};
-    res.base = splitTitle;
+    res.base = title ? title : splitTitle;
     res.splits = {};
-    res.splits.selection = split;
+    res.splits.selection = splitArg ? splitArg : split;
     res.numDays = 7;
-    res.title = splitTitle;
+    res.title = title ? title : splitTitle;
     return res;
   }
 
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
       try {
-        const response = await axios.get('https://more-weight.com/login', {
+        const response = await axios.get('http://localhost:3000/login', {
           params: { username, password }
         });
         setRoutine(response.data.routine.routine);
@@ -83,10 +83,9 @@ export function UserProvider({children}) {
       }
 
       try {
-        const params = formatParams(info);
+        const params = formatParams();
         setInfo(params);
-      
-        const response = await axios.post('https://more-weight.com/new-user', {
+        const response = await axios.post('http://localhost:3000/new-user', {
           inputs: params, username: username.toLowerCase(), password: password.toLowerCase(), numSets: info.sets
         });
         setRoutine(response.data.routine);
@@ -118,6 +117,8 @@ export function UserProvider({children}) {
   }
 
   const signOut = () => {
+    router.replace("/");
+
     setUsername("");
     setRoutine([]);
     setRoutineCpy([]);
@@ -131,27 +132,26 @@ export function UserProvider({children}) {
     AsyncStorage.setItem("username", "");
     AsyncStorage.setItem("password", "");
     AsyncStorage.setItem("isLoggedIn", JSON.stringify(false));
-
-    router.replace("/");
   }
 
-  const addRoutine = async (username, split) => {
-    const params = formatParams(info);
+  const addRoutine = async (title, split) => {
+    const params = formatParams(title, split);
     setInfo(params);
   
-    const response = await axios.post('https://more-weight.com/add-routine', {
-      inputs: params, username: username.toLowerCase(), split: split
+    const response = await axios.post('http://localhost:3000/add-routine', {
+      inputs: params,
+      username: username.toLowerCase(),
+      split: split
     });
 
     setRoutine(response.data.routine);
     setRoutineCpy(response.data.routine);
-    setAllRoutines(prev => [...prev, {title: splitTitle, routine: response.data.routine}]);
 
     router.push("/(main)/EditPage");
   }
 
   const logSet = async (movement, weight, reps, variant) => {
-    await axios.post('https://more-weight.com/log-set', {
+    await axios.post('http://localhost:3000/log-set', {
       username: username,
       movement: movement,
       weight: weight,
@@ -162,7 +162,7 @@ export function UserProvider({children}) {
   }
 
   const getTargets = async (movement) => {
-    const response = await axios.get('https://more-weight.com/get-last', {
+    const response = await axios.get('http://localhost:3000/get-last', {
       params: { username: username, movement: movement, numberOfSets: info.sets }
     });
     return [response.data.weight, response.data.reps];

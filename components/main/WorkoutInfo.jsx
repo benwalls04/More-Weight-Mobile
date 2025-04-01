@@ -22,18 +22,23 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
 
   const { addMovement, removeMovement, moveUp, moveDown, changeMovement, changeBias, getSubOptions, getSets, editSets, subChoice, setSubChoice, changeRepRange, maxed } = useEditContext();
 
-  const dataKey = movement.includes("new movement") || !MOVEMENTS[movement] ? "default" : movement;
   const [lowerRep, setLowerRep] = useState(workoutCpy.movements[workoutIndex].lowerRep);
   const [upperRep, setUpperRep] = useState(workoutCpy.movements[workoutIndex].upperRep);
+  const dataKey = movement.includes("new movement") || !MOVEMENTS[movement] ? "default" : movement;
   const bias = movement.includes("new movement")? 'neutral': workoutCpy.movements[workoutIndex].bias; 
   
   const [editSetFlag, setEditSetFlag] = useState(false);
   const sets = getSets(movement);
   const [setsCpy, setSetsCpy] = useState(sets.map(set => ({ ...set })));
-  
+
   useEffect(() => {
     setSetsCpy(sets.map(set => ({ ...set })));
   }, [movement, maxed])
+
+  useEffect(() => {
+    setLowerRep(workoutCpy.movements[workoutIndex].lowerRep);
+    setUpperRep(workoutCpy.movements[workoutIndex].upperRep);
+  }, [workoutCpy, workoutIndex, movement]);
 
   useEffect(() => {
     if (editSetFlag && (sets && lowerRep !== sets[0].lowerRep || upperRep !== sets[0].upperRep)){

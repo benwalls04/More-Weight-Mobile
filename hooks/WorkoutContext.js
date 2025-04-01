@@ -36,293 +36,10 @@ export function WorkoutProvider({children}) {
   const [weightExp, setWeightExp] = useState(0);
   const [repsExp, setRepsExp] = useState(0);
   const [complete, setComplete] = useState(false);
-
-  const dummyWorkout = {
-    title: "chest back",
-    movements: [
-      {
-        movement: "pull ups",
-        bias: "neutral",
-        lowerRep: 6,
-        upperRep: 10,
-        stimulus: 28.189714092061568,
-        _id: "67e83642a39b1cdf9a63747d"
-      },
-      {
-        movement: "bench press",
-        bias: "flat",
-        lowerRep: 8,
-        upperRep: 12,
-        stimulus: 25.7,
-        _id: "67e83642a39b1cdf9a63747e"
-      },
-      {
-        movement: "rows",
-        bias: "barbell",
-        lowerRep: 8,
-        upperRep: 12,
-        stimulus: 22.4,
-        _id: "67e83642a39b1cdf9a63747f"
-      },
-      {
-        movement: "incline press",
-        bias: "dumbbell",
-        lowerRep: 10,
-        upperRep: 15,
-        stimulus: 20.1,
-        _id: "67e83642a39b1cdf9a637480"
-      },
-      {
-        movement: "lat pulldown",
-        bias: "wide",
-        lowerRep: 10,
-        upperRep: 15,
-        stimulus: 18.5,
-        _id: "67e83642a39b1cdf9a637481"
-      },
-      {
-        movement: "chest fly",
-        bias: "cable",
-        lowerRep: 12,
-        upperRep: 15,
-        stimulus: 15.8,
-        _id: "67e83642a39b1cdf9a637482"
-      },
-      {
-        movement: "face pull",
-        bias: "neutral",
-        lowerRep: 12,
-        upperRep: 15,
-        stimulus: 14.2,
-        _id: "67e83642a39b1cdf9a637483"
-      }
-    ],
-    sets: [
-      // Pull ups - 3 sets
-      {
-        movement: "pull ups",
-        bias: "neutral",
-        RPE: 9,
-        rest: 2.25,
-        num: 1,
-        lowerRep: 6,
-        upperRep: 10,
-        _id: "67e83642a39b1cdf9a637484"
-      },
-      {
-        movement: "pull ups",
-        bias: "neutral",
-        RPE: 9,
-        rest: 2.25,
-        num: 2,
-        lowerRep: 6,
-        upperRep: 10,
-        _id: "67e83642a39b1cdf9a637485"
-      },
-      {
-        movement: "pull ups",
-        bias: "neutral",
-        RPE: 10,
-        rest: 1,
-        num: 3,
-        lowerRep: 6,
-        upperRep: 10,
-        _id: "67e83642a39b1cdf9a637486"
-      },
-      
-      // Bench press - 3 sets
-      {
-        movement: "bench press",
-        bias: "flat",
-        RPE: 8,
-        rest: 2.5,
-        num: 1,
-        lowerRep: 8,
-        upperRep: 12,
-        _id: "67e83642a39b1cdf9a637487"
-      },
-      {
-        movement: "bench press",
-        bias: "flat",
-        RPE: 9,
-        rest: 2.5,
-        num: 2,
-        lowerRep: 8,
-        upperRep: 12,
-        _id: "67e83642a39b1cdf9a637488"
-      },
-      {
-        movement: "bench press",
-        bias: "flat",
-        RPE: 10,
-        rest: 1,
-        num: 3,
-        lowerRep: 8,
-        upperRep: 12,
-        _id: "67e83642a39b1cdf9a637489"
-      },
-      
-      // Rows - 3 sets
-      {
-        movement: "rows",
-        bias: "barbell",
-        RPE: 8,
-        rest: 2,
-        num: 1,
-        lowerRep: 8,
-        upperRep: 12,
-        _id: "67e83642a39b1cdf9a63748a"
-      },
-      {
-        movement: "rows",
-        bias: "barbell",
-        RPE: 9,
-        rest: 2,
-        num: 2,
-        lowerRep: 8,
-        upperRep: 12,
-        _id: "67e83642a39b1cdf9a63748b"
-      },
-      {
-        movement: "rows",
-        bias: "barbell",
-        RPE: 10,
-        rest: 1,
-        num: 3,
-        lowerRep: 8,
-        upperRep: 12,
-        _id: "67e83642a39b1cdf9a63748c"
-      },
-      
-      // Incline press - 3 sets
-      {
-        movement: "incline press",
-        bias: "dumbbell",
-        RPE: 8,
-        rest: 2,
-        num: 1,
-        lowerRep: 10,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a63748d"
-      },
-      {
-        movement: "incline press",
-        bias: "dumbbell",
-        RPE: 9,
-        rest: 2,
-        num: 2,
-        lowerRep: 10,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a63748e"
-      },
-      {
-        movement: "incline press",
-        bias: "dumbbell",
-        RPE: 10,
-        rest: 1,
-        num: 3,
-        lowerRep: 10,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a63748f"
-      },
-      
-      // Lat pulldown - 3 sets
-      {
-        movement: "lat pulldown",
-        bias: "wide",
-        RPE: 8,
-        rest: 1.75,
-        num: 1,
-        lowerRep: 10,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637490"
-      },
-      {
-        movement: "lat pulldown",
-        bias: "wide",
-        RPE: 9,
-        rest: 1.75,
-        num: 2,
-        lowerRep: 10,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637491"
-      },
-      {
-        movement: "lat pulldown",
-        bias: "wide",
-        RPE: 10,
-        rest: 1,
-        num: 3,
-        lowerRep: 10,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637492"
-      },
-      
-      // Chest fly - 3 sets
-      {
-        movement: "chest fly",
-        bias: "cable",
-        RPE: 8,
-        rest: 1.5,
-        num: 1,
-        lowerRep: 12,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637493"
-      },
-      {
-        movement: "chest fly",
-        bias: "cable",
-        RPE: 9,
-        rest: 1.5,
-        num: 2,
-        lowerRep: 12,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637494"
-      },
-      {
-        movement: "chest fly",
-        bias: "cable",
-        RPE: 10,
-        rest: 1,
-        num: 3,
-        lowerRep: 12,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637495"
-      },
-      
-      // Face pull - 3 sets
-      {
-        movement: "face pull",
-        bias: "neutral",
-        RPE: 8,
-        rest: 1.5,
-        num: 1,
-        lowerRep: 12,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637496"
-      },
-      {
-        movement: "face pull",
-        bias: "neutral",
-        RPE: 9,
-        rest: 1.5,
-        num: 2,
-        lowerRep: 12,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637497"
-      },
-      {
-        movement: "face pull",
-        bias: "neutral",
-        RPE: 10,
-        rest: 0,
-        num: 3,
-        lowerRep: 12,
-        upperRep: 15,
-        _id: "67e83642a39b1cdf9a637498"
-      }
-    ]
-  };
+  const [movementIndex, setMovementIndex] = useState(0);
+  const [index, setIndex] = useState(0);
+  const [workoutCpy, setWorkoutCpy] = useState(routine[dayIndex]);
+  const [currMovement, setCurrMovement] = useState(workoutCpy.sets[index] ? workoutCpy.sets[index].movement : null);
 
   const numSets = info.sets;
   const exp = info.exp;
@@ -361,8 +78,6 @@ export function WorkoutProvider({children}) {
     workoutFlagRef.current = workoutFlag;
   }, [workoutFlag]);
 
-  const [index, setIndex] = useState(0);
-
   useEffect(() => {
     indexRef.current = index;
   }, [index]);
@@ -380,6 +95,13 @@ export function WorkoutProvider({children}) {
 
   useEffect(() => {
     setWorkoutCpy(routine[dayIndex]);
+    const firstMovement = routine[dayIndex].movements[0].movement;
+    setCurrMovement(firstMovement);
+    setSubList(getSubOptions(firstMovement));
+    getTargets(firstMovement).then(([targetWeight, targetReps]) => {
+      setWeightExp(targetWeight);
+      setRepsExp(targetReps);
+    })
     setTime(0);
     setIndex(0);
     setWorkoutFlag(false);
@@ -568,7 +290,7 @@ export function WorkoutProvider({children}) {
         newLog[movement][index].weight = Number(value.weight);
         newLog[movement][index].reps = Number(value.reps);
         
-        await axios.post('https://more-weight.com/log-set', {
+        await axios.post('http://localhost:3000/log-set', {
           username: username,
           movement: baseMovement,
           weight: Number(value.weight),
@@ -589,9 +311,6 @@ export function WorkoutProvider({children}) {
     }
   }
 
-  const [workoutCpy, setWorkoutCpy] = useState(routine[dayIndex]);
-  const [currMovement, setCurrMovement] = useState(workoutCpy.sets[index] ? workoutCpy.sets[index].movement : null);
-  const [movementIndex, setMovementIndex] = useState(0);
   const [setNum, setSetNum] = useState(1);
   const [recentsCpy, setRecentsCpy] = useState(recents);
   const [logCpy, setLogCpy] = useState(log);

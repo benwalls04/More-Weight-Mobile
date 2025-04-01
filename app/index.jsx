@@ -22,7 +22,8 @@ const WelcomePage = () => {
 
   async function getData() {
     const loggedInStr = await AsyncStorage.getItem("isLoggedIn");
-    const isLoggedInValue = JSON.parse(loggedInStr);
+    // const isLoggedInValue = JSON.parse(loggedInStr);
+    const isLoggedInValue = false;
 
     if (isLoggedInValue) {
       const username = await AsyncStorage.getItem("username");

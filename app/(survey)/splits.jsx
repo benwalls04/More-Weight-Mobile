@@ -3,7 +3,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
 import { ThemedPressable } from "@/components/ThemedPressable";
-import PopupPressable from "@/components/PopupPressable";
 
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
@@ -16,7 +15,6 @@ import axios from "axios";
 
 import { COLORS } from "@/constants/Colors";
 
-
 const windowWidth = Dimensions.get('window').width * .85;
 const BUTTON_MARGIN = 3;
 const BTN_WIDTH =  (windowWidth - (3) * BUTTON_MARGIN * 2) / 2;
@@ -24,7 +22,7 @@ const BTN_WIDTH =  (windowWidth - (3) * BUTTON_MARGIN * 2) / 2;
 export default function Split() {
 
   const { setSplits, setLeaf, leaf, setDecisions, decisions, root } = useSplitsContext();
-  const { setSplit, username, addRoutine } = useUserContext();
+  const { setSplit, username, addRoutine, splitTitle } = useUserContext();
   const [ isLoading, setIsLoading ] = useState(false);
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
@@ -39,7 +37,7 @@ export default function Split() {
   const partition = async () => {
     if (choiceIndex > -1 && canPartition) {
       setIsLoading(true);
-      const response = await axios.post('https://more-weight.com/partition', { splits: leaf[choiceIndex]});
+      const response = await axios.post('http://localhost:3000/partition', { splits: leaf[choiceIndex]});
       setLeaf(response.data);
       setDecisions(prev => [...prev, leaf]);
       setChoiceIndex(-1);
@@ -65,7 +63,6 @@ export default function Split() {
   }
 
   const handleNext = () => {
-    console.log(choiceIndex);
     if (choiceIndex > -1) {
       setDecisions(prev => [...prev, leaf]);
       setSplit(leaf[choiceIndex][0]);
@@ -73,7 +70,7 @@ export default function Split() {
       if (username === "") {
         router.push("/(auth)/SignUpPage");
       } else {
-        addRoutine(username, leaf[choiceIndex][0]);
+        addRoutine(splitTitle, leaf[choiceIndex][0]);
       }
     } else {
       Alert.alert("Error");

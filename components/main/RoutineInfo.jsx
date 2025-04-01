@@ -21,8 +21,9 @@ export default function RoutineInfo({routine, selected, last}) {
   const [popupVisible, setPopupVisible] = useState(false);
 
   const handleEditRoutine = () => {
-    setRoutine(routine.routine);
     setRoutineCpy(routine.routine);
+    setRoutine(routine.routine);
+    setSplitTitle(routine.title);
     router.push("(main)/EditPage");
   };
 
@@ -46,7 +47,7 @@ export default function RoutineInfo({routine, selected, last}) {
     updatedInfo.sets = routine.numSets;
     setInfo(updatedInfo);
     
-    await axios.post('https://more-weight.com/change-routine', {
+    await axios.post('http://localhost:3000/change-routine', {
       username: username,
       title: routine.title,
     })

@@ -8,6 +8,7 @@ import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import RoutineInfo from "@/components/main/RoutineInfo";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfilePage() {
   const theme = useThemeContext();
@@ -17,10 +18,17 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState(0);
 
   const renderRoutine = () => {
+    const renderedRoutines = allRoutines
+      .sort((a, b) => {
+        if (a.title === splitTitle) return -1;
+        if (b.title === splitTitle) return 1;
+        return 0;
+      });
+
     return (
       <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>
-        {allRoutines.map((routine, index) => (
-          <RoutineInfo routine={routine} last={index === allRoutines.length - 1} selected={routine.title.includes(splitTitle)}/>
+        {renderedRoutines.map((routine, index) => (
+          <RoutineInfo routine={routine} last={index === renderedRoutines.length - 1} selected={routine.title === splitTitle}/>
         ))}
       </ScrollView>
     )
@@ -59,10 +67,11 @@ export default function ProfilePage() {
 
   return (
     <ThemedView style={styles.container}>
+      <View style={styles.signOutContainer}>
+        <Ionicons name="log-out-outline" size={24} color={colors.text} onPress={() => signOut()} />
+        <ThemedText style={styles.signOutText}>Sign Out</ThemedText>
+      </View>
       <MainHeader title={username} subHeaderComponent={renderSubHeader()}></MainHeader>
-      <ThemedPressable style={styles.signOutButton} onPress={() => signOut()}>
-        <ThemedText style={{textAlign: 'center', fontSize: 10}}>Sign Out</ThemedText>
-      </ThemedPressable>
       
       <View style={styles.content}>
         <View style={styles.tabContent}>
@@ -113,14 +122,17 @@ function createStyles(colors) {
       alignItems: 'center',
       marginTop: 10,
     },
-    signOutButton: {
-      width: 70,
-      height: 35,
-      paddingHorizontal: 5,
-      marginTop: 10,
+    signOutContainer: {
       position: 'absolute',
-      top: 0,
-      right: 0,
+      top: 10,
+      right: -20,
+      alignItems: 'center',
+      zIndex: 3,
+    },
+    signOutText: {
+      lineHeight: 10,
+      fontSize: 10,
+      textAlign: 'center',
     }
   });
 }

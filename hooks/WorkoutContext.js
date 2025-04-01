@@ -5,6 +5,7 @@ import { MOVEMENTS } from "@/constants/Movements";
 import getSubList from "@/functions/getSubsList";
 import updateRestTime from "@/functions/updateRestTime";
 import axios from "axios";
+import { AppState } from 'react-native';
 
 const dayIndex = (new Date().getDay() + 6) % 7;
 const dayName = new Date().toLocaleDateString('en-US', { 
@@ -54,6 +55,91 @@ export function WorkoutProvider({children}) {
     };
   }, []);
 
+  const [appStateVisible, setAppStateVisible] = useState(AppState.currentState);
+  const [lastActiveTime, setLastActiveTime] = useState(Date.now());
+  
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (appStateVisible.match(/inactive|background/) && nextAppState === 'active') {
+        const now = Date.now();
+        const timeInBackground = (now - lastActiveTime) / 1000; 
+        
+        if (timerInterval && time > 0) {
+          setTime(prevTime => {
+            const newTime = Math.max(0, prevTime - timeInBackground/60);
+            
+            if (newTime <= 0) {
+              clearInterval(timerInterval);
+              setTimerInterval(null);
+              return 0;
+            }
+            
+            return newTime;
+          });
+        }
+      } else if (nextAppState.match(/inactive|background/)) {
+        setLastActiveTime(Date.now());
+
+        if (workoutFlag) {
+          saveWorkoutProgress();
+        }
+      }
+      
+      setAppStateVisible(nextAppState);
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [appStateVisible, timerInterval, time, lastActiveTime]);
+
+  const saveWorkoutProgress = async () => {
+    console.log("attempting to save workout progress")
+    if (username) {
+      console.log("saving workout progress")
+      await axios.post('http://localhost:3000/progress', {
+        username: username,
+        inProgress: workoutFlag,
+        movementIndex: movementIndex,
+        index: index,
+        movementsCpy: workoutCpy.movements,
+        setsCpy: workoutCpy.sets
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (username) {
+      loadWorkoutProgress();
+    }
+  }, [username])
+
+  const loadWorkoutProgress = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/progress', {
+        params: { username: username }  
+      });
+  
+      if (response.data.inProgress) {
+        setWorkoutFlag(true);
+        setMovementIndex(response.data.movementIndex);
+        setIndex(response.data.index);
+        setCurrMovement(response.data.movementsCpy[response.data.movementIndex].movement);
+        // set time based on rest remaining - (end time stamp - currtime stamp) || 0 if no rest remaining
+        
+        setWorkoutCpy({
+          movements: response.data.movementsCpy,
+          sets: response.data.setsCpy
+        });
+      }
+    } catch (error) {
+      console.error("Error loading workout progress:", error);
+    }
+  }
+
+  console.log(movementIndex)
+  console.log(index)
+
   const startTimer = (initialTime) => {
     if (timerInterval) clearInterval(timerInterval);
     
@@ -63,6 +149,7 @@ export function WorkoutProvider({children}) {
       setTime((prevTime) => {
         if (prevTime <= 0.0167) { // Less than 1 second
           clearInterval(interval);
+          setTimerInterval(null);
           return 0;
         }
         return prevTime - 1/60;
@@ -86,25 +173,31 @@ export function WorkoutProvider({children}) {
     setWorkoutFlag(true);
     setTime(0)
     const firstMovement = routine[dayIndex].movements[0].movement;
-    setSubList(getSubOptions(firstMovement));
-    getTargets(firstMovement).then(([targetWeight, targetReps]) => {
-      setWeightExp(targetWeight);
-      setRepsExp(targetReps);
-    })
+    setCurrMovement(firstMovement);
   }
 
   useEffect(() => {
+    if (currMovement){
+      setSubList(getSubOptions(currMovement));
+      getTargets(currMovement).then(([targetWeight, targetReps]) => {
+        setWeightExp(targetWeight);
+        setRepsExp(targetReps);
+      })
+    }
+  }, [currMovement])
+
+  useEffect(() => {
     setWorkoutCpy(routine[dayIndex]);
-    const firstMovement = routine[dayIndex].movements[0].movement;
-    setCurrMovement(firstMovement);
-    setSubList(getSubOptions(firstMovement));
-    getTargets(firstMovement).then(([targetWeight, targetReps]) => {
-      setWeightExp(targetWeight);
-      setRepsExp(targetReps);
-    })
-    setTime(0);
-    setIndex(0);
-    setWorkoutFlag(false);
+    if (routine[dayIndex] && 
+      routine[dayIndex].movements.length > 0 &&
+     JSON.stringify(routine[dayIndex]) !== JSON.stringify(workoutCpy))
+    {
+      const firstMovement = routine[dayIndex].movements[0].movement;
+      setCurrMovement(firstMovement);
+      setTime(0);
+      setIndex(0);
+      setWorkoutFlag(false);
+    } 
   }, [routine])
 
   const doNext = () => {
@@ -126,7 +219,6 @@ export function WorkoutProvider({children}) {
 
     const newMovement = newWorkout.movements[movementIndex].movement;
     setCurrMovement(newMovement);
-    setSubList(getSubOptions(newMovement));
 
     setWorkoutCpy(newWorkout);
   }
@@ -148,7 +240,6 @@ export function WorkoutProvider({children}) {
 
     const newMovement = newWorkout.movements[movementIndex].movement;
     setCurrMovement(newMovement);
-    setSubList(getSubOptions(newMovement));
 
     setWorkoutCpy(newWorkout);
   }
@@ -189,7 +280,6 @@ export function WorkoutProvider({children}) {
           setCurrMovement(newMovement);
           setMovementIndex(movementIndex + 1);
           // FIXME: make sure subList updates for accessories, as well as on doNext and doLast clicks
-          setSubList(getSubOptions(newMovement));
           setSetNum(1);
           getTargets(newMovement).then(([targetWeight, targetReps]) => {
             setWeightExp(targetWeight);
@@ -263,7 +353,6 @@ export function WorkoutProvider({children}) {
     newWorkout.movements[movementIndex] = newMovementObj;
 
     setCurrMovement(newMovement);
-    setSubList(getSubOptions(newMovement));
     setWorkoutCpy(newWorkout);
   }
 

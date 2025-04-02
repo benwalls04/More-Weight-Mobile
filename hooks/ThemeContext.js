@@ -16,7 +16,8 @@ export function useThemeContext() {
 export function ThemeProvider({children}) {
   
   const systemTheme = Appearance.getColorScheme();
-  const [theme, setTheme] = useState(systemTheme | 'dark');
+  // FIXME: add theme toggling 
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
   const subscription = Appearance.addChangeListener(({ colorScheme }) => {
@@ -27,7 +28,7 @@ export function ThemeProvider({children}) {
 }, []);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    setTheme((prevTheme) => ('dark'));
   }
 
   const themeState = {

@@ -4,7 +4,6 @@ import { ThemedView } from "../ThemedView";
 import { ThemedLayout } from "../ThemedLayout";
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
-import SurveyNavBar from "./SurveyNavBar";
 import { useRouter } from "expo-router";
 
 export default function SurveyNumber({
@@ -44,6 +43,7 @@ export default function SurveyNumber({
           numberOfLines={2}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
+          style={{textAlign: 'center'}}
         >
           {title}
         </ThemedText>

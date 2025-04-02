@@ -37,7 +37,7 @@ export default function Split() {
   const partition = async () => {
     if (choiceIndex > -1 && canPartition) {
       setIsLoading(true);
-      const response = await axios.post('http://localhost:3000/partition', { splits: leaf[choiceIndex]});
+      const response = await axios.post('http://192.168.1.253:3000/partition', { splits: leaf[choiceIndex]});
       setLeaf(response.data);
       setDecisions(prev => [...prev, leaf]);
       setChoiceIndex(-1);

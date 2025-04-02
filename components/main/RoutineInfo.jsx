@@ -47,7 +47,7 @@ export default function RoutineInfo({routine, selected, last}) {
     updatedInfo.sets = routine.numSets;
     setInfo(updatedInfo);
     
-    await axios.post('http://localhost:3000/change-routine', {
+    await axios.post('http://192.168.1.253:3000/change-routine', {
       username: username,
       title: routine.title,
     })

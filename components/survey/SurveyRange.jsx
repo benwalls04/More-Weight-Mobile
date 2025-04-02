@@ -1,17 +1,11 @@
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { ThemedView } from "../ThemedView";
 import { ThemedLayout } from "../ThemedLayout";
 import { ThemedText } from "../ThemedText";
-import { useState } from "react";
 import Slider from '@react-native-community/slider';
-import { useRouter } from "expo-router";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useSurveyContext } from "@/hooks/SurveyContext";
-import SurveyNavBar from "./SurveyNavBar";
 import { COLORS } from "@/constants/Colors";
-
-const windowWidth = Dimensions.get('window').width * .85;
-const BUTTON_MARGIN = 3;
 
 export default function SurveyRange({
   style,
@@ -35,6 +29,7 @@ export default function SurveyRange({
             numberOfLines={headerLines}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
+            style={{textAlign: 'center'}}
           >
             {title}
           </ThemedText>
@@ -84,7 +79,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   slider: {
-    paddingTop: 55,
+    paddingTop: 10,
     width: '100%',
     height: 40,
   },

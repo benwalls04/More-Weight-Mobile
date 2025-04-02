@@ -6,7 +6,7 @@ const grayTwo = 'rgb(62, 62, 62)';
 const grayThree = 'rgb(120, 120, 120)';
 
 export const COLORS = {
-  light: {
+  dark: {
     text: "white", 
     textTwo: grayThree,
     background: grayOne, 
@@ -23,22 +23,21 @@ export const COLORS = {
     shadowColor: grayThree,
     popupColor: grayTwo,
   }, 
-  dark: {
-    text: grayOne, 
-    textTwo: grayTwo,
-    background: "white", 
-    accent: grayOne, 
+  light: {
+    text: "white", 
+    textTwo: grayThree,
+    background: grayOne, 
+    accent: grayTwo, 
     accentLight: grayThree, 
     accentDark: grayOne,
     tint: redTwo,
-    borderColor: redOne,
-    buttonColor: redThree,
+    buttonColor: grayOne,
     inputBorderColor: "white",
     buttonBorder: redTwo,
-    buttonColorSelected: redThree,
-    borderColorSelected: redOne,
+    buttonColorSelected: redTwo,
+    borderColorSelected: redTwo,
     textSelected: "white",
     shadowColor: grayThree,
-    popupColor: grayTwo
+    popupColor: grayTwo,
   }
 }

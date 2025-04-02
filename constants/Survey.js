@@ -19,7 +19,8 @@ export const SURVEY_DATA = [
       }
     ],
     cols: 3, 
-    required: true
+    required: true,
+    headerLines: 1
   },
   {
     key: "schedule",
@@ -115,7 +116,8 @@ export const SURVEY_DATA = [
       }
     ],
     cols: 3, 
-    required: true
+    required: true,
+    headerLines: 2
   },
   {
     key: "time",
@@ -152,7 +154,8 @@ export const SURVEY_DATA = [
       }
     ],
     cols: 4, 
-    required: true
+    required: true,
+    headerLines: 2
   },
   {
     key: "accessories",
@@ -186,24 +189,28 @@ export const SURVEY_DATA = [
     ],
     cols: 3, 
     minimum: 0,
+    headerLines: 2
   },
   {
     key: "chest",
     type: "range",
     title: "What region of the chest would you like to bias?",
     options: ["lower chest", "upper chest"],
+    headerLines: 2
   }, 
   {
     key: "back",
     type: "range",
     title: "What region of the back would you like to bias?",
     options: ["lats", "upper back"],
+    headerLines: 2
   },
   {
     key: "legs",
     type: "range",
     title: "What region of the legs would you like to bias?",
     options: ["quads", "hamstrings"],
+    headerLines: 2
   },
   {
     key: "horizontal-press",

@@ -1,5 +1,5 @@
-import { View, Animated } from "react-native";
-import { useState, useEffect } from "react";
+import { View, Animated, Easing } from "react-native";
+import { useState, useEffect, useRef } from "react";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import  LoadingScreen from "@/components/LoadingScreen";
 import { Ionicons } from "@expo/vector-icons";
@@ -11,11 +11,12 @@ import { Slot, Link } from "expo-router";
 import { COLORS } from "@/constants/Colors";
 
 export default function TabsLayout() {
-  const [fadeAnim] = useState(new Animated.Value(0)); 
+  const slideAnim = useRef(new Animated.Value(0)).current;
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  const theme = useThemeContext();
+  const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
 
   useEffect(() => {
@@ -28,11 +29,43 @@ export default function TabsLayout() {
 
   useEffect(() => {
     if (!loading) {
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300, 
-        useNativeDriver: true,
-      }).start();
+      if (pathname !== prevPathname) {
+        const tabOrder = ['WorkoutPage', 'TrackPage', 'ProfilePage'];
+        const currentIndex = tabOrder.findIndex(path => pathname.includes(path));
+        const prevIndex = tabOrder.findIndex(path => prevPathname.includes(path));
+        
+        // Calculate the starting position for the animation
+        let startValue = 0;
+        
+        if (currentIndex !== -1 && prevIndex !== -1) {
+          // Moving right (to a higher index tab)
+          if (currentIndex > prevIndex) {
+            startValue = 300; 
+          } 
+          // Moving left (to a lower index tab)
+          else if (currentIndex < prevIndex) {
+            startValue = -300; 
+          }
+        }
+        
+        // Reset position for new animation
+        slideAnim.setValue(startValue);
+        
+        // Animate to center
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 250,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }).start(() => {
+          // Ensure we're exactly at 0 when animation completes
+          slideAnim.setValue(0);
+          setPrevPathname(pathname);
+        });
+      } else {
+        // Initial load - just set to center position
+        slideAnim.setValue(0);
+      }
     }
   }, [loading, pathname]);
 
@@ -48,15 +81,18 @@ export default function TabsLayout() {
     return (
       <EditProvider>
       <WorkoutProvider>
-        <Animated.View style={{ 
+        <View style={{ 
           flex: 1, 
           backgroundColor: colors.background,
-          opacity: fadeAnim, 
+          overflow: 'hidden', // Ensure content doesn't show outside bounds during animation
         }}>
-          {/* Main content area */}
-          <View style={{ flex: 1 }}>
+          {/* Main content area with horizontal slide animation */}
+          <Animated.View style={{ 
+            flex: 1,
+            transform: [{ translateX: slideAnim }]
+          }}>
             <Slot />
-          </View>
+          </Animated.View>
 
           {/* Footer navigation */}
           <View style={{ 
@@ -116,7 +152,7 @@ export default function TabsLayout() {
               </ThemedPressable>
             </Link>
           </View>
-        </Animated.View>
+        </View>
       </WorkoutProvider>
     </EditProvider>
   );

@@ -15,7 +15,6 @@ const dayName = new Date().toLocaleDateString('en-US', {
 }).replace(',', '').replace(' ', ', ');
 
 const timeRef = { current: -Infinity };
-const indexRef = { current: 0 };
 const workoutFlagRef = { current: false };
 
 export function useWorkoutContext() {
@@ -81,7 +80,7 @@ export function WorkoutProvider({children}) {
         setLastActiveTime(Date.now());
 
         if (workoutFlag) {
-          saveWorkoutProgress();
+          saveWorkoutProgress(true);
         }
       }
       
@@ -93,17 +92,16 @@ export function WorkoutProvider({children}) {
     };
   }, [appStateVisible, timerInterval, time, lastActiveTime]);
 
-  const saveWorkoutProgress = async () => {
-    console.log("attempting to save workout progress")
+  const saveWorkoutProgress = async (inProgress) => {
     if (username) {
-      console.log("saving workout progress")
-      await axios.post('http://localhost:3000/progress', {
+      await axios.post('http://192.168.1.253:3000/progress', {
         username: username,
-        inProgress: workoutFlag,
+        inProgress: inProgress,
         movementIndex: movementIndex,
         index: index,
         movementsCpy: workoutCpy.movements,
-        setsCpy: workoutCpy.sets
+        setsCpy: workoutCpy.sets,
+        restTime: time ? time : 0
       })
     }
   }
@@ -116,29 +114,48 @@ export function WorkoutProvider({children}) {
 
   const loadWorkoutProgress = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/progress', {
+      const response = await axios.get('http://192.168.1.253:3000/progress', {
         params: { username: username }  
       });
   
       if (response.data.inProgress) {
-        setWorkoutFlag(true);
-        setMovementIndex(response.data.movementIndex);
-        setIndex(response.data.index);
-        setCurrMovement(response.data.movementsCpy[response.data.movementIndex].movement);
-        // set time based on rest remaining - (end time stamp - currtime stamp) || 0 if no rest remaining
+        if (response.data.timestamp && sameDay(new Date(response.data.timestamp), new Date())) {
         
-        setWorkoutCpy({
-          movements: response.data.movementsCpy,
-          sets: response.data.setsCpy
-        });
+          setWorkoutFlag(true);
+          setMovementIndex(response.data.movementIndex);
+          setIndex(response.data.index);
+          setCurrMovement(response.data.movementsCpy[response.data.movementIndex].movement);
+          const oldTimestamp = new Date(response.data.timestamp).getTime(); 
+          const oldRestTime = response.data.restTime;
+          const currTime = Date.now();
+          const timeDiffMs = currTime - oldTimestamp;
+          const timeDiffMinutes = timeDiffMs / (1000 * 60);
+          const newRestTime = Math.max(0, oldRestTime - timeDiffMinutes);
+          setTime(newRestTime);
+          if (newRestTime > 0) {
+            startTimer(newRestTime);
+          }
+          
+          setWorkoutCpy({
+            movements: response.data.movementsCpy,
+            sets: response.data.setsCpy
+          });
+        } 
+      } else if (response.data.timestamp && sameDay(new Date(response.data.timestamp), new Date()) && response.data.index > 0 ){
+        setComplete(true);
       }
     } catch (error) {
       console.error("Error loading workout progress:", error);
     }
-  }
 
-  console.log(movementIndex)
-  console.log(index)
+    function sameDay(date1, date2) {
+      const d1 = new Date(date1);
+      const d2 = new Date(date2);
+      return d1.getDate() === d2.getDate() && 
+             d1.getMonth() === d2.getMonth() && 
+             d1.getFullYear() === d2.getFullYear();
+    }
+  }
 
   const startTimer = (initialTime) => {
     if (timerInterval) clearInterval(timerInterval);
@@ -161,13 +178,6 @@ export function WorkoutProvider({children}) {
 
   const [workoutFlag, setWorkoutFlag] = useState(workoutFlagRef.current);
 
-  useEffect(() => {
-    workoutFlagRef.current = workoutFlag;
-  }, [workoutFlag]);
-
-  useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
 
   const startWorkout = () => {
     setWorkoutFlag(true);
@@ -199,6 +209,10 @@ export function WorkoutProvider({children}) {
       setWorkoutFlag(false);
     } 
   }, [routine])
+
+  useEffect(() => {
+    setSetNum(index % numSets + 1);
+  }, [index])
 
   const doNext = () => {
     let { ...newWorkout } = workoutCpy;
@@ -253,7 +267,6 @@ export function WorkoutProvider({children}) {
           setTime(workoutCpy.sets[index].rest);
           startTimer(workoutCpy.sets[index].rest);
 
-          // update local copies 
           let newLog = {...logCpy};
           let newRecents = [...recentsCpy];
 
@@ -267,29 +280,24 @@ export function WorkoutProvider({children}) {
 
           setRecentsCpy(newRecents);
           setLogCpy(newLog);
+          saveWorkoutProgress(true);
 
           logSet(currMovement, weight, reps, variant);
         } 
           
         setIndex(index + 1);
-        setSetNum(setNum + 1);
         
         const newMovement = workoutCpy.sets[index + 1].movement;
         const newBias = workoutCpy.sets[index + 1].bias;
         if (newMovement !== currMovement || newBias !== bias) {
           setCurrMovement(newMovement);
           setMovementIndex(movementIndex + 1);
-          // FIXME: make sure subList updates for accessories, as well as on doNext and doLast clicks
-          setSetNum(1);
-          getTargets(newMovement).then(([targetWeight, targetReps]) => {
-            setWeightExp(targetWeight);
-            setRepsExp(targetReps);
-          })
         }
 
       } else {
         setComplete(true);
         setWorkoutFlag(false);
+        saveWorkoutProgress(false);
       }
   }
 
@@ -379,7 +387,7 @@ export function WorkoutProvider({children}) {
         newLog[movement][index].weight = Number(value.weight);
         newLog[movement][index].reps = Number(value.reps);
         
-        await axios.post('http://localhost:3000/log-set', {
+        await axios.post('http://192.168.1.253:3000/log-set', {
           username: username,
           movement: baseMovement,
           weight: Number(value.weight),

@@ -1,10 +1,11 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity } from "react-native";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 
 export function ThemedPressable({
   style,
   type = "default",
+  btnType="opacity",
   btnHeight = 60,
   ...otherProps
 }) {
@@ -12,8 +13,9 @@ export function ThemedPressable({
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
+  if (btnType === "opacity") {
   return (
-    <Pressable
+    <TouchableOpacity
       style={[
         {
           height: 60,
@@ -27,7 +29,25 @@ export function ThemedPressable({
       ]}
       {...otherProps}
     />
-  );
+    );
+  } else {
+    return (
+      <Pressable
+        style={[
+          {
+            height: 60,
+            width: "100%",
+            borderWidth: 1,
+            borderRadius: 4,
+            justifyContent: "center",
+          },
+          styles[type] || styles.default, 
+          style,
+        ]}
+        {...otherProps}
+      />
+    );
+  }
 }
 
 function createStyles(colors) {

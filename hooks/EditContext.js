@@ -39,7 +39,7 @@ export function EditProvider({children}){
 
   const finish = async () => {
     if (routineCpy.every(day => !day.movements.some(entry => entry.movement.includes("new movement")))){    
-      await axios.post('http://localhost:3000/set-routine', {
+      await axios.post('http://192.168.1.253:3000/set-routine', {
         routine: {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}, 
         username: username,
         updateActive: !newUser && allRoutines.some(routine => routine.title === splitTitle)

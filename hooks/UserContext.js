@@ -49,7 +49,7 @@ export function UserProvider({children}) {
   const login = async (username, password) => {
     if (validInput(username) && validInput(password)) {
       try {
-        const response = await axios.get('http://localhost:3000/login', {
+        const response = await axios.get('http://192.168.1.253:3000/login', {
           params: { username, password }
         });
         setRoutine(response.data.routine.routine);
@@ -81,11 +81,10 @@ export function UserProvider({children}) {
       if (password !== confirmPassword) {
         return "Passwords do not match";
       }
-
       try {
         const params = formatParams();
         setInfo(params);
-        const response = await axios.post('http://localhost:3000/new-user', {
+        const response = await axios.post('http://192.168.1.253:3000/new-user', {
           inputs: params, username: username.toLowerCase(), password: password.toLowerCase(), numSets: info.sets
         });
         setRoutine(response.data.routine);
@@ -97,6 +96,7 @@ export function UserProvider({children}) {
         AsyncStorage.setItem("password", password);
         AsyncStorage.setItem("isLoggedIn", JSON.stringify(true));
       } catch (error) {
+        console.log(error)
         if (error.response) {
           if (error.response.status === 400) {
             return "Incorrect username and password";
@@ -138,7 +138,7 @@ export function UserProvider({children}) {
     const params = formatParams(title, split);
     setInfo(params);
   
-    const response = await axios.post('http://localhost:3000/add-routine', {
+    const response = await axios.post('http://192.168.1.253:3000/add-routine', {
       inputs: params,
       username: username.toLowerCase(),
       split: split
@@ -151,7 +151,7 @@ export function UserProvider({children}) {
   }
 
   const logSet = async (movement, weight, reps, variant) => {
-    await axios.post('http://localhost:3000/log-set', {
+    await axios.post('http://192.168.1.253:3000/log-set', {
       username: username,
       movement: movement,
       weight: weight,
@@ -162,7 +162,7 @@ export function UserProvider({children}) {
   }
 
   const getTargets = async (movement) => {
-    const response = await axios.get('http://localhost:3000/get-last', {
+    const response = await axios.get('http://192.168.1.253:3000/get-last', {
       params: { username: username, movement: movement, numberOfSets: info.sets }
     });
     return [response.data.weight, response.data.reps];

@@ -242,16 +242,16 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         {!workoutFlag && (
           <View style={styles.editBtnGrid}>
-            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => addMovement(workoutIndex, movement)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => addMovement(workoutIndex, movement)}>
               <ThemedText style={styles.btnText}>+</ThemedText>
             </ThemedPressable>
-            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => removeMovement(movement, bias)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => removeMovement(movement, bias)}>
               <ThemedText style={styles.btnText}>-</ThemedText>
             </ThemedPressable>
-            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveUp(workoutIndex, movement)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => moveUp(workoutIndex, movement)}>
               <ThemedText style={styles.btnText}>↑</ThemedText>
             </ThemedPressable>
-            <ThemedPressable style={styles.editBtn} type="slanted" onPress={() => moveDown(workoutIndex, movement)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => moveDown(workoutIndex, movement)}>
               <ThemedText style={styles.btnText}>↓</ThemedText>
             </ThemedPressable>
             <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} avoidSubCheck={false} onClose={() => handleSubClose()} canClose={subChoice && !subChoice.movement.includes("new movement")}>
@@ -341,13 +341,13 @@ function createStyles(colors, workoutFlag) {
   editBtnGrid: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '50%',
+    width: '60%',
     zIndex: 2,
-    height: 30,
+    height: 35,
   },
   editBtn: {
     flex: 1,
-    height: 30,
+    height: 35,
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 0,
@@ -365,7 +365,7 @@ function createStyles(colors, workoutFlag) {
     borderColor: colors.tint,
     margin: 0,
     borderWidth: 1,
-    width: 35,
+    width: 40,
   },
   iconImage: {
     width: 20,

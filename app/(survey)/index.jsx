@@ -15,16 +15,16 @@ export default function Survey() {
 
   const entry = (item, index, ref) => {
     if (index >= SURVEY_DATA.findIndex(item => item.key === "horizontal-press") && index <= SURVEY_DATA.findIndex(item => item.key === "extension")) {
-      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]}/>;
+      return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]} headerLines={item.headerLines}/>;
     }
 
     switch (item.type) {
       case "one":
-        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} listRef={ref} errorMsg={errors[index]}/>;
+        return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} headerLines={item.headerLines} listRef={ref} errorMsg={errors[index]}/>;
       case "many":
-        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} errorMsg={errors[index]}/>;
+        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} headerLines={item.headerLines} surveyIndex={index} errorMsg={errors[index]}/>;
       case "range":
-        return <SurveyRange data={item.options} title={item.title} surveyIndex={index}/>;
+        return <SurveyRange data={item.options} title={item.title} surveyIndex={index} headerLines={item.headerLines}/>;
       case "submit":
         return <Proceed/>
     } 

@@ -16,12 +16,13 @@ const SignupPage = () => {
   const { signup } = useUserContext();
 
   const handleSubmit = async () => {
-
     const res = await signup(userText, passText, confirmPassText);
-
-    if (res != "success") {
-      Alert.alert(res);
-    } 
+    
+    if (res.error) {
+      Alert.alert("Signup Failed", res.error);
+    } else if (res.message) {
+      Alert.alert("Signup Failed", res.message);
+    }
   }
 
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
@@ -44,6 +45,7 @@ const SignupPage = () => {
             placeholder="Your username"
             value={userText}
             onChangeText={setUserText}
+            returnKeyType="done"
           />
         </View>
         <View style={Styles.input}>
@@ -54,6 +56,7 @@ const SignupPage = () => {
             value={passText}
             onChangeText={setPassText}
             secureTextEntry
+            returnKeyType="done"
           />
         </View>
         <View style={Styles.input}>
@@ -64,12 +67,19 @@ const SignupPage = () => {
             value={confirmPassText}
             onChangeText={setConfirmPassText}
             secureTextEntry
+            returnKeyType="done"
           />
         </View>
         <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()}>
           <ThemedText style={{textAlign: "center"}}>Sign Up</ThemedText>
-            </ThemedPressable>
-          </View>
+        </ThemedPressable>
+        <View style={Styles.warningContainer}>
+          <ThemedText style={Styles.warningText}>
+            ⚠️ Warning: There is currently no way to recover lost passwords with this version. 
+            We recommend writing it down somewhere safe.
+          </ThemedText>
+        </View>
+      </View>
         }
       />
     </ThemedView>
@@ -95,5 +105,18 @@ function createStyles (colors) {
       borderWidth: 1,
       borderRadius: 2,
     },
+    warningContainer: {
+      marginTop: 20,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: '#FFA500',
+      borderRadius: 5,
+      backgroundColor: 'rgba(255, 165, 0, 0.1)',
+    },
+    warningText: {
+      textAlign: 'center',
+      fontSize: 12,
+      color: '#FFA500',
+    }
   })
 }

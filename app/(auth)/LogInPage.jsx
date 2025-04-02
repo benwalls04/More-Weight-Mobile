@@ -15,7 +15,7 @@ const LoginPage = () => {
   const { login } = useUserContext();
 
   const handleSubmit = async () => {
-    const res = await login(userText, passText);
+    const res = await login(userText.toLowerCase(), passText.toLowerCase());
     if (res != "success") {
       Alert.alert(res);
     } 
@@ -41,6 +41,7 @@ const LoginPage = () => {
             placeholder="Your username"
             value={userText}
             onChangeText={setUserText}
+            returnKeyType="done"
           />
         </View>
         <View style={Styles.input}>
@@ -51,6 +52,7 @@ const LoginPage = () => {
             value={passText}
             onChangeText={setPassText}
             secureTextEntry
+            returnKeyType="done"
           />
         </View>
         <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()}>

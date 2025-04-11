@@ -17,6 +17,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "benwalls2004@gmail.com",
+        "ascAppId": "6744487475",
+        "appleTeamId": "LDYN53X62R"
+      }
+    }
   }
 }

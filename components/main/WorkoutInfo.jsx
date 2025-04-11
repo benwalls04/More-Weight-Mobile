@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, FlatList, StyleSheet, Dimensions, ScrollView} from 'react-native';
+import { View, FlatList, StyleSheet, Dimensions, TouchableOpacity, Alert} from 'react-native';
 import { MOVEMENTS } from "@/constants/Movements";
 import { useEditContext } from "@/hooks/EditContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
@@ -184,12 +184,11 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
 
   const subPopupBody = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center', height: 250}}>
+      <View style={{width: '100%', alignItems: 'center', height: "250"}}>
         <ThemedText style={{fontSize: 18, fontWeight: 'bold', marginTop: 10}}>Choose A {movement.includes("new movement")? "Movement": "Substitute"}</ThemedText>
         <SubList 
           list={subOptions} 
           style={{justifySelf: 'center', width: "100%", left: 0, height: "100%", marginTop: 50}}
-          height={250}
           selectInteract={true}
           source="edit"
         />
@@ -204,8 +203,10 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
         <PopupPressable 
           popupBody={popupBody} 
           style={styles.closeButton} 
+          label="Sets Information"
+          hint="View Information on All of the Sets for This Movement"
           onClose={() => handleSetsClose()}>
-            <ThemedText style={{fontSize: 20, marginTop: 20}}>+</ThemedText>
+            <ThemedText style={{fontSize: 25, marginTop: 20}}>+</ThemedText>
         </PopupPressable>
         
         <View style={[styles.flexboxRow, {flex: 9, marginTop: 16}]}>
@@ -222,14 +223,14 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
         </View>
       </View>
         
-      <View style={{width: '100%', alignItems: 'flex-start', paddingLeft: 20, marginBottom: 10, marginTop: 0}}>
+      <View style={{width: '100%', alignItems: 'flex-start', paddingLeft: 35, marginBottom: 10, marginTop: 0}}>
         <FlatList 
           data={tags}
           renderItem={({ item, index }) => (
             <View style={{marginLeft: 10}}>
-              <ThemedPressable key={index} style={[styles.tag, { backgroundColor: tagsSelect[index] ? colors.tint : "gray"}]} onPress={() => handleBias(index)}>
+              <TouchableOpacity key={index} style={[styles.tag, { backgroundColor: tagsSelect[index] ? colors.tint : "gray"}]} onPress={() => handleBias(index)} accessible={true} accessibilityLabel={item} accessibilityRole="button" accessibilityHint="Select one of these tags to change the bias of this movement">
                 <ThemedText style={styles.tagText}>{item}</ThemedText>
-              </ThemedPressable>
+              </TouchableOpacity>
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
@@ -242,19 +243,19 @@ export default function WorkoutInfo({workoutCpy, workoutIndex, movement, workout
       <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 15}}>
         {!workoutFlag && (
           <View style={styles.editBtnGrid}>
-            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => addMovement(workoutIndex, movement)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => addMovement(workoutIndex, movement)} label="Add Movement Below">
               <ThemedText style={styles.btnText}>+</ThemedText>
             </ThemedPressable>
-            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => removeMovement(movement, bias)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => removeMovement(movement, bias)} label="Remove This Movement">
               <ThemedText style={styles.btnText}>-</ThemedText>
             </ThemedPressable>
-            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => moveUp(workoutIndex, movement)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => moveUp(workoutIndex, movement)} label="Move This Movement Up">
               <ThemedText style={styles.btnText}>↑</ThemedText>
             </ThemedPressable>
-            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => moveDown(workoutIndex, movement)}>
+            <ThemedPressable style={styles.editBtn} type="slanted" btnType="pressable" onPress={() => moveDown(workoutIndex, movement)} label="Move This Movement Down">
               <ThemedText style={styles.btnText}>↓</ThemedText>
             </ThemedPressable>
-            <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} avoidSubCheck={false} onClose={() => handleSubClose()} canClose={subChoice && !subChoice.movement.includes("new movement")}>
+            <PopupPressable style={[styles.editBtn, styles.slantedBtn]} popupBody={subPopupBody} avoidSubCheck={false} onClose={() => handleSubClose()} canClose={subChoice && !subChoice.movement.includes("new movement")} label="Change This Movement">
               <ThemedText style={[styles.btnText, {marginTop: 0}]}>⇄</ThemedText>
             </PopupPressable>
           </View>

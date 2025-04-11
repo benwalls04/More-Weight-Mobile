@@ -18,26 +18,27 @@ const SignupPage = () => {
   const handleSubmit = async () => {
     const res = await signup(userText, passText, confirmPassText);
     
-    if (res.error) {
-      Alert.alert("Signup Failed", res.error);
-    } else if (res.message) {
-      Alert.alert("Signup Failed", res.message);
+    if (res) {
+      Alert.alert("Signup Failed", res);
     }
   }
+
 
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const Styles = createStyles(colors);
 
   return (
-    <ThemedView>
-      <ThemedLayout
+    <ThemedView label="Sign Up Page">
+      <ThemedLayout 
+        headerFlex={1}
+        bodyFlex={3}
         header={
           <View style={Styles.headerContainer}>
             <ThemedText style={{textAlign: "center"}} type="header">Create an Account to Save Your Routine!</ThemedText>
           </View>
         }
         body={
-          <View style={Styles.inputContainer}>
+          <View>
             <View style={Styles.input}>
               <ThemedText>Username</ThemedText>
           <TextInput
@@ -46,6 +47,13 @@ const SignupPage = () => {
             value={userText}
             onChangeText={setUserText}
             returnKeyType="done"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            accessible={true}
+            accessibilityLabel="Username"
+            accessibilityRole="text"
+            accessibilityHint="Enter your username"
           />
         </View>
         <View style={Styles.input}>
@@ -57,6 +65,13 @@ const SignupPage = () => {
             onChangeText={setPassText}
             secureTextEntry
             returnKeyType="done"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            accessible={true}
+            accessibilityLabel="Password"
+            accessibilityRole="text"
+            accessibilityHint="Enter your password"
           />
         </View>
         <View style={Styles.input}>
@@ -68,9 +83,16 @@ const SignupPage = () => {
             onChangeText={setConfirmPassText}
             secureTextEntry
             returnKeyType="done"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            accessible={true}
+            accessibilityLabel="Confirm Password"
+            accessibilityRole="text"
+            accessibilityHint="Enter your password again"
           />
         </View>
-        <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()}>
+        <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()} label="Sign Up" hint="Creates a new account and allows you to edit your routine">
           <ThemedText style={{textAlign: "center"}}>Sign Up</ThemedText>
         </ThemedPressable>
         <View style={Styles.warningContainer}>
@@ -100,7 +122,7 @@ function createStyles (colors) {
       paddingLeft: 10,
       fontSize: 14,
       color: colors.text,
-      height: 35, 
+      height: 45, 
       borderColor: colors.inputBorderColor,
       borderWidth: 1,
       borderRadius: 2,

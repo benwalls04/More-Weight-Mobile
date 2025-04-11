@@ -10,7 +10,7 @@ import { useUserContext } from "@/hooks/UserContext";
 
 import { useRouter } from "expo-router";
 import { View, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 import { COLORS } from "@/constants/Colors";
@@ -31,22 +31,31 @@ export default function Split() {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
 
-  // FIXME: this is a mess. Use a tree stucture and a class
-  // FIXME: add a counter under each choice (num of splits like this one)
+  useEffect(() => {
+    if (choiceIndex > -1 && leaf[choiceIndex] && leaf[choiceIndex].length >= 2) {
+      setCanPartition(true);
+    } else {
+      setCanPartition(false);
+    }
+  }, [choiceIndex])
 
   const partition = async () => {
     if (choiceIndex > -1 && canPartition) {
       setIsLoading(true);
-      const response = await axios.post('http://192.168.1.253:3000/partition', { splits: leaf[choiceIndex]});
-      setLeaf(response.data);
-      setDecisions(prev => [...prev, leaf]);
-      setChoiceIndex(-1);
-      setIsLoading(false);
-      if (leaf[0].length < 2 && leaf[1].length < 2) {
-        setCanPartition(false);
-      }
+      await axios.post('https://more-weight.com/partition', { splits: leaf[choiceIndex]}).then(response => {
+        setLeaf(response.data);
+        setDecisions(prev => [...prev, leaf]);
+        setChoiceIndex(-1);
+        if (leaf[0].length < 2 && leaf[1].length < 2) {
+          setCanPartition(false);
+        }
+      }).catch(error => {
+        Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+      }).finally(() => {
+        setIsLoading(false);
+      });
     } else {
-      Alert.alert("Error");
+      Alert.alert("Error", "Please select a routine");
     }
   }
 
@@ -83,23 +92,16 @@ export default function Split() {
     )
   } 
 
-  const popupBody = () => {
-    return (
-      <View>
-        <ThemedText>More Info</ThemedText>
-      </View>
-    )
-  }
-
   return (
-    <ThemedView>
+    <ThemedView label="Find Your Favorite Split">
       <ThemedLayout
         header={
           <ThemedText 
             type="title"
-            numberOfLines={2}
+            numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
+            style={{paddingBottom: 10}}
           >
             Which routine do you prefer?
           </ThemedText>
@@ -120,6 +122,8 @@ export default function Split() {
                     onPress={() => setChoiceIndex(outerIndex)}
                     type={"default"}
                     style={[styles.button, {width: BTN_WIDTH, borderColor: colors.accentLight}]}
+                    label={"Select " + prettyPrint(item)}
+                    hint={"Choose this option if you prefer it over the other option. You can either see more splits like this, or continue with this split."}
                   >
                   <FlatList
                     data={item[0]}
@@ -138,24 +142,28 @@ export default function Split() {
                   />
                   </ThemedPressable>
                   <View style={styles.checkContainer}>
-                    <ThemedPressable style={[styles.check, {borderColor: colors.accentLight}]}
-                      type={choiceIndex === outerIndex ? "selected" : "default"}
-                      onPress={() => setChoiceIndex(outerIndex)}
+                    <View style={[styles.check, {borderColor: colors.accentLight}, choiceIndex === outerIndex && {backgroundColor: colors.tint}]}
                     />
                   </View>
                 </View>
               )}
             />
             <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
-              <ThemedPressable onPress={() => handleBack()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]}> 
+              <ThemedPressable onPress={() => handleBack()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]} label="Go Back"> 
                 <ThemedText>Back</ThemedText>
               </ThemedPressable>
 
-              <ThemedPressable onPress={() => partition()} style={[styles.submitButton, {backgroundColor: canPartition && choiceIndex > -1 ? colors.tint : colors.accentLight, width: '50%'}]}> 
-                <ThemedText>Show Me More</ThemedText>
+              <ThemedPressable onPress={() => partition()} style={[styles.submitButton, {backgroundColor: canPartition && choiceIndex > -1 ? colors.tint : colors.accentLight, width: '50%'}]} label="Show Me More Splits Like This"> 
+                <ThemedText>
+                  {choiceIndex < 0 
+                    ? 'Show Me More' 
+                    : canPartition 
+                      ? `Show Me ${leaf[choiceIndex].length} More` 
+                      : 'Show Me More'}
+                </ThemedText>
               </ThemedPressable>
 
-              <ThemedPressable onPress={() => handleNext()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]}>
+              <ThemedPressable onPress={() => handleNext()} style={[styles.submitButton, {backgroundColor: colors.accentLight, width: '25%'}]} label="Select" hint="Continue with this split as your final choice">
                 <ThemedText>Select</ThemedText>
               </ThemedPressable>
             </View>
@@ -243,5 +251,6 @@ const styles = StyleSheet.create({
     width: 24, 
     height: 24,
     borderWidth: 1,
+    borderRadius: 4,
   }
 }); 

@@ -21,7 +21,7 @@ export default function SurveyRange({
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
 
   return (
-    <ThemedView>
+    <ThemedView label={title}>
       <ThemedLayout 
         header={
           <ThemedText 

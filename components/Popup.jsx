@@ -33,7 +33,7 @@ const Popup = ({ visible, onClose, extraClose, body, canClose=true}) => {
             {body()}
           </View>
           <View style={styles.buttonContainer}>
-            <ThemedPressable type="selected" onPress={handleClose} style={styles.closeButton}>
+            <ThemedPressable type="selected" onPress={handleClose} style={styles.closeButton} label="Close" hint="Closes the popup">
                 <Text style={styles.closeText}>Close</Text>
             </ThemedPressable>
           </View>

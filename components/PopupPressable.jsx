@@ -11,6 +11,8 @@ export default function PopupPressable({
   onClose,
   canClose=true,
   visible=true,
+  label,
+  hint,
   ...otherProps
 }) {
   const { theme } = useThemeContext();
@@ -72,6 +74,10 @@ export default function PopupPressable({
           styles.button, 
           style,
         ]}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityHint={hint ? hint : label}
         {...otherProps}
         onPressIn={onPressIn}
         onPressOut={onPressOut}
@@ -98,7 +104,9 @@ function createStyles(colors) {
       backgroundColor: colors.buttonColor,
       borderColor: colors.buttonBorder,
       color: colors.text,
-      height: 40,
+      height: 45,
+      minWidth: 45,
+      minHeight: 45,
       borderRadius: 5,
       borderWidth: 1,
       justifyContent: "center",

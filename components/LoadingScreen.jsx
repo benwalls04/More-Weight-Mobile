@@ -17,7 +17,7 @@ export default function LoadingScreen() {
   }, []);
 
   return (
-    <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <ThemedView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}} label="Loading">
       <ThemedText style={{fontSize: 30}}>{showText ? 'Loading...' : ''}</ThemedText>
     </ThemedView>
   )

@@ -1,10 +1,9 @@
-import { View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { ThemedLayout } from "../ThemedLayout";
 import { useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from "expo-router";
 
 export default function SurveyNumber({
   style,
@@ -20,7 +19,6 @@ export default function SurveyNumber({
   ...otherProps
 }) {
   const [value, setValue] = useState(initial);
-  const router = useRouter();
 
   const increment = () => {
     if (value + step <= max) {
@@ -35,7 +33,7 @@ export default function SurveyNumber({
   };
 
   return (
-    <ThemedView>
+    <ThemedView label={title}>
       <ThemedLayout
         header={
         <ThemedText 

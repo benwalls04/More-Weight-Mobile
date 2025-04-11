@@ -102,7 +102,8 @@ export default function TabsLayout() {
             backgroundColor: colors.background,
             height: 60,
             paddingBottom: 15,
-            marginBottom: 15
+            marginTop: 3,
+            marginBottom: 15,
           }}>
             <Link href="/(tabs)/WorkoutPage" asChild style={{ flex: 1 }}>
               <ThemedPressable
@@ -111,6 +112,7 @@ export default function TabsLayout() {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
+                label="Go to Workout Page"
               >
                 <Ionicons 
                   name="barbell-outline" 
@@ -127,6 +129,7 @@ export default function TabsLayout() {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
+                label="Go to Progress Tracking Page"
               >
                 <Ionicons 
                   name="stats-chart-outline" 
@@ -143,6 +146,7 @@ export default function TabsLayout() {
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
+                label="Go to Profile Page"
               >
                 <Ionicons 
                   name="person-outline" 

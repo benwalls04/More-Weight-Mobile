@@ -84,6 +84,10 @@ const MovementPopup = ({
           keyboardType="numeric"
           placeholder="RPE"
           placeholderTextColor={colors.text}
+          accessible={true}
+          accessibilityLabel="RPE"
+          accessibilityRole="text"
+          accessibilityHint="Enter the RPE for the set"
         />
       </View>
       <View style={styles.editableCell}>
@@ -94,6 +98,10 @@ const MovementPopup = ({
           keyboardType="numeric"
           placeholder="Rest"
           placeholderTextColor={colors.text}
+          accessible={true}
+          accessibilityLabel="Rest"
+          accessibilityRole="text"
+          accessibilityHint="Enter the rest time for the set"
         />
       </View>
     </View>
@@ -103,7 +111,7 @@ const MovementPopup = ({
     <View style={styles.container}>
       <ThemedText type="header" style={{marginVertical: 15, alignSelf: "center"}}>{movement}</ThemedText>
       <View style={styles.repRangeContainer}>
-        <ThemedText>Rep Range: </ThemedText>
+        <ThemedText style={{lineHeight: 45}}>Rep Range: </ThemedText>
         <View style={styles.editableCell}>
           <TextInput
             style={styles.input}
@@ -112,6 +120,10 @@ const MovementPopup = ({
             keyboardType="numeric"
             placeholder="Min"
             placeholderTextColor={colors.text}
+            accessible={true}
+            accessibilityLabel="Lower Rep Range"
+            accessibilityRole="text"
+            accessibilityHint="Enter the lower bound value of your desired rep range"
           />
         </View>
         <ThemedText> - </ThemedText>
@@ -123,6 +135,10 @@ const MovementPopup = ({
             keyboardType="numeric"
             placeholder="Max"
             placeholderTextColor={colors.text}
+            accessible={true}
+            accessibilityLabel="Upper Rep Range"
+            accessibilityRole="text"
+            accessibilityHint="Enter the upper bound value of your desired rep range"
           />
         </View>
       </View>
@@ -194,7 +210,7 @@ function createStyles(colors) {
     backgroundColor: colors.accentLight,
     borderRadius: 4,
     marginHorizontal: 4,
-    height: 30,
+    height: 45,
     justifyContent: 'center',
   },
   input: {
@@ -206,11 +222,13 @@ function createStyles(colors) {
   cellText: {
     flex: 1,
     textAlign: 'center',
+    lineHeight: 45,
   },
   maxBtn: {
-    height: 30,
+    height: 45,
     width: "85%",
     alignSelf: "center",
+    justifyContent: "center",
     marginTop: 10,
     backgroundColor: colors.accentLight,
     borderRadius: 0,

@@ -11,7 +11,7 @@ export default function FooterButton({clickEvent, text, marginBottom}) {
 
   return (
     <View style={[Styles.stickyButtonContainer, {marginBottom: marginBottom ? marginBottom : 35}]}>
-      <ThemedPressable style={Styles.doneButton} onPress={() => clickEvent()}>
+      <ThemedPressable style={Styles.doneButton} onPress={() => clickEvent()} label={text}>
         <ThemedText>{text}</ThemedText>
       </ThemedPressable>
     </View>

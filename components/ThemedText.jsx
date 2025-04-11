@@ -19,9 +19,8 @@ export function ThemedText({
     Play_700Bold,    // Bold weight
   });
 
-  // If fonts are not loaded, return a loading state or placeholder text
   if (!fontsLoaded) {
-    return <Text style={[{ color: colors.text }, style]} {...rest}>Loading...</Text>;
+    return <Text accessible={true} accessibilityRole="text" allowFontScaling={true} style={[{ color: colors.text }, style]} {...rest}>Loading...</Text>;
   }
 
   // Return the text with the font applied once fonts are loaded

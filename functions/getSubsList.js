@@ -71,7 +71,6 @@ export default function getSubList(title, movements, text, accessories, bias=nul
     }
   }
 
-  // FIXME: include the variant information in the movements list to avoid excessive search
   options = options.filter(option => !movements.some(movement => {
     if (!MOVEMENTS[movement.movement]) {
       return false;

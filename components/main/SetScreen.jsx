@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { View, TextInput, TouchableOpacity, StyleSheet, Dimensions, Keyboard, TouchableWithoutFeedback, Alert } from "react-native";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
@@ -20,7 +20,7 @@ export default function SetScreen() {
   const { info } = useUserContext();
   const NUM_SETS = info.sets;
 
-  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, addMovement, subList, weightExp, repsExp, subChoice, addFlag, setAddFlag} = useWorkoutContext();
+  const { currMovement, time, workoutCpy, index, setNum, nextSet, doNext, doLast, substitute, addMovement, subList, weightExp, repsExp, subChoice, addFlag, setAddFlag, isLogging } = useWorkoutContext();
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);  // Create styles with colors
@@ -36,8 +36,8 @@ export default function SetScreen() {
   const [weight, setWeight] = useState(weightExp === 0? "" : weightExp);
   const [reps, setReps] = useState(repsExp === 0? "" : repsExp);
   useEffect(() => {
-    setWeight(weightExp);
-    setReps(repsExp);
+    setWeight(weightExp === 0 ? "" : weightExp.toString());
+    setReps(repsExp === 0 ? "" : repsExp.toString());
   }, [currMovement, weightExp, repsExp])
   
   // Format time from decimal minutes (e.g. 2.25) to MM:SS
@@ -123,11 +123,11 @@ export default function SetScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <ThemedView style={{justifyContent: 'flex-start'}}>
+      <ThemedView style={{justifyContent: 'flex-start'}} label="Current Set in Your Workout">
         {/* Top action buttons */}
         <Popup visible={addFlag} body={subPopupBody} onClose={() => setAddFlag(false)} canClose={subChoice !== null} extraClose={handleSubClose}></Popup>
         <View style={styles.actionButtons}>
-          <PopupPressable visible={setNum === 1} popupBody={subPopupBody} canClose={subChoice !== null} onClose={handleSubClose} style={[styles.actionButton, styles.popupBtn]}>
+          <PopupPressable visible={setNum === 1} popupBody={subPopupBody} canClose={subChoice !== null} onClose={handleSubClose} style={[styles.actionButton, styles.popupBtn]} label="Substitute" hint="Substitute this set with a different movement">
             <ThemedText style={[styles.actionButtonText, {color: setNum === 1? colors.text : colors.tint}]}>Substitute</ThemedText>
           </PopupPressable>
           <TouchableOpacity style={styles.actionButton} onPress={setNum === 1? () => doNext() : () => {}}>
@@ -184,13 +184,17 @@ export default function SetScreen() {
                 placeholderTextColor={colors.text}
                 onSubmitEditing={dismissKeyboard}
                 onBlur={dismissKeyboard}
+                accessible={true}
+                accessibilityLabel="Weight"
+                accessibilityRole="text"
+                accessibilityHint="Enter the weight of the set"
               />
               <View style={styles.arrowContainer}>
-                <TouchableOpacity onPress={incrementWeight} style={styles.arrow}>
-                  <AntDesign name="caretup" size={12} color={colors.text} />
+                <TouchableOpacity onPress={incrementWeight} style={styles.arrow} label="Increment Weight" hint="Increment the weight of the set">
+                  <AntDesign name="caretup" size={15} color={colors.text} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={decrementWeight} style={styles.arrow}>
-                  <AntDesign name="caretdown" size={12} color={colors.text} />
+                <TouchableOpacity onPress={decrementWeight} style={styles.arrow} label="Decrement Weight" hint="Decrement the weight of the set">
+                  <AntDesign name="caretdown" size={15} color={colors.text} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -207,13 +211,17 @@ export default function SetScreen() {
                 placeholder="0"
                 placeholderTextColor={colors.text}
                 onSubmitEditing={dismissKeyboard}
+                accessible={true}
+                accessibilityLabel="Reps"
+                accessibilityRole="text"
+                accessibilityHint="Enter the reps of the set"
               />
               <View style={styles.arrowContainer}>
-                <TouchableOpacity onPress={incrementReps} style={styles.arrow}>
-                  <AntDesign name="caretup" size={12} color={colors.text} />
+                <TouchableOpacity onPress={incrementReps} style={styles.arrow} label="Increment Reps" hint="Increment the reps of the set">
+                  <AntDesign name="caretup" size={15} color={colors.text} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={decrementReps} style={styles.arrow}>
-                  <AntDesign name="caretdown" size={12} color={colors.text} />
+                <TouchableOpacity onPress={decrementReps} style={styles.arrow} label="Decrement Reps" hint="Decrement the reps of the set">
+                  <AntDesign name="caretdown" size={15} color={colors.text} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -221,10 +229,39 @@ export default function SetScreen() {
 
           {/* Log set button */}
           <View style={styles.logButtons}>
-            <ThemedPressable type="slanted" style={styles.logButton} onPress={() => {weight > 0 && reps > 0 && nextSet(false, bias, weight, reps, variant)}}>
-              <ThemedText style={styles.logButtonText}>log set</ThemedText>
+            <ThemedPressable 
+              type="slanted" 
+              style={[styles.logButton, isLogging && styles.disabledButton]} 
+              label="Log Set"
+              hint="Add this set's weight and reps to your log"
+              onPress={() => {
+                if (isLogging) {
+                  Alert.alert(
+                    "Please wait",
+                    "Your previous set is still being logged. Please wait a few seconds.",
+                    [{ text: "OK" }]
+                  );
+                  return;
+                }
+                
+                // Check if weight or reps is zero or empty
+                if (!weight || parseInt(weight) === 0 || !reps || parseInt(reps) === 0) {
+                  Alert.alert(
+                    "Invalid Input",
+                    "Both weight and reps must be greater than 0.",
+                    [{ text: "OK" }]
+                  );
+                  return;
+                }
+                
+                nextSet(false, bias, weight, reps, variant);
+              }}
+            >
+              <ThemedText style={styles.logButtonText}>
+                {isLogging ? "logging..." : "log set"}
+              </ThemedText>
             </ThemedPressable>
-            <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(true, bias)}>
+            <ThemedPressable type="slanted" style={styles.logButton} onPress={() => nextSet(true, bias)} label="Skip This Set" hint="Skips this set and goes to the next one">
               <ThemedText style={styles.logButtonText}>skip set</ThemedText>
             </ThemedPressable>
           </View>
@@ -238,11 +275,11 @@ export default function SetScreen() {
 function createStyles(colors) {
   return StyleSheet.create({
     actionButtons: {
-      marginTop: 40,
+      marginTop: 20,
       width: windowWidth * .9,
       justifyContent: 'space-around',
       flexDirection: 'row',
-      marginBottom: 34,
+      marginBottom: 20,
       gap: 0,
     },
     actionButton: {
@@ -279,7 +316,7 @@ function createStyles(colors) {
     setInfoContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
-      marginBottom: 40,
+      marginBottom: 50,
       gap: 15,
     },
     infoPill: {
@@ -299,7 +336,7 @@ function createStyles(colors) {
       borderColor: colors.text,
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 40,
+      marginBottom: 50,
     },
     timerText: {
       fontSize: 35,
@@ -350,7 +387,7 @@ function createStyles(colors) {
       color: colors.text,
       borderRadius: 3,
       width: 55,  // Slightly smaller to accommodate arrows
-      height: 30,
+      height: 45,
       textAlign: 'center',
       fontSize: 14,
     },
@@ -370,6 +407,9 @@ function createStyles(colors) {
       lineHeight: 0,
       fontSize: 16,
       fontWeight: '500',
+    },
+    disabledButton: {
+      opacity: 0.6,
     },
   });
 }

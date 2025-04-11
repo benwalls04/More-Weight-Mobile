@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, TouchableOpacity } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import  MainHeader from "@/components/main/MainHeader";
@@ -9,6 +9,7 @@ import { COLORS } from "@/constants/Colors";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import RoutineInfo from "@/components/main/RoutineInfo";
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function ProfilePage() {
   const theme = useThemeContext();
@@ -16,6 +17,7 @@ export default function ProfilePage() {
   const styles = createStyles(colors);
   const {username, allRoutines, splitTitle, signOut} = useUserContext();
   const [activeTab, setActiveTab] = useState(0);
+  const router = useRouter();
 
   const renderRoutine = () => {
     const renderedRoutines = allRoutines
@@ -26,24 +28,45 @@ export default function ProfilePage() {
       });
 
     return (
-      <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>
-        {renderedRoutines.map((routine, index) => (
-          <RoutineInfo routine={routine} last={index === renderedRoutines.length - 1} selected={routine.title === splitTitle}/>
-        ))}
-      </ScrollView>
+      <View style={{width: '100%', flex: 1, justifyContent: 'flex-start', alignItems: 'center'}}>
+        <ScrollView 
+          style={{width: '100%'}} 
+          contentContainerStyle={{paddingBottom: 10}}
+          showsVerticalScrollIndicator={false}
+        >
+          {renderedRoutines.map((routine, index) => (
+            <RoutineInfo 
+              key={index} 
+              routine={routine} 
+              last={index === renderedRoutines.length - 1} 
+              selected={routine.title === splitTitle}
+            />
+          ))}
+          
+          <ThemedPressable 
+            style={styles.addRoutineRow} 
+            onPress={() => router.push('(survey)')}
+            activeOpacity={0.7}
+            label="Create a new routine"
+            hint="Takes you to the survey to create a new routine"
+          >
+            <ThemedText style={styles.addRoutineText}>Create a new routine</ThemedText>
+          </ThemedPressable>
+        </ScrollView>
+      </View>
     )
   }
 
   const renderSubHeader = () => {
     return (
       <View style={styles.tabContainer}>
-      <ThemedPressable type="pill" style={[styles.tabButton, activeTab === 0 && styles.activeTab]} onPress={() => setActiveTab(0)}>
+      <ThemedPressable type="pill" style={[styles.tabButton, activeTab === 0 && styles.activeTab]} onPress={() => setActiveTab(0)} label="View Your Routines" hint="View your saved routines">
         <ThemedText style={styles.tabText}>Routines</ThemedText>
-      </ThemedPressable>
-      <ThemedPressable type="pill" style={[styles.tabButton, activeTab === 1 && styles.activeTab]} onPress={() => setActiveTab(1)}>
+      </ThemedPressable >
+      <ThemedPressable type="pill" style={[styles.tabButton, activeTab === 1 && styles.activeTab]} onPress={() => setActiveTab(1)} label="Friends Tab" hint="View your friends">
         <ThemedText style={styles.tabText}>Friends</ThemedText>
       </ThemedPressable>
-      <ThemedPressable type="pill" style={[styles.tabButton, activeTab === 2 && styles.activeTab]} onPress={() => setActiveTab(2)}>
+      <ThemedPressable type="pill" style={[styles.tabButton, activeTab === 2 && styles.activeTab]} onPress={() => setActiveTab(2)} label="Weight Tab" hint="View your weight progress">
         <ThemedText style={styles.tabText}>Weight</ThemedText>
       </ThemedPressable>
       </View>
@@ -52,7 +75,7 @@ export default function ProfilePage() {
   const renderFriends = () => {
     return (
       <View>
-        <ThemedText>Friends Coming Soon</ThemedText>
+        <ThemedText type="header" style={{marginTop: 20}}>Friends Coming Soon</ThemedText>
       </View>
     )
   }
@@ -60,16 +83,22 @@ export default function ProfilePage() {
   const renderWeight = () => {
     return (
       <View>
-        <ThemedText>Weight Coming Soon</ThemedText>
+        <ThemedText type="header" style={{marginTop: 20}}>Weight Coming Soon</ThemedText>
       </View>
     )
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.signOutContainer}>
-        <Ionicons name="log-out-outline" size={24} color={colors.text} onPress={() => signOut()} />
-        <ThemedText style={styles.signOutText}>Sign Out</ThemedText>
+    <ThemedView style={styles.container} label="Profile Page">
+      <View style={styles.settingsContainer}>
+        <ThemedPressable 
+          style={styles.settingsIconTouchable}
+          onPress={() => router.push('/SettingsPage')}
+          label="Settings"
+          hint="Takes you to the settings page"
+        >
+          <Ionicons name="settings-outline" size={30} color={colors.text} />
+        </ThemedPressable>
       </View>
       <MainHeader title={username} subHeaderComponent={renderSubHeader()}></MainHeader>
       
@@ -108,6 +137,7 @@ function createStyles(colors) {
     tabButton: {
       width: 100,
       marginHorizontal: 10,
+      height: 45
     },
     activeTab: {
       backgroundColor: colors.tint,
@@ -122,18 +152,30 @@ function createStyles(colors) {
       alignItems: 'center',
       marginTop: 10,
     },
-    signOutContainer: {
+    settingsContainer: {
       position: 'absolute',
-      top: 10,
-      right: -20,
+      top: -10,
+      right: -15,
       alignItems: 'center',
       zIndex: 3,
     },
-    signOutText: {
-      lineHeight: 10,
-      fontSize: 10,
-      textAlign: 'center',
-    }
+    settingsIconTouchable: {
+      alignItems: 'center',
+      padding: 10,
+      borderWidth: 0,
+    },
+    addRoutineRow: {
+      marginTop: 15,
+      marginBottom: 5,
+      paddingVertical: 8,
+      alignItems: 'center',
+      borderRadius: 4,
+      backgroundColor: colors.backgroundLight,
+    },
+    addRoutineText: {
+      color: colors.text,
+      fontWeight: '500',
+    },
   });
 }
 

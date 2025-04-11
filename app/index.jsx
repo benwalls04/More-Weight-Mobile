@@ -1,13 +1,14 @@
 import React from "react";
 import { useRouter } from "expo-router";
-import { View, Dimensions, StyleSheet } from "react-native";
+import { View, Dimensions, StyleSheet, Alert } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { ThemedText } from "@/components/ThemedText";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { useUserContext } from "@/hooks/UserContext";
+import * as SecureStore from 'expo-secure-store';
+import NetInfo from '@react-native-community/netinfo';
 
 const windowWidth = Dimensions.get('window').width * .85;
 const BUTTON_MARGIN = 3;
@@ -16,42 +17,79 @@ const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColu
 
 const WelcomePage = () => {
   const router = useRouter();
-
-  const [loading, setLoading] = useState(true);
+  const [isOnline, setIsOnline] = useState(true);
   const {login, setNewUser} = useUserContext();
 
+  // Check network connectivity
+  useEffect(() => {
+    // Initial check
+    NetInfo.fetch().then(state => {
+      setIsOnline(state.isConnected);
+    });
+
+    // Subscribe to network state updates
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsOnline(state.isConnected);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   async function getData() {
-    const loggedInStr = await AsyncStorage.getItem("isLoggedIn");
-    // const isLoggedInValue = JSON.parse(loggedInStr);
-    const isLoggedInValue = false;
+    const loggedInStr = await SecureStore.getItemAsync("isLoggedIn");
+    const isLoggedInValue = JSON.parse(loggedInStr);
 
     if (isLoggedInValue) {
-      const username = await AsyncStorage.getItem("username");
-      const password = await AsyncStorage.getItem("password");
+      const username = await SecureStore.getItemAsync("username");
+      const password = await SecureStore.getItemAsync("password");
       login(username, password);
     }
-    setLoading(false);
   }
 
   useEffect(() => {
     getData();
   }, []);
   
+  // Handle navigation with offline check
+  const handleNavigation = (path, isSignup = false) => {
+    if (!isOnline) {
+      Alert.alert(
+        'No Internet Connection',
+        'You need to be online to access this feature. Please check your connection and try again.',
+        [{ text: 'OK' }]
+      );
+    } else {
+      if (isSignup) {
+        setNewUser(true);
+        router.push(path);
+      } else {
+        router.push(path);
+      }
+    }
+  };
+  
   return (
-    <ThemedView>
+    <ThemedView label="Welcome Page">
         <ThemedLayout
           header={
             <ThemedText style={Styles.title}>Welcome to More Weight!</ThemedText>
           }
         body={
             <View style={Styles.buttonContainer}>
-              <ThemedPressable onPress={() => router.push("/LogInPage")} style={Styles.button}>
+              <ThemedPressable 
+                onPress={() => handleNavigation("/LogInPage")} 
+                style={Styles.button} 
+                label="Returning User" 
+                hint="Logs you into your existing account"
+              >
                 <ThemedText style={Styles.buttonText}>Returning User</ThemedText>
               </ThemedPressable>
-              <ThemedPressable onPress={() => {
-                setNewUser(true);
-                router.push("/(survey)")
-              }} style={Styles.button}>
+              <ThemedPressable 
+                onPress={() => handleNavigation("/(survey)", true)} 
+                style={Styles.button} 
+                label="New User" 
+                hint="Creates a new account and takes you to the survey"
+              >
                 <ThemedText style={Styles.buttonText}>New User</ThemedText>
               </ThemedPressable>  
             </View>

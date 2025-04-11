@@ -5,6 +5,7 @@ import { COLORS } from "@/constants/Colors";
 export function ThemedView({
   style,
   children,
+  label,
   ...otherProps
 }) {
   const { theme } = useThemeContext();
@@ -31,6 +32,8 @@ export function ThemedView({
           },
           style,
         ]}
+        accessibilityLabel={label}
+        accessible={true}
       >
         {children}
       </View>

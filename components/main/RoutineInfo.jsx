@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useUserContext } from "@/hooks/UserContext";
@@ -27,10 +27,6 @@ export default function RoutineInfo({routine, selected, last}) {
     router.push("(main)/EditPage");
   };
 
-  const handleAddRoutine = () => {
-    router.push("(survey)");
-  }
-
   let restDays = [];
   routine.routine.forEach((day, index) => {
     if (day.title === "rest") {
@@ -38,19 +34,34 @@ export default function RoutineInfo({routine, selected, last}) {
     }
   });
 
+  const [changingRoutine, setChangingRoutine] = useState(false);
+
   const handleConfirm = async () => {
+    if (changingRoutine) {
+      Alert.alert("Please wait for the routine to change");
+      return;
+    }
+    
     setPopupVisible(false);
     setRoutine(routine.routine);
     setRoutineCpy(routine.routine);
     setSplitTitle(routine.title);
+    setChangingRoutine(true);
+    
     let updatedInfo = info ? {...info} : {};
     updatedInfo.sets = routine.numSets;
     setInfo(updatedInfo);
     
-    await axios.post('http://192.168.1.253:3000/change-routine', {
-      username: username,
-      title: routine.title,
-    })
+    try {
+      await axios.post('https://more-weight.com/change-routine', {
+        username: username,
+        title: routine.title,
+      });
+    } catch (error) {
+      Alert.alert('Error', error.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setChangingRoutine(false);
+    }
   }
 
   const popupBody = () => {
@@ -58,7 +69,7 @@ export default function RoutineInfo({routine, selected, last}) {
       <View style={{padding: 20, height: 230, justifyContent: 'flex-start', alignItems: 'center'}}>
         <ThemedText type="header"style={{textAlign: 'center'}}>Are you sure you want to change to this routine?</ThemedText>
         <ThemedText style={{textAlign: 'center', lineHeight: 20, paddingTop: 10}}>If you are currently working out, todays progress may be lost.</ThemedText>
-        <ThemedPressable style={styles.confirmButton} onPress={handleConfirm}>
+        <ThemedPressable style={styles.confirmButton} onPress={handleConfirm} label="Confirm Routine Change" hint="You acknowledge the warning and wish to change to this routine">
           <ThemedText style={{textAlign: 'center'}}>Yes</ThemedText>
         </ThemedPressable>
       </View>
@@ -68,32 +79,39 @@ export default function RoutineInfo({routine, selected, last}) {
   return (
     <View style={styles.container}>
       <Popup visible={popupVisible} body={popupBody} onClose={() => setPopupVisible(false)}></Popup>
-      <View style={styles.columnGrid}>
-        <View style={{flex: 1}}>
-          <TouchableOpacity style={[styles.checkButton, selected && {backgroundColor: colors.tint}]} onPress={() => !selected && setPopupVisible(true)}>
-            {selected && <ThemedText style={{textAlign: 'center', color: colors.tint}}>✓</ThemedText>}
-          </TouchableOpacity>
-        </View>
-        <View style={{flex: 6}}>
-          <View style={styles.titleRow}>
-            <ThemedText>{routine.title}</ThemedText>
-            <TouchableOpacity 
-              style={styles.editButton} 
-              onPress={handleEditRoutine}
-            >
-              <Feather 
-                name="edit-2" 
-                size={18} 
-                color={colors.text} 
-              />
-            </TouchableOpacity>
+      <TouchableOpacity 
+        style={styles.rowTouchable}
+        onPress={() => !selected && setPopupVisible(true)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.columnGrid}>
+          <View style={{flex: 1}}>
+            <View style={[styles.checkButton, selected && {backgroundColor: colors.tint}]}>
+              {selected && <ThemedText style={{textAlign: 'center', color: colors.tint}}>✓</ThemedText>}
+            </View>
           </View>
-          <ThemedText style={{lineHeight: 12}}>Rest Days: {restDays.join(", ")}</ThemedText>
+          <View style={{flex: 6}}>
+            <View style={styles.titleRow}>
+              <ThemedText>{routine.title}</ThemedText>
+              <TouchableOpacity 
+                style={styles.editButton} 
+                onPress={handleEditRoutine}
+                accessible={true}
+                accessibilityLabel="Edit Routine"
+                accessibilityRole="button"
+                accessibilityHint="Edit the routine"
+              >
+                <Feather 
+                  name="edit-2" 
+                  size={22} 
+                  color={colors.text} 
+                />
+              </TouchableOpacity>
+            </View>
+            <ThemedText style={{lineHeight: 12}}>Rest Days: {restDays.join(", ")}</ThemedText>
+          </View>
         </View>
-      </View>
-      {last && <ThemedPressable type="slanted" style={styles.addButton} onPress={handleAddRoutine}>
-        <ThemedText style={{marginTop: -12, fontSize: 20}}>+</ThemedText>
-      </ThemedPressable>}
+      </TouchableOpacity>
     </View>
   )
 }
@@ -121,6 +139,11 @@ function createStyles(colors) {
     },
     editButton: {
       padding: 5,
+      height: 45,
+      width: 45,
+      justifyContent: 'center',
+      alignItems: 'flex-end',
+      marginRight: -10,
     },
     checkButton: {
       height: 25,
@@ -129,13 +152,6 @@ function createStyles(colors) {
       borderColor: colors.tint,
       borderWidth: 1,
       borderRadius: 4,
-    },
-    addButton: {
-      height: 30,
-      width: 50,
-      alignSelf: 'center',
-      position: 'absolute',
-      bottom: -20,
     },
     confirmButton: {
       marginTop: 25,
@@ -146,6 +162,9 @@ function createStyles(colors) {
       alignSelf: 'center',
       width: 200,
       height: 40,
-    }
+    },
+    rowTouchable: {
+      width: '100%',
+    },
   })
 }

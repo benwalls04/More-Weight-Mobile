@@ -18,9 +18,9 @@ export default function WorkoutPage() {
 
   const { workoutCpy, dayName, workoutFlag, startWorkout, complete } = useWorkoutContext();
 
-  if (!workoutFlag) {
+  if ((!workoutFlag || complete) && workoutCpy?.movements?.length > 0) {
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView style={styles.container} label="Workout Page">
         <MainHeader title={getWorkoutTitle(workoutCpy.title)} subHeaderComponent={<ThemedText style={{textAlign: 'center'}}>{dayName}</ThemedText>} />
         {workoutCpy.title !== "rest" && (
           <ScrollView
@@ -46,8 +46,14 @@ export default function WorkoutPage() {
         )}       
       </ThemedView>
     );
-  } else {
+  } else if (workoutCpy?.movements?.length > 0) {
     return (<SetScreen />)
+  } else {
+    return (
+      <ThemedView style={styles.container} label="Workout Page">
+        <ThemedText type="header" style={{textAlign: 'center', marginTop: 20}}>No workout found</ThemedText>
+      </ThemedView>
+    )
   }
 }
 

@@ -33,7 +33,8 @@ function EditPageContent() {
   const Styles = createStyles(colors);
 
   const WEEKDAYS = ["M", "T", "W", "Th", "F", "S", "Su"]
-  const { routineCpy } = useUserContext();
+  const WEEKDAYS_LABELS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+  const { routineCpy, isSavingRoutine, isSigningUp } = useUserContext();
   const { dayIndex, setDayIndex, finish, maxDay, maxed } = useEditContext();
   const workoutCpy = routineCpy[dayIndex];
 
@@ -55,15 +56,24 @@ function EditPageContent() {
       <View>
         <ThemedText type="title"style={{textAlign: "center", marginBottom: 10}}>Are you sure?</ThemedText>
         <ThemedText style={{textAlign: "center", lineHeight: 20}}>This will make all sets RPE 10, which could be overkill depending on your experience level. It also may cause your workout time to exceed your time limit.</ThemedText>
-        <ThemedPressable style={Styles.confirmBtn} onPress={handleMaxIntensity}>
+        <ThemedPressable style={Styles.confirmBtn} onPress={handleMaxIntensity} label="Confirm Max Intensity" hint="You acknowledge the warning and wish to make all sets RPE 10">
           <ThemedText style={{fontSize: 14}}>Yes</ThemedText>
         </ThemedPressable>
       </View>
     )
   }
 
+  const handleFinish = async () => {
+    if (isSavingRoutine || isSigningUp) return;
+    try {
+      await finish();
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+    }
+  }
+
   return (
-      <ThemedView style={Styles.container}>
+      <ThemedView style={Styles.container} label="Edit Routine Page">
         {maxPopupVisible && <Popup body={maxBody} onClose={() => setMaxPopupVisible(false)}/>}
         <View style={Styles.headerContainer}>
           <FlatList 
@@ -84,17 +94,19 @@ function EditPageContent() {
                     marginRight: index < WEEKDAYS.length - 1 ? 1 : 0,
                   }
                 ]}
+                label={WEEKDAYS_LABELS[index]}
+                hint={"View the workout for " + WEEKDAYS_LABELS[index]}
               >
                 <ThemedText>{item}</ThemedText>
               </ThemedPressable>
             )}
           />
-          <ThemedText type="title" style={{marginTop: 10}}>{getWorkoutTitle(workoutCpy.title)}</ThemedText>
+          <ThemedText type="title" style={{marginTop: 10, marginBottom: 10}}>{getWorkoutTitle(workoutCpy.title)}</ThemedText>
         </View>
 
-        <ThemedPressable style={[Styles.maxBtn, maxed[dayIndex] && {backgroundColor: colors.tint}]} onPress={maxed[dayIndex] ? () => {} : () => setMaxPopupVisible(true)}>
+        {workoutCpy.title !== "rest" && <ThemedPressable style={[Styles.maxBtn, maxed[dayIndex] && {backgroundColor: colors.tint}]} onPress={maxed[dayIndex] ? () => {} : () => setMaxPopupVisible(true)} label="Max The Intensity of This Workout" hint="This will allow you to make all the sets RPE 10, which means maximum intensity">
           <ThemedText>Max Intensity</ThemedText>
-        </ThemedPressable>       
+        </ThemedPressable >} 
 
         <ScrollView
             showsVerticalScrollIndicator={false}
@@ -112,7 +124,11 @@ function EditPageContent() {
             ))}
           </ScrollView>
 
-        <FooterButton clickEvent={() => finish()} text={"Done Editing"}/>
+        <FooterButton 
+          clickEvent={isSavingRoutine || isSigningUp ? () => {} : handleFinish} 
+          text={isSavingRoutine || isSigningUp ? "Saving..." : "Done Editing"}
+          style={isSavingRoutine || isSigningUp ? {opacity: 0.6} : {}}
+        />
       </ThemedView>
   )
 }
@@ -127,7 +143,6 @@ function createStyles (colors) {
       zIndex: 10,
       position: 'absolute',
       top: 25,
-      paddingBottom: 10,
     },
     container: {
       justifyContent: 'center',
@@ -140,24 +155,27 @@ function createStyles (colors) {
       flexDirection: "row",
       justifyContent: "center",
       paddingHorizontal: 15,
+      paddingBottom: 5,
     }, 
     weekdayBtn: {
       width: (HEADER_WIDTH / 7) - 1, 
       alignItems: "center",
       transform: [{ skewX: '-10deg' }],
       borderRadius: 0,
-      height: 40,
+      height: 44,
       marginHorizontal: 0,
       zIndex: 100,
       overflow: 'hidden', 
     },
     maxBtn: {
       width: 100,
-      height: 35,
+      height: 45,
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: colors.background,
-      marginTop: 25,
+      marginTop: 40,
+      zIndex: 100,
+      marginBottom: 10,
     },
     confirmBtn: {
       width: 150,

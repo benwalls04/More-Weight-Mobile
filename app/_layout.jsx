@@ -26,10 +26,16 @@ export default function RootLayout() {
     <UserProvider>
       <AuthProvider>
         <ThemeProvider>
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(auth)/LogInPage"/>
+          <Stack screenOptions={{ 
+              headerShown: false, 
+              gestureEnabled: false,
+              animation: 'fade',
+              animationDuration: 300,
+              contentStyle: { backgroundColor: 'black' }
+            }}>
+            <Stack.Screen name="(auth)/LogInPage" options={{ gestureEnabled: true }}/>
             <Stack.Screen name="(survey)"/>
-            <Stack.Screen name="(auth)/SignUpPage"/>
+            <Stack.Screen name="(auth)/SignUpPage" options={{ gestureEnabled: true }}/>
           </Stack>
         </ThemeProvider>
       </AuthProvider>

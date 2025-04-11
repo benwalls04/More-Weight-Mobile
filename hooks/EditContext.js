@@ -39,12 +39,13 @@ export function EditProvider({children}){
 
   const finish = async () => {
     if (routineCpy.every(day => !day.movements.some(entry => entry.movement.includes("new movement")))){    
-      await axios.post('http://192.168.1.253:3000/set-routine', {
-        routine: {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}, 
-        username: username,
-        updateActive: !newUser && allRoutines.some(routine => routine.title === splitTitle)
-      }).then(response => {
-
+      try {
+        const response = await axios.post('https://more-weight.com/set-routine', {
+          routine: {title: splitTitle, routine: routineCpy, numSets: NUM_SETS}, 
+          username: username,
+          updateActive: !newUser && allRoutines.some(routine => routine.title === splitTitle)
+        });
+        
         if (newUser) {
           setNewUser(false);
         }
@@ -55,9 +56,9 @@ export function EditProvider({children}){
         setRoutine(routineCpy);
 
         router.replace("/(main)/(tabs)/WorkoutPage");
-      }).catch(error => {
-        console.error("Error updating routine:", error);
-      })
+      } catch (error) {
+        Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+      } 
     } else {
       Alert.alert("Incomplete Routine", "Please substitute all fields titled 'new movement' for a valid movement");
     }
@@ -209,6 +210,7 @@ export function EditProvider({children}){
     const newDay = [...routineCpy][dayIndexRef.current];
     let movements = newDay.movements;
     let sets = newDay.sets;
+    const max = maxed[dayIndexRef.current];
     
     const oldMovementObj = newDay.movements[workoutIndex]
 
@@ -240,13 +242,17 @@ export function EditProvider({children}){
       }
     }
 
+    if (max){
+      const newSets = maxIntensity(sets.slice(firstIndex, firstIndex + NUM_SETS));
+      sets.splice(firstIndex, NUM_SETS, ...newSets);
+    }
+
     sets[firstIndex + NUM_SETS - 1].rest = updateRestTime(firstIndex + NUM_SETS - 1, sets);
     if (firstIndex > 0) {
       sets[firstIndex - 1].rest = updateRestTime(firstIndex - 1, sets);
     }
 
     newDay.sets = sets;
-
     updateRoutine(newDay);
   }
 
@@ -293,6 +299,12 @@ export function EditProvider({children}){
       }
     }
     newDay.sets = sets;
+
+    if (maxed[dayIndexRef.current] && editedSets.some(set => set.RPE !== 10)){
+      let newMaxed = [...maxed];
+      newMaxed[dayIndexRef.current] = false;
+      setMaxed(newMaxed);
+    }
 
     updateRoutine(newDay);
   }

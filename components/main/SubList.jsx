@@ -1,19 +1,69 @@
-import { View, ScrollView, StyleSheet, TextInput } from "react-native";
+import { View, FlatList, StyleSheet, TextInput } from "react-native";
 import { ThemedPressable } from "@/components/ThemedPressable";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, memo, useMemo, useRef } from "react";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
 import { useEditContext } from "@/hooks/EditContext";
 
-export default function SubList({list, style, height, selectInteract=false, source}) {
+// Completely isolated input component with its own state
+const IsolatedTextInput = memo(({ onSubmit, isSelected, styles }) => {
+  const [localText, setLocalText] = useState("");
+  const inputRef = useRef(null);
+  
+  const handleSubmit = () => {
+    if (localText.trim()) {
+      onSubmit(localText);
+      setLocalText(""); 
+      
+      // Dismiss keyboard
+      if (inputRef.current) {
+        inputRef.current.blur();
+      }
+    }
+  };
+  
+  return (
+    <View style={styles.addContainer}>
+      <ThemedText style={styles.addLabel}>Or Add Your Own Movement</ThemedText>
+      <TextInput
+        ref={inputRef}
+        placeholder="Enter movement here"
+        style={[styles.addInput, isSelected ? styles.addInputFocus : null]}
+        value={localText}
+        onChangeText={setLocalText}
+        returnKeyType="done"
+        onSubmitEditing={handleSubmit}
+        accessible={true}
+        accessibilityLabel="Add Movement"
+        accessibilityRole="text"
+        accessibilityHint="Enter the movement you want to add"
+      />
+    </View>
+  );
+});
+
+// Memoized item component
+const SubListItem = memo(({ item, index, isSelected, onPress, styles }) => (
+  <ThemedPressable 
+    key={index.toString()}
+    style={[styles.subOption, isSelected ? styles.subOptionSelected : null]} 
+    onPress={() => onPress(index)}
+    label={item.variant}
+    hint={"Select this option to use as your new movement"}
+  >
+    <ThemedText>{item.variant}</ThemedText>
+  </ThemedPressable>
+));
+
+const SubList = ({list, style, height, selectInteract=false, source}) => {
   const { theme } = useThemeContext();
   const colors = theme === 'dark' ? COLORS.dark : COLORS.light;
-  const styles = createStyles(colors, height);
+  const styles = useMemo(() => createStyles(colors, height), [colors, height]);
 
   const [choiceIndex, setChoiceIndex] = useState(0);
-  const [addText, setAddText] = useState("");
+  const [displayList, setDisplayList] = useState(list);
 
   let setSubChoice;
   if (source === "workout") {
@@ -25,12 +75,18 @@ export default function SubList({list, style, height, selectInteract=false, sour
   }
 
   useEffect(() => {
-    setSubChoice({movement: list[0].baseMovement, bias: list[0].bias})
-  }, [])
+    setDisplayList(list);
+  }, [list]);
 
-  const handlePress = (index) => {
+  useEffect(() => {
+    if (displayList && displayList.length > 0) {
+      setSubChoice({movement: displayList[0].baseMovement, bias: displayList[0].bias});
+    }
+  }, []);
+
+  const handlePress = useCallback((index) => {
     if (choiceIndex !== index) {
-      setSubChoice({movement: list[index].baseMovement, bias: list[index].bias});
+      setSubChoice({movement: displayList[index].baseMovement, bias: displayList[index].bias});
       if (selectInteract) {
         setChoiceIndex(index);
       }
@@ -40,68 +96,83 @@ export default function SubList({list, style, height, selectInteract=false, sour
         setChoiceIndex(-1);
       }
     }
-  }
+  }, [choiceIndex, displayList, selectInteract, setSubChoice]);
 
-  const handleAddText = (text) => {
-    setAddText(text);
-    setSubChoice({movement: text.toLowerCase(), bias: "neutral"});
-  }
+  const handleCustomSubmit = useCallback((text) => {
+    // Create a new custom movement item
+    const newItem = {
+      variant: text,
+      baseMovement: text.toLowerCase(),
+      bias: "neutral"
+    };
+    
+    // Add the new item to the display list
+    const newList = [...displayList, newItem];
+    setDisplayList(newList);
+    
+    // Set the choice index to the new item (last in the list)
+    const newIndex = newList.length - 1;
+    setChoiceIndex(newIndex);
+    
+    // Update the selected movement
+    setSubChoice({movement: newItem.baseMovement, bias: newItem.bias});
+  }, [displayList, setSubChoice]);
+
+  const renderItem = useCallback(({ item, index }) => (
+    <SubListItem 
+      item={item}
+      index={index}
+      isSelected={choiceIndex === index}
+      onPress={handlePress}
+      styles={styles}
+    />
+  ), [choiceIndex, handlePress, styles]);
+  
+  const renderFooter = useCallback(() => (
+    <IsolatedTextInput 
+      onSubmit={handleCustomSubmit}
+      isSelected={false} 
+      styles={styles}
+    />
+  ), [handleCustomSubmit, styles]);
 
   return (
     <View style={[styles.subDropdown, style]}>
-        <ScrollView
-          nestedScrollEnabled={true}
-          showsVerticalScrollIndicator={true}
-          indicatorStyle="white" // Try setting an explicit color
-          persistentScrollbar={true} // Make scrollbar always visible
-          style={{ 
-            maxHeight: height ? height : 150,
-            width: '100%' // Ensure full width
-          }}
-          contentContainerStyle={{
-            paddingRight: 5 // Add padding for the scrollbar
-          }}
-        >
-          {list.map((item, index) => (
-            <ThemedPressable 
-              key={index.toString()}
-              style={[styles.subOption, choiceIndex === index ? styles.subOptionSelected : null]} 
-              onPress={() => handlePress(index)}
-            >
-              <ThemedText>{item.variant}</ThemedText>
-            </ThemedPressable>
-          ))}
-          <View style={styles.addContainer}>
-            <ThemedText style={styles.addLabel}>Or Add Your Own Movement</ThemedText>
-            <TextInput
-              placeholder="Enter movement here"
-              style={[styles.addInput, choiceIndex === list.length ? styles.addInputFocus : null]}
-              value={addText}
-              onFocus={() => setChoiceIndex(list.length)}
-              onChangeText={e => handleAddText(e)}
-            ></TextInput>
-          </View>
-        </ScrollView>
-      </View>
+      <FlatList
+        data={displayList}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={true}
+        persistentScrollbar={true}
+        contentContainerStyle={{
+          paddingBottom: 20,
+        }}
+        style={{ 
+          width: '100%',
+          height: '100%',
+        }}
+      />
+    </View>
   );
 }
 
+// Memoize the entire SubList component
+export default memo(SubList);
 
 function createStyles(colors, height) {
   return StyleSheet.create({
     subDropdown: {
-      position: 'absolute',
-      left: 27,
-      width: 240,
-      maxHeight: 180,
+      width: '100%',
+      height: height || '100%',
       backgroundColor: colors.background,
       overflow: 'hidden',
-      zIndex: 10,
+      position: 'absolute',
     },
     subOption: {
       fontSize: 10,
       textAlign: 'left',
-      height: 35,
+      height: 45,
       backgroundColor: colors.accentLight,
       color: colors.text,
       borderColor: colors.accent,
@@ -124,6 +195,7 @@ function createStyles(colors, height) {
       textAlign: "center"
     },
     addInput: {
+      height: 45,
       fontSize: 14,
       paddingLeft: 10,
       borderWidth: 1,

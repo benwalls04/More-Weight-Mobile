@@ -54,7 +54,7 @@ export default function SurveyGrid({
   const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;
 
   return (
-    <ThemedView style={{borderWidth: 0}}>
+    <ThemedView style={{borderWidth: 0}} label={title}>
       <ThemedLayout
       header={
         <ThemedText 
@@ -68,7 +68,7 @@ export default function SurveyGrid({
         </ThemedText>
       }
       body={
-        <View>
+        <View style={{justifyContent: 'center', alignItems: 'center', alignSelf: 'center'}}>
           <FlatList         
           data={data}
           keyExtractor={(item, index) => index.toString()}
@@ -80,6 +80,7 @@ export default function SurveyGrid({
               onPress={() => handlePress(index)}
               type={surveyData[surveyIndex].includes(index) ? "selected" : "default"}
               style={[styles.button, btnGrow ? {flexGrow: 1} : {}, {width: BTN_WIDTH}, {height: 60}]}
+              label={String(item.title)}
             >
               <ThemedText style={styles.buttonText}>{item.title}</ThemedText>
             </ThemedPressable>

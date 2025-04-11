@@ -70,6 +70,7 @@ export const MOVEMENTS = {
     }, 
     "variants": {
       "lower chest": '',
+      neutral: '',
     }, 
     biasOrder: ['lower chest', 'lower chest', 'lower chest']
   }, 
@@ -255,7 +256,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 10, 11]
     }, 
     "variants": {
-      "upper back": ''
+      "upper back": '',
+       neutral: '',
     },
     biasOrder: ['upper back', 'upper back', 'upper back']
   }, 
@@ -268,7 +270,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 10, 10]
     },
     "variants": {
-      "upper back": ''
+      "upper back": '', 
+       neutral: '',
     },
     biasOrder: ['upper back', 'upper back', 'upper back']
   }, 
@@ -281,7 +284,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 9, 9]
     }, 
     "variants": {
-      quads: ''
+      quads: '', 
+      neutral: '',
     },
     biasOrder: ['quads', 'quads', 'quads']
   }, 
@@ -294,7 +298,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 10, 10]
     }, 
     "variants": {
-      quads: ''
+      quads: '', 
+      neutral: '',
     },
     biasOrder: ['quads', 'quads', 'quads']
   }, 
@@ -307,7 +312,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 10, 10]
     }, 
     "variants": {
-      quads: ''
+      quads: '', 
+      neutral: '',
     },
     biasOrder: ['quads', 'quads', 'quads']
   }, 
@@ -336,7 +342,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 9, 9]
     },
     "variants": {
-      quads: ''
+      quads: '', 
+      neutral: '',
     },
     biasOrder: ['quads', 'quads', 'quads']
   }, 
@@ -349,7 +356,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 9, 9]
     }, 
     "variants": {
-      hamstrings: ''
+      hamstrings: '', 
+      neutral: '',
     },
     biasOrder: ['hamstrings', 'hamstrings', 'hamstrings']
   }, 
@@ -362,7 +370,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 9, 9]
     }, 
     "variants": {
-      hamstrings: ''
+      hamstrings: '', 
+      neutral: '',
     },
     biasOrder: ['hamstrings', 'hamstrings', 'hamstrings']
   }, 
@@ -375,7 +384,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 9, 9]
     }, 
     "variants": {
-      hamstrings: ''
+      hamstrings: '', 
+      neutral: '',
     }, 
     biasOrder: ['hamstrings', 'hamstrings', 'hamstrings']
   }, 
@@ -402,7 +412,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 9, 9]
     },
     "variants": {
-      hamstrings: ''
+      hamstrings: '', 
+      neutral: '',
     },
     biasOrder: ['hamstrings', 'hamstrings', 'hamstrings']
   }, 
@@ -415,7 +426,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 10, 11]
     }, 
     "variants": {
-      quads: ''
+      quads: '', 
+      neutral: '',
     },
     biasOrder: ['quads', 'quads', 'quads']
   }, 
@@ -428,7 +440,8 @@ export const MOVEMENTS = {
       "a": [9, 9, 10, 11]
     }, 
     "variants": {
-      hamstrings: ''
+      hamstrings: '', 
+      neutral: '',
     },
     biasOrder: ['hamstrings', 'hamstrings', 'hamstrings']
   }, 

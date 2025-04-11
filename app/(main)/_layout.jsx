@@ -5,6 +5,7 @@ export default function RootLayout() {
     <Stack screenOptions={{ headerShown: false, gestureEnabled: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="EditPage" options={{ headerShown: false }} />
+      <Stack.Screen name="SettingsPage" options={{ headerShown: false }} />
     </Stack>
   );
 }

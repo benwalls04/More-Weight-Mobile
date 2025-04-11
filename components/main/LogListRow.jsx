@@ -43,8 +43,6 @@ export default function LogListRow({ entry, index }) {
     setLogChanges(newLogChanges);
   }
 
-  // FIXME: add a set number field for log entries and render it here.
-
   return (
     <View key={index} style={styles.popupEntry}>
       <View style={styles.detailGroup}>
@@ -52,6 +50,10 @@ export default function LogListRow({ entry, index }) {
           style={[styles.valText, styles.dateText]}
           value={formatDate(entry.createdAt) || "NA"}
           editable={false}
+          accessible={true}
+          accessibilityLabel="Date"
+          accessibilityRole="text"
+          accessibilityHint="The date of the log entry is not editable"
         />
       </View>
       <View style={styles.detailGroup}>
@@ -60,6 +62,11 @@ export default function LogListRow({ entry, index }) {
           value={weightText}
           editable={true}
           onChangeText={handleWeightChange}
+          keyboardType="numeric"
+          accessible={true}
+          accessibilityLabel="Weight"
+          accessibilityRole="text"
+          accessibilityHint="Enter the weight of the log entry"
         />
       </View>
       <View style={styles.detailGroup}>
@@ -68,6 +75,11 @@ export default function LogListRow({ entry, index }) {
           value={repsText}
           editable={true}
           onChangeText={handleRepsChange}
+          keyboardType="numeric"
+          accessible={true}
+          accessibilityLabel="Reps"
+          accessibilityRole="text"
+          accessibilityHint="Enter the reps of the log entry"
         />
       </View>
     </View>
@@ -97,6 +109,7 @@ function createStyles(colors) {
       paddingHorizontal: 4,
       borderRadius: 4,
       width: 40,
+      height: 45,
       textAlign: 'center',
       color: colors.text,
       width: "100%"

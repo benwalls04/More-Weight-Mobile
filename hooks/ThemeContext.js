@@ -16,7 +16,6 @@ export function useThemeContext() {
 export function ThemeProvider({children}) {
   
   const systemTheme = Appearance.getColorScheme();
-  // FIXME: add theme toggling 
   const [theme, setTheme] = useState('dark');
 
   useEffect(() => {

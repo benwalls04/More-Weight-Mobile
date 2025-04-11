@@ -30,7 +30,6 @@ export default function Graph({exercise}) {
 
   const exerciseData = logCpy[exercise] || [];
 
-  // FIXME: store movement info (like rep ranges) in the recents table 
   const maxReps = exerciseData.reduce((max, entry) => {
     return Math.max(max, Number(entry.reps));
   }, 0);

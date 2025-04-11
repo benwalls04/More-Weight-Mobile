@@ -78,7 +78,7 @@ export default function Custom() {
         <ThemedText type="subheader" style={styles.dayTitle}>{WEEKDAYS[index]}: {dayTitle}</ThemedText>
         {item !== "rest" && <ScrollView horizontal={true} contentContainerStyle={styles.muscleGroupContainer}>
           {muscleGroups.map((muscleGroup, muscleIndex) => (
-            <ThemedPressable key={muscleIndex} type="pill" onPress={() => handleMuscleGroupPress(muscleGroup, index)} style={selectedMuscleGroups[index].includes(muscleGroup) ? styles.selectedMuscleGroup : null}>
+            <ThemedPressable key={muscleIndex} type="pill" onPress={() => handleMuscleGroupPress(muscleGroup, index)} style={selectedMuscleGroups[index].includes(muscleGroup) ? styles.selectedMuscleGroup : null} label={muscleGroup} hint="If selected, this muscle group will be included in the workout for this day">
               <ThemedText style={{lineHeight: 14, fontSize: 12}}>{muscleGroup}</ThemedText>
             </ThemedPressable>
           ))}
@@ -88,10 +88,15 @@ export default function Custom() {
   }
 
   return (
-    <ThemedView>
+    <ThemedView label="Make Your Own Custom Split">
       <View style={styles.container}>
         <ThemedText type="title" style={{marginTop: 20}}>Customize Your Split</ThemedText>
-        <TextInput placeholder="Split Title" style={styles.splitTitleInput} onChangeText={(text) => setTitleText(text)}/>
+        <TextInput placeholder="Split Title" style={styles.splitTitleInput} onChangeText={(text) => setTitleText(text)}
+          accessible={true}
+          accessibilityLabel="Split Title"
+          accessibilityRole="text"
+          accessibilityHint="Enter the title of your split"
+        />
         <FlatList
           data={schedule}
           keyExtractor={(item, index) => index.toString()}
@@ -102,9 +107,15 @@ export default function Custom() {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      <ThemedPressable style={styles.footerButton} onPress={() => handleSubmit()}>
-        <ThemedText>Generate Workouts</ThemedText>
-      </ThemedPressable>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
+        <ThemedPressable onPress={() => router.back()} style={styles.submitButton} label="Go Back"> 
+          <ThemedText>Back</ThemedText>
+        </ThemedPressable>
+
+        <ThemedPressable onPress={() => handleSubmit()} style={styles.submitButton} label="Submit">
+          <ThemedText>Submit</ThemedText>
+        </ThemedPressable>
+      </View>
     </ThemedView>
   )
 }
@@ -157,14 +168,14 @@ function createStyles(colors) {
     selectedMuscleGroup: {
       backgroundColor: colors.tint,
     },
-    footerButton: {
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      height: 70,
-      backgroundColor: colors.background,
+    submitButton: {
+      borderWidth: 0,
+      height: 40,
+      width: '49%',
+      margin: 0,
       justifyContent: 'center',
       alignItems: 'center',
-    }
+      backgroundColor: colors.tint,
+    }, 
   })
 }

@@ -1,14 +1,13 @@
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedPressable } from "@/components/ThemedPressable";
-import PopupPressable from "@/components/PopupPressable";
 import { ThemedLayout } from "@/components/ThemedLayout";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useSplitsContext } from "@/hooks/SplitsContext";
 import { useUserContext } from "@/hooks/UserContext";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { useRouter } from "expo-router";
-import { View, StyleSheet, Dimensions, FlatList } from "react-native";
+import { View, StyleSheet, Dimensions, FlatList, Alert } from "react-native";
 import { useState } from "react";
 import { SPLIT_TITLES, SPLIT_SAMPLES } from "@/constants/Survey";
 import { COLORS } from "@/constants/Colors";
@@ -27,10 +26,6 @@ export default function Base() {
   const { setSplitTitle, allRoutines} = useUserContext();
   const router = useRouter();
   const [choiceIndex, setChoiceIndex] = useState(-1);
-
-  // FIXME: function that changes long description to short: IE shoul, biceps, triceps -> arms 
-  // FIXME: for 7 days, the component mounts before the data is loaded, so it shows nothing
-  // FIXME: get all the logic for handling tree out 
   
   const handleNext = async () => {
     if (choiceIndex > -1){
@@ -39,8 +34,8 @@ export default function Base() {
         newSplits.selection = value;
         setSplits(newSplits);
       if (Array.isArray(newSplits.selection[0])){
-          setLoading(true);
-          const response = await axios.post('http://192.168.1.253:3000/partition', { splits: newSplits.selection });
+        setLoading(true);
+        await axios.post('https://more-weight.com/partition', { splits: newSplits.selection }).then(response => {
           newSplits.selection = response.data;
           setLeaf(response.data)
           setSplits(newSplits);
@@ -55,7 +50,11 @@ export default function Base() {
 
           setLoading(false);
           router.push("/splits");
-        } 
+        })
+        .catch(error => {
+          Alert.alert('Error', error.response?.data?.message || 'Something went wrong. Please try again.');
+        });
+      }
     }
   };
 
@@ -63,49 +62,20 @@ export default function Base() {
     setChoiceIndex(index)
   }
 
-  const popupBody = () => {
-    return (
-      <FlatList 
-        data={splits.selection}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={1}
-        contentContainerStyle={{ flexGrow: 1, width: '100%'}}
-        scrollEnabled={false}
-        renderItem={({item, index}) => (
-          <View>
-            <View style={[styles.popupEntry, index === 0 ? {borderTopWidth: 0} : {}]}>
-              <View style={{flex: 4, justifyContent: 'center', paddingLeft: 10}}>
-                <ThemedText type="subheader">{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
-                <ThemedText style={styles.subText}>Pros:</ThemedText>
-                <ThemedText style={styles.subText}>Cons:</ThemedText>
-              </View>
-              <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ThemedPressable 
-                  style={styles.checkButton} 
-                  onPress={() => handlePress(index)}
-                  type={choiceIndex === index ? "selected" : "default"} />
-              </View>
-            </View>
-            <ThemedText style={styles.sampleText}>EX: {SPLIT_SAMPLES[Object.entries(item)[0][0]]}</ThemedText>
-          </View>
-        )}
-      />
-    )
-  }
-
   if (loading) {
     return <LoadingScreen />
   }
   
   return (
-    <ThemedView>
+    <ThemedView label="Select Your Base Split Type">
       <ThemedLayout
         header={
           <ThemedText 
             type="title"
-            numberOfLines={2}
+            numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
+            style={{paddingBottom: 10}}
         >
           Which split type do you prefer?
         </ThemedText>
@@ -125,6 +95,8 @@ export default function Base() {
                 onPress={() => handlePress(index)}
                 type={choiceIndex === index ? "selected" : "default"}
                 style={[styles.button, {width: BTN_WIDTH}]}
+                label={SPLIT_TITLES[Object.entries(item)[0][0]]}
+                hint={"Select this split to use it as your base split"}
               >
                 <View style={styles.buttonTextContainer}>
                   <ThemedText style={styles.buttonText}>{SPLIT_TITLES[Object.entries(item)[0][0]]}</ThemedText>
@@ -134,12 +106,12 @@ export default function Base() {
           />
 
           <View style={{flexDirection: 'row', justifyContent: 'space-between', width: windowWidth}}>
-            <ThemedPressable onPress={() => router.back()} style={styles.submitButton}> 
+            <ThemedPressable onPress={() => router.back()} style={styles.submitButton} label="Go Back"> 
               <ThemedText>Back</ThemedText>
             </ThemedPressable>
 
-            <ThemedPressable onPress={() => handleNext()} style={styles.submitButton}>
-              <ThemedText>Next</ThemedText>
+            <ThemedPressable onPress={() => handleNext()} style={styles.submitButton} label="Select this Split">
+              <ThemedText>Select</ThemedText>
             </ThemedPressable>
           </View>
         </View>

@@ -17,7 +17,7 @@ const LoginPage = () => {
   const handleSubmit = async () => {
     const res = await login(userText.toLowerCase(), passText.toLowerCase());
     if (res != "success") {
-      Alert.alert(res);
+      Alert.alert("Login Failed", res);
     } 
   }
 
@@ -25,8 +25,10 @@ const LoginPage = () => {
   const Styles = createStyles(colors);
 
   return (
-    <ThemedView>
+    <ThemedView label="Log In Page">
       <ThemedLayout
+        headerFlex={1}
+        bodyFlex={3}
         header={
           <View style={Styles.headerContainer}>
             <ThemedText style={{textAlign: "center"}} type="header">Hi, Welcome Back!</ThemedText>
@@ -42,6 +44,12 @@ const LoginPage = () => {
             value={userText}
             onChangeText={setUserText}
             returnKeyType="done"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            accessible={true}
+            accessibilityLabel="Username"
+            accessibilityRole="text"
           />
         </View>
         <View style={Styles.input}>
@@ -53,9 +61,15 @@ const LoginPage = () => {
             onChangeText={setPassText}
             secureTextEntry
             returnKeyType="done"
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoComplete="off"
+            accessible={true}
+            accessibilityLabel="Password"
+            accessibilityRole="text"
           />
         </View>
-        <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()}>
+        <ThemedPressable style={{marginTop: 10, height: 35}} onPress={() => handleSubmit()} label="Log In" hint="Logs you into your existing account">
           <ThemedText style={{textAlign: "center"}}>Log In</ThemedText>
             </ThemedPressable>
           </View>
@@ -79,7 +93,7 @@ function createStyles (colors) {
       paddingLeft: 10,
       fontSize: 14,
       color: colors.text,
-      height: 35, 
+      height: 45, 
       borderColor: colors.inputBorderColor,
       borderWidth: 1,
       borderRadius: 2,

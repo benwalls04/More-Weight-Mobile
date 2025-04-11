@@ -14,7 +14,6 @@ export function useSurveyContext() {
 
 export function SurveyProvider({children}) {
 
-  // FIXME: set up this context call
   const { setInfo } = useUserContext();
   const { setRoot, setSplits, setLeaf } = useSplitsContext();
   const [schedule, setSchedule] = useState([]);
@@ -101,10 +100,12 @@ export function SurveyProvider({children}) {
     setSchedule(userData.schedule);
 
     if (userData['split-make'] === 'sample') {
-      await axios.get('http://192.168.1.253:3000/splits', { params: params }).then((response) => {
+      await axios.get('https://more-weight.com/splits', { params: params }).then((response) => {
         setSplits(response.data);
         setLeaf(response.data.selection);
         setRoot(response.data);
+      }).catch(error => {
+        Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
       });
       router.push('/base')
     } else {

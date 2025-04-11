@@ -5,7 +5,7 @@ import { MOVEMENTS } from "@/constants/Movements";
 import getSubList from "@/functions/getSubsList";
 import updateRestTime from "@/functions/updateRestTime";
 import axios from "axios";
-import { AppState } from 'react-native';
+import { AppState, Alert } from 'react-native';
 
 const dayIndex = (new Date().getDay() + 6) % 7;
 const dayName = new Date().toLocaleDateString('en-US', { 
@@ -29,7 +29,7 @@ export function useWorkoutContext() {
 
 export function WorkoutProvider({children}) {
 
-  const { routine, info, logSet, getTargets, log, recents, username } = useUserContext();
+  const { routine, info, logSet, getTargets, log, recents, username, setLog, setRecents } = useUserContext();
 
   const [time, setTime] = useState(timeRef.current);
   const [timerInterval, setTimerInterval] = useState(null);
@@ -41,8 +41,8 @@ export function WorkoutProvider({children}) {
   const [workoutCpy, setWorkoutCpy] = useState(routine[dayIndex]);
   const [currMovement, setCurrMovement] = useState(workoutCpy.sets[index] ? workoutCpy.sets[index].movement : null);
 
-  const numSets = info.sets;
-  const exp = info.exp;
+  const numSets = info && info.sets ? info.sets : 3;
+  const exp = info && info.exp ? info.exp : "i";
   
   useEffect(() => {
     timeRef.current = time;
@@ -94,7 +94,7 @@ export function WorkoutProvider({children}) {
 
   const saveWorkoutProgress = async (inProgress) => {
     if (username) {
-      await axios.post('http://192.168.1.253:3000/progress', {
+      await axios.post('https://more-weight.com/progress', {
         username: username,
         inProgress: inProgress,
         movementIndex: movementIndex,
@@ -102,7 +102,9 @@ export function WorkoutProvider({children}) {
         movementsCpy: workoutCpy.movements,
         setsCpy: workoutCpy.sets,
         restTime: time ? time : 0
-      })
+      }).catch(error => {
+        Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+      });
     }
   }
 
@@ -113,12 +115,13 @@ export function WorkoutProvider({children}) {
   }, [username])
 
   const loadWorkoutProgress = async () => {
-    try {
-      const response = await axios.get('http://192.168.1.253:3000/progress', {
-        params: { username: username }  
-      });
-  
-      if (response.data.inProgress) {
+    await axios.get('https://more-weight.com/progress', {
+      params: { username: username }  
+    }).then(response => {
+
+      const sameMovements = response.data.movementsCpy.every(movement => workoutCpy.movements.some(m => m.movement === movement.movement))
+
+      if (response.data.inProgress && sameMovements) {
         if (response.data.timestamp && sameDay(new Date(response.data.timestamp), new Date())) {
         
           setWorkoutFlag(true);
@@ -142,11 +145,16 @@ export function WorkoutProvider({children}) {
           });
         } 
       } else if (response.data.timestamp && sameDay(new Date(response.data.timestamp), new Date()) && response.data.index > 0 ){
-        setComplete(true);
+        if (sameMovements) {
+          setComplete(true);
+        } else {
+          setComplete(false);
+        }
       }
-    } catch (error) {
-      console.error("Error loading workout progress:", error);
-    }
+    })
+    .catch(error => {
+      Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+    });
 
     function sameDay(date1, date2) {
       const d1 = new Date(date1);
@@ -184,30 +192,46 @@ export function WorkoutProvider({children}) {
     setTime(0)
     const firstMovement = routine[dayIndex].movements[0].movement;
     setCurrMovement(firstMovement);
+    loadWorkoutProgress();
   }
 
   useEffect(() => {
     if (currMovement){
       setSubList(getSubOptions(currMovement));
-      getTargets(currMovement).then(([targetWeight, targetReps]) => {
-        setWeightExp(targetWeight);
-        setRepsExp(targetReps);
-      })
+      fetchTargets(currMovement);
     }
   }, [currMovement])
 
+  const fetchTargets = async (movement) => {
+    try {
+      const result = await getTargets(movement);
+      if (result) {
+        setWeightExp(result.weight);
+        setRepsExp(result.reps);
+      } else {
+        setWeightExp(0);
+        setRepsExp(0);
+      }
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+    }
+  }
+
   useEffect(() => {
-    setWorkoutCpy(routine[dayIndex]);
-    if (routine[dayIndex] && 
-      routine[dayIndex].movements.length > 0 &&
-     JSON.stringify(routine[dayIndex]) !== JSON.stringify(workoutCpy))
-    {
-      const firstMovement = routine[dayIndex].movements[0].movement;
-      setCurrMovement(firstMovement);
-      setTime(0);
-      setIndex(0);
-      setWorkoutFlag(false);
-    } 
+    if (routine && routine[dayIndex]) {
+      setWorkoutCpy(routine[dayIndex]);
+      if (routine[dayIndex] && 
+        routine[dayIndex].movements && 
+        routine[dayIndex].movements.length > 0 &&
+        JSON.stringify(routine[dayIndex]) !== JSON.stringify(workoutCpy))
+      {
+        const firstMovement = routine[dayIndex].movements[0].movement;
+        setCurrMovement(firstMovement);
+        setTime(0);
+        setIndex(0);
+        setWorkoutFlag(false);
+      }
+    }
   }, [routine])
 
   useEffect(() => {
@@ -259,9 +283,15 @@ export function WorkoutProvider({children}) {
   }
 
   const [subList, setSubList] = useState([]);
-  const nextSet = (skippedSet=false, bias, weight, reps, variant) => {
+  const [isLogging, setIsLogging] = useState(false);
+  
+  const nextSet = async (skippedSet=false, bias, weight, reps, variant) => {
+      if (isLogging && !skippedSet) return; // Prevent multiple simultaneous log operations
+      
       if (index < workoutCpy.sets.length - 1) {
         if (!skippedSet) {
+          setIsLogging(true); // Set logging flag to true before starting
+          
           setWeightExp(weight);
           setRepsExp(reps);
           setTime(workoutCpy.sets[index].rest);
@@ -280,9 +310,17 @@ export function WorkoutProvider({children}) {
 
           setRecentsCpy(newRecents);
           setLogCpy(newLog);
-          saveWorkoutProgress(true);
+          setLog(newLog);
+          setRecents(newRecents);
+          await saveWorkoutProgress(true);
 
-          logSet(currMovement, weight, reps, variant);
+          try {
+            await logSet(currMovement, weight, reps, variant);
+          } catch (error) {
+            Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+          } finally {
+            setIsLogging(false); 
+          }
         } 
           
         setIndex(index + 1);
@@ -292,12 +330,25 @@ export function WorkoutProvider({children}) {
         if (newMovement !== currMovement || newBias !== bias) {
           setCurrMovement(newMovement);
           setMovementIndex(movementIndex + 1);
+          setSubList(getSubOptions(newMovement));
+          fetchTargets(newMovement);    
         }
 
       } else {
+        if (!skippedSet) {
+          setIsLogging(true);
+          try {
+            await logSet(currMovement, weight, reps, variant);
+          } catch (error) {
+            Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
+          } finally {
+            setIsLogging(false);
+          }
+        }
+        
         setComplete(true);
         setWorkoutFlag(false);
-        saveWorkoutProgress(false);
+        await saveWorkoutProgress(false);
       }
   }
 
@@ -365,10 +416,14 @@ export function WorkoutProvider({children}) {
   }
 
   const getSubOptions = (movement) => {
+    if (!routine || !routine[dayIndex] || !workoutCpy || !workoutCpy.movements || !info) {
+      return [];
+    }
+    
     const title = routine[dayIndex].title;
     const movements = workoutCpy.movements;
-    const accessories = info.accessories;
-    const bias = workoutCpy.sets[index].bias;
+    const accessories = info.accessories || [];
+    const bias = workoutCpy.sets && workoutCpy.sets[index] ? workoutCpy.sets[index].bias : "neutral";
 
     const biasText = MOVEMENTS[movement] ? MOVEMENTS[movement].variants[bias] : "";
     const variant = (movement + " " + biasText).trim();
@@ -387,7 +442,7 @@ export function WorkoutProvider({children}) {
         newLog[movement][index].weight = Number(value.weight);
         newLog[movement][index].reps = Number(value.reps);
         
-        await axios.post('http://192.168.1.253:3000/log-set', {
+        await axios.post('https://more-weight.com/log-set', {
           username: username,
           movement: baseMovement,
           weight: Number(value.weight),
@@ -395,10 +450,13 @@ export function WorkoutProvider({children}) {
           variant: movement,
           RPE: 10, 
           index: index
+        }).catch(error => {
+          Alert.alert("Error", error.response?.data?.message || "Something went wrong. Please try again.");
         });
       }
       
       setLogCpy(newLog);
+      setLog(newLog);
       setLogChanges({});
       
       return true; 
@@ -414,7 +472,7 @@ export function WorkoutProvider({children}) {
   const [logChanges, setLogChanges] = useState({});
 
   const workoutState = {
-    workoutCpy: workoutCpy,
+    workoutCpy: workoutCpy || { movements: [], sets: [] },
     dayName: dayName,
     index: index,
     currMovement: currMovement,
@@ -441,6 +499,7 @@ export function WorkoutProvider({children}) {
     logChanges: logChanges,
     setLogChanges: setLogChanges, 
     makeLogChanges: makeLogChanges,
+    isLogging: isLogging,
   }
 
   return (

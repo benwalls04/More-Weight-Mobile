@@ -1,38 +1,25 @@
+import React, { forwardRef } from "react";
 import { Pressable, StyleSheet, TouchableOpacity } from "react-native";
 import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 
-export function ThemedPressable({
+export const ThemedPressable = forwardRef(({
   style,
   type = "default",
-  btnType="opacity",
+  btnType = "opacity",
+  label,
+  hint, 
   btnHeight = 60,
   ...otherProps
-}) {
+}, ref) => {
   const { theme } = useThemeContext();
   const colors = theme === "dark" ? COLORS.dark : COLORS.light;
   const styles = createStyles(colors);
 
   if (btnType === "opacity") {
-  return (
-    <TouchableOpacity
-      style={[
-        {
-          height: 60,
-          width: "100%",
-          borderWidth: 1,
-          borderRadius: 4,
-          justifyContent: "center",
-        },
-        styles[type] || styles.default, 
-        style,
-      ]}
-      {...otherProps}
-    />
-    );
-  } else {
     return (
-      <Pressable
+      <TouchableOpacity
+        ref={ref}
         style={[
           {
             height: 60,
@@ -40,15 +27,44 @@ export function ThemedPressable({
             borderWidth: 1,
             borderRadius: 4,
             justifyContent: "center",
+            minWidth: 45,
+            minHeight: 45,
           },
           styles[type] || styles.default, 
           style,
         ]}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        {...otherProps}
+      />
+    );
+  } else {
+    return (
+      <Pressable
+        ref={ref}
+        style={[
+          {
+            height: 60,
+            width: "100%",
+            borderWidth: 1,
+            borderRadius: 4,
+            justifyContent: "center",
+            minWidth: 45,
+            minHeight: 45,
+          },
+          styles[type] || styles.default, 
+          style,
+        ]}
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityHint={hint ? hint : label}
         {...otherProps}
       />
     );
   }
-}
+});
 
 function createStyles(colors) {
   return StyleSheet.create({

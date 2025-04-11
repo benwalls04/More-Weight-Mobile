@@ -42,6 +42,9 @@ export default function TrackScreen() {
               type="slanted" 
               style={[styles.muscleButton1, selectGroups.includes(index) ? styles.muscleButtonSelected : {}]}
               onPress={() => handleGroupPress(index)}
+              label={"Filter by " + group}
+              hint={"If selected, exercises of this muscle group will be shown. If not selected, no exercises of this muscle group will be shown."}
+              
             >
               <ThemedText style={styles.buttonText}>{group}</ThemedText>
             </ThemedPressable>
@@ -50,13 +53,15 @@ export default function TrackScreen() {
         <View style={styles.muscleRow}>
           {muscleGroups.slice(4, 7).map((group, index) => (
             <ThemedPressable 
-              key={index} 
+              key={index + 4} 
               type="slanted" 
               style={[styles.muscleButton2, selectGroups.includes(index + 4) ? styles.muscleButtonSelected : {}]}
               onPress={() => handleGroupPress(index + 4)}
+              label={"Filter by " + group}
+              hint={"If selected, exercises of this muscle group will be shown. If not selected, no exercises of this muscle group will be shown."}
             >
               <ThemedText style={styles.buttonText}>{group}</ThemedText>
-            </ThemedPressable>
+            </ThemedPressable >
           ))}
         </View>
       </View>
@@ -66,13 +71,15 @@ export default function TrackScreen() {
   const renderExerciseItem = (exercise) => (
     <View style={styles.exerciseItem}>
       <View style={styles.exerciseHeader}>
-        <ThemedText type="header" style={styles.exerciseTitle}>{exercise}</ThemedText>
+        <ThemedText type="header" style={styles.exerciseTitle} numberOfLines={1} ellipsizeMode="tail">{exercise}</ThemedText>
         <PopupPressable 
           popupBody={() =><LogList exercise={exercise}/>}
           style={styles.viewLogButton}
           onClose={() => makeLogChanges(exercise, logCpy[exercise][0].baseMovement)}
+          label="View Complete Log"
+          hint="View all the log entries for this exercise"
         >
-          <ThemedText style={styles.viewLogText}>View Complete Log</ThemedText>
+          <ThemedText style={styles.viewLogText}>View Log</ThemedText>
         </PopupPressable>
       </View>
       <Graph exercise={exercise}/>
@@ -99,10 +106,8 @@ export default function TrackScreen() {
     }
   }
 
-  // FIXME: add the muscle group to the log entries 
-
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView style={styles.container} label="Progress Tracking Page">
       <MainHeader title="Log" subHeaderComponent={renderHeader()} />
       <ScrollView
         style={styles.scrollView}

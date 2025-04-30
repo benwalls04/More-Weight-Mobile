@@ -28,9 +28,9 @@ export default function Survey() {
       case "one":
         return <SurveyGrid type="one" data={item.options} title={item.title} numColumns={item.cols} surveyIndex={index} headerLines={item.headerLines} listRef={ref} errorMsg={errors[index]}/>;
       case "many":
-        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} headerLines={item.headerLines} surveyIndex={index} errorMsg={errors[index]}/>;
+        return <SurveyGrid type="many" data={item.options} title={item.title} numColumns={item.cols} headerLines={item.headerLines} surveyIndex={index} errorMsg={errors[index]} listRef={ref}/>;
       case "range":
-        return <SurveyRange data={item.options} title={item.title} surveyIndex={index} headerLines={item.headerLines}/>;
+        return <SurveyRange data={item.options} title={item.title} surveyIndex={index} headerLines={item.headerLines} listRef={ref}/>;
       case "submit":
         return <Proceed/>
     } 
@@ -140,7 +140,7 @@ export default function Survey() {
           style={{
             position: 'absolute',
             left: 10,
-            bottom: 20,
+            top: 20,
             padding: 15,
             borderRadius: 10,
           backgroundColor: 'rgba(0, 0, 0, 0.1)',

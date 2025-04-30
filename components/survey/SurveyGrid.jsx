@@ -4,7 +4,9 @@ import { ThemedView } from "../ThemedView";
 import { ThemedText } from "../ThemedText";
 import { ThemedLayout } from "../ThemedLayout";
 import { useSurveyContext } from "@/hooks/SurveyContext";
-const windowWidth = Dimensions.get('window').width * .85;
+import { Ionicons } from "@expo/vector-icons";
+let windowWidth = Dimensions.get('window').width * .85;
+windowWidth = Math.min(windowWidth, 428);
 const windowHeight = Dimensions.get('window').height;
 const BUTTON_MARGIN = 3;
 
@@ -34,7 +36,6 @@ export default function SurveyGrid({
       newData = [...newData, index];
     } else if (type === 'one') {
       newData = [index];
-      scrollToNext();
     }
 
     updateSurveyData(surveyIndex, newData);
@@ -56,11 +57,13 @@ export default function SurveyGrid({
   return (
     <ThemedView style={{borderWidth: 0}} label={title}>
       <ThemedLayout
+      footerFlex={1}
+      bodyFlex={1}
       header={
         <ThemedText 
           type="title"
           numberOfLines={headerLines}
-          style={{textAlign: 'center', marginBottom: 10}}
+          style={{textAlign: 'center', marginBottom: 10, width: '90%'}}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
         >
@@ -87,6 +90,17 @@ export default function SurveyGrid({
           )}
           />
           {errorMsg && <ThemedText type="error">{errorMsg}</ThemedText>}
+        </View>
+      }
+      footer={
+        <View style={styles.arrowContainer}>
+          <ThemedPressable
+            onPress={scrollToNext}
+            style={styles.arrowButton}
+            label="Next Question"
+          >
+            <Ionicons name="chevron-down" size={30} color="#fff" />
+          </ThemedPressable>
         </View>
       }
     />
@@ -130,5 +144,20 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 5,
-  }
+  },
+  arrowContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  arrowButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'none',
+    borderWidth: 0,
+  },
 });

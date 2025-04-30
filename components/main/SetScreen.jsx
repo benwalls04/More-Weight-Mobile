@@ -13,7 +13,8 @@ import Popup from "@/components/Popup"
 import { AntDesign } from '@expo/vector-icons';
 import { MOVEMENTS } from "@/constants/Movements";
 
-const windowWidth = Dimensions.get("window").width;
+let windowWidth = Dimensions.get("window").width;
+windowWidth = Math.min(windowWidth, 428);
 
 export default function SetScreen() {
 
@@ -123,7 +124,7 @@ export default function SetScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <ThemedView style={{justifyContent: 'flex-start'}} label="Current Set in Your Workout">
+      <ThemedView style={{justifyContent: 'flex-start', width: '90%'}} label="Current Set in Your Workout">
         {/* Top action buttons */}
         <Popup visible={addFlag} body={subPopupBody} onClose={() => setAddFlag(false)} canClose={subChoice !== null} extraClose={handleSubClose}></Popup>
         <View style={styles.actionButtons}>
@@ -275,7 +276,7 @@ export default function SetScreen() {
 function createStyles(colors) {
   return StyleSheet.create({
     actionButtons: {
-      marginTop: 20,
+      marginTop: 0,
       width: windowWidth * .9,
       justifyContent: 'space-around',
       flexDirection: 'row',
@@ -304,7 +305,7 @@ function createStyles(colors) {
       fontSize: 28,
       fontWeight: 'bold',
       textAlign: 'center',
-      paddingBottom: 15,
+      paddingBottom: 10,
     },
     biasText: {
       fontStyle: "italic",
@@ -316,7 +317,7 @@ function createStyles(colors) {
     setInfoContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
-      marginBottom: 50,
+      marginBottom: 40,
       gap: 15,
     },
     infoPill: {
@@ -336,7 +337,7 @@ function createStyles(colors) {
       borderColor: colors.text,
       justifyContent: 'center',
       alignItems: 'center',
-      marginBottom: 50,
+      marginBottom: 40,
     },
     timerText: {
       fontSize: 35,

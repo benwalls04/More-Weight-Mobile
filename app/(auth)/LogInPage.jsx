@@ -25,7 +25,7 @@ const LoginPage = () => {
   const Styles = createStyles(colors);
 
   return (
-    <ThemedView label="Log In Page">
+    <ThemedView label="Log In Page" style={{width: '90%'}}>
       <ThemedLayout
         headerFlex={1}
         bodyFlex={3}

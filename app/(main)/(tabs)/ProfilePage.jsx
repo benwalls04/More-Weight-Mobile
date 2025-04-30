@@ -125,7 +125,7 @@ function createStyles(colors) {
       marginTop: 10,
     },
     content: {
-      width: '100%',
+      width: '90%',
       flex: 1,
     },
     tabContainer: {
@@ -155,7 +155,7 @@ function createStyles(colors) {
     settingsContainer: {
       position: 'absolute',
       top: -10,
-      right: -15,
+      right: 0,
       alignItems: 'center',
       zIndex: 3,
     },

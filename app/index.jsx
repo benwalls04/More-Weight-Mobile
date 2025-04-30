@@ -10,7 +10,8 @@ import { useUserContext } from "@/hooks/UserContext";
 import * as SecureStore from 'expo-secure-store';
 import NetInfo from '@react-native-community/netinfo';
 
-const windowWidth = Dimensions.get('window').width * .85;
+let windowWidth = Dimensions.get('window').width * .85;
+windowWidth = Math.min(windowWidth, 428);
 const BUTTON_MARGIN = 3;
 const numColumns = 2;
 const BTN_WIDTH = (windowWidth - (numColumns + 1) * BUTTON_MARGIN * 2) / numColumns;

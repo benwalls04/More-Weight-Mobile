@@ -101,7 +101,7 @@ export default function Split() {
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
-            style={{paddingBottom: 10}}
+            style={{paddingBottom: 10, width: '90%'}}
           >
             Which routine do you prefer?
           </ThemedText>

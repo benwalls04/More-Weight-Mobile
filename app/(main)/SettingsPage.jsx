@@ -81,8 +81,8 @@ function createStyles(colors) {
     },
     backButtonContainer: {
       position: 'absolute',
-      top: 28,
-      left: 0,
+      top: 5,
+      left: 20,
       zIndex: 3,
     },
     content: {

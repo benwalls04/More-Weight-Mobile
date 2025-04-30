@@ -25,7 +25,7 @@ export default function WorkoutPage() {
         {workoutCpy.title !== "rest" && (
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{paddingBottom: 70, paddingHorizontal: 15}}
+            contentContainerStyle={{paddingBottom: 70, paddingHorizontal: 15, width: '90%'}}
           >
             {workoutCpy.movements.map((item, index) => (
               <WorkoutInfo 
@@ -51,7 +51,7 @@ export default function WorkoutPage() {
   } else {
     return (
       <ThemedView style={styles.container} label="Workout Page">
-        <ThemedText type="header" style={{textAlign: 'center', marginTop: 20}}>No workout found</ThemedText>
+        <ThemedText type="header" style={{textAlign: 'center', marginTop: 20}}>Rest Day</ThemedText>
       </ThemedView>
     )
   }

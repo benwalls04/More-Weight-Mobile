@@ -41,14 +41,14 @@ export default function SurveyNumber({
           numberOfLines={2}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
-          style={{textAlign: 'center'}}
+          style={{textAlign: 'center', width: '90%'}}
         >
           {title}
         </ThemedText>
         }
 
       body={
-      <View style={styles.container}>
+      <View style={{width: '90%'}}>
         <View style={styles.textContainer}>
           <ThemedText style={styles.text}>{textBefore}</ThemedText>
           <View style={styles.inputContainer}>

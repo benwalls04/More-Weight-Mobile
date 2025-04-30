@@ -5,7 +5,8 @@ import { useThemeContext } from "@/hooks/ThemeContext";
 import { COLORS } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 
-const windowWidth = Dimensions.get('window').width;
+let windowWidth = Dimensions.get('window').width;
+windowWidth = Math.min(windowWidth, 428);
 
 export default function MainHeader({ 
   title, 

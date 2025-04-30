@@ -9,7 +9,8 @@ import { COLORS } from "@/constants/Colors";
 import { useWorkoutContext } from "@/hooks/WorkoutContext";
 import PopupPressable from "@/components/PopupPressable";
 import { ThemedPressable } from "@/components/ThemedPressable";
-const windowWidth = Dimensions.get('window').width;
+let windowWidth = Dimensions.get('window').width;
+windowWidth = Math.min(windowWidth, 428);
 import { MOVEMENTS } from "@/constants/Movements";
 import LogList from "@/components/main/LogList";
 
@@ -214,7 +215,7 @@ function createStyles(colors) {
       textDecorationLine: 'underline',
     },
     scrollView: {
-      width: '100%',
+      width: '90%',
       paddingTop: 20,
     },
     buttonText: {

@@ -73,7 +73,7 @@ function EditPageContent() {
   }
 
   return (
-      <ThemedView style={Styles.container} label="Edit Routine Page">
+      <ThemedView>
         {maxPopupVisible && <Popup body={maxBody} onClose={() => setMaxPopupVisible(false)}/>}
         <View style={Styles.headerContainer}>
           <FlatList 
@@ -141,8 +141,7 @@ function createStyles (colors) {
       justifyContent: "center",
       backgroundColor: colors.background,
       zIndex: 10,
-      position: 'absolute',
-      top: 25,
+      marginTop: 25,
     },
     container: {
       justifyContent: 'center',
@@ -173,7 +172,7 @@ function createStyles (colors) {
       alignItems: "center",
       justifyContent: "center",
       backgroundColor: colors.background,
-      marginTop: 40,
+      marginTop: 10,
       zIndex: 100,
       marginBottom: 10,
     },

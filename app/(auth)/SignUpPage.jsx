@@ -28,7 +28,7 @@ const SignupPage = () => {
   const Styles = createStyles(colors);
 
   return (
-    <ThemedView label="Sign Up Page">
+    <ThemedView label="Sign Up Page" style={{width: '90%'}}>
       <ThemedLayout 
         headerFlex={1}
         bodyFlex={3}

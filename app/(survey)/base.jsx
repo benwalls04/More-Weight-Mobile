@@ -75,7 +75,7 @@ export default function Base() {
             numberOfLines={1}
             adjustsFontSizeToFit
             minimumFontScale={0.5}
-            style={{paddingBottom: 10}}
+            style={{paddingBottom: 10, width: '90%'}}
         >
           Which split type do you prefer?
         </ThemedText>

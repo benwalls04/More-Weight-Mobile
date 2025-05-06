@@ -33,7 +33,7 @@ export default function Custom() {
 
   const handleSubmit = () => {
     if (selectedMuscleGroups.some((day, index) => schedule[index] !== "rest" && day.length === 0)) {
-      Alert.alert("Please select a muscle group for each day.");
+      Alert.alert("Please select at least one muscle group for each day.");
       return;
     }
 
@@ -47,8 +47,13 @@ export default function Custom() {
       return;
     }
 
-    if (!muscleGroups.every(group => selectedMuscleGroups.some(day => day.includes(group)))) {
-      Alert.alert("Please select a muscle group for each day.");
+    const notSelected = muscleGroups.filter(group => !selectedMuscleGroups.some(day => day.includes(group)));
+
+    if (notSelected.length > 0) {
+      Alert.alert(
+        "Please select each muscle group at least once.",
+        notSelected.join(", ") + " have not been selected for any day."
+      );
       return;
     }
 
